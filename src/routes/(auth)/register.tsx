@@ -16,18 +16,15 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { useAuth } from '@/context/auth-context'
-import { LoaderComponent } from '@/components/loader'
 import { PasswordInput } from '@/components/ui/password-input'
+import { UnProtectedRoute } from '@/hoc/unprotected-route'
 
 export const Route = createFileRoute('/(auth)/register')({
-	component: RouteComponent,
-	async beforeLoad({ context: { auth } }) {
-		await auth.prefetch()
-		if (auth.isAuthenticated.authenticated) {
-			throw redirect({ to: '/dashboard' })
-		}
-	},
-	pendingComponent: LoaderComponent,
+	component: () => (
+		<UnProtectedRoute>
+			<RouteComponent />
+		</UnProtectedRoute>
+	),
 })
 
 function RouteComponent() {

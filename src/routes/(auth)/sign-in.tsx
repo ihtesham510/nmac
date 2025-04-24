@@ -1,9 +1,4 @@
-import {
-	createFileRoute,
-	Link,
-	redirect,
-	useNavigate,
-} from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,23 +13,17 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { LoaderCircle, PhoneIcon } from 'lucide-react'
-import { LoaderComponent } from '@/components/loader'
 import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
 import { PasswordInput } from '@/components/ui/password-input'
+import { UnProtectedRoute } from '@/hoc/unprotected-route'
 
 export const Route = createFileRoute('/(auth)/sign-in')({
-	component: RouteComponent,
-	async beforeLoad({ context: { auth } }) {
-		await auth.prefetch()
-		if (auth.isAuthenticated.authenticated) {
-			throw redirect({
-				to: '/dashboard',
-				throw: true,
-			})
-		}
-	},
-	pendingComponent: LoaderComponent,
+	component: () => (
+		<UnProtectedRoute>
+			<RouteComponent />
+		</UnProtectedRoute>
+	),
 })
 
 const formSchema = z.object({

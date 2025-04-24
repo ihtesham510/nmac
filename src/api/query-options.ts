@@ -1,8 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { convexQuery } from '@convex-dev/react-query'
 import { client } from '@/api/client'
-import { api } from 'convex/_generated/api'
-import type { Id } from 'convex/_generated/dataModel'
 
 export const queries = {
 	list_agents: () =>
@@ -24,22 +21,4 @@ export const queries = {
 			queryKey: ['get_agent', id],
 			queryFn: async () => await client.conversationalAi.getAgent(id),
 		}),
-	authenticate_client: (id: string | undefined) =>
-		queryOptions(
-			convexQuery(api.client.authenticate, {
-				id: id ? (id as Id<'client'>) : undefined,
-			}),
-		),
-	authenticate_user: (id: string | undefined) =>
-		queryOptions(
-			convexQuery(api.user.authenticate, {
-				id: id ? (id as Id<'user'>) : undefined,
-			}),
-		),
-	get_clients: (id: Id<'user'>) =>
-		queryOptions(
-			convexQuery(api.client.listClients, {
-				id,
-			}),
-		),
 }

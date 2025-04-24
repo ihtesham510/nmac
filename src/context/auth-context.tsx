@@ -1,12 +1,6 @@
-import { queries } from '@/api/query-options'
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	type UseQueryResult,
-} from '@tanstack/react-query'
+import { useQuery, useMutation } from 'convex/react'
 import type { Client, ArgsUser, User, ArgsSignIn } from '@/lib/types'
-import { useLocalStorage } from '@mantine/hooks'
+import { useLocalStorage, useLogger } from '@mantine/hooks'
 import { api } from 'convex/_generated/api'
 import {
 	createContext,
@@ -14,100 +8,87 @@ import {
 	useContext,
 	type PropsWithChildren,
 } from 'react'
-import { useConvexMutation } from '@convex-dev/react-query'
-import { toast } from 'sonner'
+import type { Id } from 'convex/_generated/dataModel'
 
 type UserType = 'client' | 'user' | null
 
-type IsAuthenticated = { authenticated: boolean; type: UserType }
-
 export const authContext = createContext<{
-	user: UseQueryResult<User>
-	client: UseQueryResult<Client>
+	user: User | undefined
+	client: Client | undefined
 	logOut: () => void
 	signUp: (params: ArgsUser) => void
-	prefetch: () => Promise<void>
-	isAuthenticated: IsAuthenticated
+	type: UserType
+	isAuthenticated: boolean
+	isUnauthenticated: boolean
+	isLoading: boolean
 	signIn: (data: ArgsSignIn) => void
 } | null>(null)
 
 export function AuthProvider({ children }: PropsWithChildren) {
-	const queryclient = useQueryClient()
 	const [token, setToken] = useLocalStorage<string | undefined>({
 		key: 'token',
 		defaultValue: undefined,
 	})
-	const user = useQuery(queries.authenticate_user(token))
-	const client = useQuery(queries.authenticate_client(token))
-	const sign_in = useMutation({
-		mutationFn: useConvexMutation(api.user.signIn),
+	const user = useQuery(api.user.authenticate, {
+		id: token === 'undefined' ? undefined : (token as Id<'user'>),
+	})
+	const client = useQuery(api.client.authenticate, {
+		id: token === 'undefined' ? undefined : (token as Id<'client'>),
 	})
 
-	const registerUser = useMutation({
-		mutationFn: useConvexMutation(api.user.registerUser),
-	})
+	const sign_in = useMutation(api.user.signIn)
+	const registerUser = useMutation(api.user.registerUser)
 
 	const logOut = useCallback(() => {
 		setToken(undefined)
 	}, [token])
 
 	const signUp = useCallback(
-		(params: ArgsUser) => {
-			registerUser.mutate(params, {
-				onSuccess(data) {
-					if (!data) return toast.error('Error While Singing In')
-					toast.success('Successfully Signed In')
-					setToken(data)
-				},
-				onError() {
-					toast.error('Error While Singing In')
-				},
-			})
+		async (params: ArgsUser) => {
+			const id = await registerUser(params)
+			setToken(id)
 		},
 		[token],
 	)
 
-	const isUser = user.data && !user.isLoading && !user.isError
-	const isClient = client.data && !client.isLoading && !client.isError
-
 	function getType(): UserType {
-		if (isUser) return 'user'
-		if (isClient) return 'client'
+		if (user) return 'user'
+		if (client) return 'client'
 		return null
 	}
 	const type = getType()
-	const isAuthenticated: IsAuthenticated = {
-		authenticated: !!(isUser || isClient),
-		type: type,
-	}
-
-	async function prefetch(): Promise<void> {
-		await queryclient.prefetchQuery(queries.authenticate_user(token))
-		await queryclient.prefetchQuery(queries.authenticate_client(token))
-	}
 
 	const signIn = useCallback(
-		(data: ArgsSignIn) => {
-			sign_in.mutate(data, {
-				onSuccess(data) {
-					if (data) {
-						setToken(data)
-					}
-				},
-			})
+		async (data: ArgsSignIn) => {
+			const id = await sign_in(data)
+			setToken(id as string)
 		},
 		[token],
 	)
+
+	const isLoading = user === undefined || client === undefined
+	const isUnauthenticated = user === null || client === null
+	const isAuthenticated = !!user && !!client
+
+	// useLogger('auth', [
+	// 	user,
+	// 	client,
+	// 	isAuthenticated,
+	// 	isUnauthenticated,
+	// 	isLoading,
+	// ])
 
 	return (
 		<authContext.Provider
 			value={{
 				user,
 				client,
+				type,
 				isAuthenticated,
+				isUnauthenticated,
+				isLoading,
 				logOut,
 				signUp,
-				prefetch,
 				signIn,
 			}}
 		>

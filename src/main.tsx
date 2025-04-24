@@ -9,7 +9,6 @@ import './index.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { Toaster } from 'sonner'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
-import { ConvexQueryClient } from '@convex-dev/react-query'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from '@/context/auth-context.tsx'
 
@@ -23,19 +22,14 @@ if (!convexURL) {
 }
 
 const convexReactClient = new ConvexReactClient(convexURL)
-const convexQueryClient = new ConvexQueryClient(convexReactClient)
 
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			queryKeyHashFn: convexQueryClient.hashFn(),
-			queryFn: convexQueryClient.queryFn(),
 			retry: 1,
 		},
 	},
 })
-
-convexQueryClient.connect(queryClient)
 
 // Create a new router instance
 const router = createRouter({
