@@ -20,11 +20,16 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 function RouteComponent() {
+	const auth = useAuth()
 	return (
 		<ProtectedRoute>
 			<SidebarProvider>
 				<AppSidebar />
 				<SidebarInset>
+					<header className=' mx-10 flex justify-between items-center h-20'>
+						<SidebarTrigger />
+						<Button onClick={auth.logOut}>Sign Out</Button>
+					</header>
 					<Outlet />
 				</SidebarInset>
 			</SidebarProvider>
