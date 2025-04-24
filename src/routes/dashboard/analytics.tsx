@@ -70,6 +70,43 @@ function RouteComponent() {
 		return filteredNumberOfCalls.reduce((acc, item) => (acc += item.calls), 0)
 	}, [filteredNumberOfCalls])
 
+	const filteredCallMinutes = useMemo(() => {
+		if (!conversationsList.data) return []
+
+		const dateDurationMap: Record<string, number> = {}
+		for (const conv of conversationsList.data.conversations) {
+			const date = new Date(conv.start_time_unix_secs * 1000)
+				.toISOString()
+				.split('T')[0]
+			dateDurationMap[date] =
+				(dateDurationMap[date] || 0) + Math.floor(conv.call_duration_secs / 60)
+		}
+
+		const endDate = new Date()
+		const daysToSubtract = parseInt(timeRange.replace('d', ''), 10)
+		const startDate = new Date()
+		startDate.setDate(endDate.getDate() - daysToSubtract)
+
+		const result: { date: string; minutes: number }[] = []
+		for (
+			let d = new Date(startDate);
+			d <= endDate;
+			d.setDate(d.getDate() + 1)
+		) {
+			const dateStr = d.toISOString().split('T')[0]
+			result.push({
+				date: dateStr,
+				minutes: dateDurationMap[dateStr] || 0,
+			})
+		}
+
+		return result
+	}, [conversationsList.data, timeRange])
+
+	const totalNumberofMinutes = useMemo(() => {
+		return filteredCallMinutes.reduce((acc, item) => (acc += item.minutes), 0)
+	}, [filteredCallMinutes])
+
 	return (
 		<div className='m-10 grid gap-6'>
 			<Select
@@ -107,13 +144,10 @@ function RouteComponent() {
 				/>
 				<CallChart
 					chartTitle='Total Call Minutes'
-					data={filteredNumberOfCalls.map(item => ({
-						date: item.date,
-						minutes: item.calls,
-					}))}
+					data={filteredCallMinutes}
 					dataKey='minutes'
 					buttonTitle='Total Munites'
-					buttonValue={`${totalNumberofCalls}`}
+					buttonValue={`${totalNumberofMinutes}`}
 					chartDescription='The total number of minutes spent on calls each day.'
 					chartConfig={{
 						minutes: {
