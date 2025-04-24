@@ -46,6 +46,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 	const signUp = useCallback(
 		async (params: ArgsUser) => {
 			const id = await registerUser(params)
+			console.log(id)
 			setToken(id)
 		},
 		[token],
@@ -68,15 +69,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 	const isLoading = user === undefined || client === undefined
 	const isUnauthenticated = user === null || client === null
-	const isAuthenticated = !!user && !!client
+	const isAuthenticated = !!user || !!client
 
-	// useLogger('auth', [
-	// 	user,
-	// 	client,
-	// 	isAuthenticated,
-	// 	isUnauthenticated,
-	// 	isLoading,
-	// ])
+	useLogger('auth', [
+		user,
+		client,
+		isAuthenticated,
+		isUnauthenticated,
+		isLoading,
+	])
 
 	return (
 		<authContext.Provider

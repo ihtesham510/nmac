@@ -1,7 +1,5 @@
-import { queries } from '@/api/query-options'
 import { useAuth } from '@/context/auth-context'
-import { useConvexMutation } from '@convex-dev/react-query'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from 'convex/react'
 import { api } from 'convex/_generated/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
@@ -33,7 +31,6 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { useLogger } from '@mantine/hooks'
 import { CreateClientForm } from '@/components/create-client-form'
 
 export const Route = createFileRoute('/dashboard/clients/')({
@@ -43,11 +40,8 @@ export const Route = createFileRoute('/dashboard/clients/')({
 function RouteComponent() {
 	const auth = useAuth()
 	const [filter, setFilter] = useState<string>()
-	const createClient = useMutation({
-		mutationFn: useConvexMutation(api.client.createClient),
-	})
-	const clients = useQuery(queries.get_clients(auth.user.data!._id))
-	useLogger('clients', [clients])
+
+	const clients = useQuery(api.client.listClients, { id: auth.user!._id })
 
 	return (
 		<Dialog>
@@ -78,10 +72,9 @@ function RouteComponent() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{clients.data &&
-								!clients.isLoading &&
-								clients.data.map(client => (
-									<DropdownMenu>
+							{clients &&
+								clients.map(client => (
+									<DropdownMenu key={client._id}>
 										<TableRow
 											key={client._id}
 											className='h-[50px] cursor-pointer'

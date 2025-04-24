@@ -1,3 +1,5 @@
+import CryptoJS from 'crypto-js'
+
 export const encrypt = (value: string, secret_key: string) => {
 	return CryptoJS.AES.encrypt(value, secret_key).toString()
 }

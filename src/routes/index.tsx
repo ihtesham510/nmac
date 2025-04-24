@@ -9,7 +9,7 @@ function App() {
 	const auth = useAuth()
 	return (
 		<div className='w-full'>
-			<pre>{JSON.stringify(auth.user, null, 2)}</pre>
+			<pre>{JSON.stringify({ auth }, null, 2)}</pre>
 		</div>
 	)
 }

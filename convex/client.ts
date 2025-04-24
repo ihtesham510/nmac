@@ -64,14 +64,18 @@ export const assignAgent = mutation({
 })
 
 export const authenticate = query({
-	args: { id: v.optional(v.id('client')) },
+	args: { id: v.optional(v.string()) },
 	async handler(ctx, args) {
 		if (args.id) {
-			const id = ctx.db.normalizeId('client', args.id)
-			if (id) {
-				const client = await ctx.db.get(args.id)
-				const user = await ctx.db.get(client!.userId)
-				return { ...client, api_key: user!.elevenLabs_api_key }
+			try {
+				const id = ctx.db.normalizeId('client', args.id)
+				if (id) {
+					const client = await ctx.db.get(id)
+					const user = await ctx.db.get(client!.userId)
+					return { ...client, api_key: user!.elevenLabs_api_key }
+				}
+			} catch (err) {
+				return null
 			}
 		}
 		return null

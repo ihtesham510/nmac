@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Link } from '@tanstack/react-router'
@@ -60,7 +60,6 @@ function RouteComponent() {
 				})
 		})
 
-	const navigate = useNavigate()
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
@@ -82,7 +81,6 @@ function RouteComponent() {
 				password,
 			})
 			toast.success('Registered Successfully.')
-			navigate({ to: '/dashboard' })
 			return
 		} catch (error) {
 			toast.error('Failed to submit the form. Please try again.')

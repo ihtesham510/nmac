@@ -25,22 +25,6 @@ export const registerUser = mutation({
 		})
 	},
 })
-
-export const authenticate = query({
-	args: {
-		id: v.optional(v.id('user')),
-	},
-	async handler(ctx, args) {
-		if (args.id) {
-			const id = ctx.db.normalizeId('user', args.id)
-			if (id) {
-				return await ctx.db.get(id)
-			}
-		}
-		return null
-	},
-})
-
 export const signIn = mutation({
 	args: {
 		username: v.string(),
@@ -75,5 +59,20 @@ export const emailExists = query({
 			.query('user')
 			.withIndex('by_email', q => q.eq('email', args_0.email))
 			.first())
+	},
+})
+
+export const authenticate = query({
+	args: {
+		id: v.optional(v.string()),
+	},
+	async handler(ctx, args) {
+		if (args.id) {
+			const id = ctx.db.normalizeId('user', args.id)
+			if (id) {
+				return await ctx.db.get(id)
+			}
+		}
+		return null
 	},
 })
