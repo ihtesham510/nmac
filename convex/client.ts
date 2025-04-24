@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { encrypt } from './utils'
 
 export const createClient = mutation({
 	args: {
@@ -9,11 +10,13 @@ export const createClient = mutation({
 		password: v.string(),
 	},
 	async handler(ctx, { userId, username, name, password }) {
+		const secretKey = process.env.SECRET_KEY
+		const encryptedPassword = encrypt(password, secretKey!)
 		return await ctx.db.insert('client', {
 			userId,
 			name,
 			username,
-			password,
+			password: encryptedPassword,
 		})
 	},
 })

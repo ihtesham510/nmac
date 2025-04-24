@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server'
 import { v } from 'convex/values'
+import { decrypt, encrypt } from './utils'
 
 export const registerUser = mutation({
 	args: {
@@ -13,11 +14,13 @@ export const registerUser = mutation({
 		ctx,
 		{ first_name, last_name, email, password, elevenLabs_api_key },
 	) => {
+		const secretKey = process.env.SECRET_KEY
+		const encryptedPassword = encrypt(password, secretKey!)
 		return await ctx.db.insert('user', {
 			first_name,
 			last_name,
 			email,
-			password,
+			password: encryptedPassword,
 			elevenLabs_api_key,
 		})
 	},
@@ -44,16 +47,21 @@ export const signIn = mutation({
 		password: v.string(),
 	},
 	async handler(ctx, args) {
+		const secretKey = process.env.SECRET_KEY
 		const user = await ctx.db
 			.query('user')
 			.withIndex('by_email', q => q.eq('email', args.username))
 			.first()
+		const isUserAuthenticated =
+			decrypt(user!.password, secretKey!) === args.password
 		const client = await ctx.db
 			.query('client')
 			.withIndex('by_username', q => q.eq('username', args.username))
 			.first()
-		if (user) return user._id
-		if (client) return client._id
+		const isClientAuthenticated =
+			decrypt(client!.password, secretKey!) === args.password
+		if (user && isUserAuthenticated) return user._id
+		if (client && isClientAuthenticated) return client._id
 		return null
 	},
 })
