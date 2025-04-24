@@ -2,7 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Link } from '@tanstack/react-router'
-import { BuildingIcon } from 'lucide-react'
+import { BuildingIcon, Phone, PhoneCall } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/form'
 import { useAuth } from '@/context/auth-context'
 import { LoaderComponent } from '@/components/loader'
+import { PasswordInput } from '@/components/ui/password-input'
 
 export const Route = createFileRoute('/(auth)/register')({
 	component: RouteComponent,
@@ -30,24 +31,49 @@ export const Route = createFileRoute('/(auth)/register')({
 })
 
 function RouteComponent() {
-	const formSchema = z.object({
-		first_name: z.string().min(1),
-		last_name: z.string().min(1),
-		elevenLabs_api_key: z.string(),
-		email: z.string().email(),
-		password: z
-			.string()
-			.min(8, { message: "Password must be at least (8) character's long." }),
-	})
+	const formSchema = z
+		.object({
+			first_name: z.string().min(1),
+			last_name: z.string().min(1),
+			elevenLabs_api_key: z.string(),
+			email: z.string().email(),
+			password: z
+				.string()
+				.min(8, { message: "Password must be at least (8) character's long." }),
+			confirm_password: z
+				.string()
+				.min(8, { message: "Password must be at least (8) character's long." }),
+		})
+		.superRefine(({ password, confirm_password }, ctx) => {
+			if (password !== confirm_password)
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Password do not match',
+					path: ['confirm_password'],
+				})
+		})
+
 	const navigate = useNavigate()
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
 	const auth = useAuth()
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	function onSubmit({
+		first_name,
+		last_name,
+		email,
+		elevenLabs_api_key,
+		password,
+	}: z.infer<typeof formSchema>) {
 		try {
-			auth.signUp(values)
+			auth.signUp({
+				first_name,
+				last_name,
+				email,
+				elevenLabs_api_key,
+				password,
+			})
 			toast.success('Registered Successfully.')
 			navigate({ to: '/dashboard' })
 			return
@@ -65,7 +91,7 @@ function RouteComponent() {
 					<div className='bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6'>
 						<div className='text-center'>
 							<Link to='/' aria-label='go home' className='mx-auto block w-fit'>
-								<BuildingIcon className='size-12' />
+								<Phone className='size-12' />
 							</Link>
 							<h1 className='text-title mb-1 mt-4 text-xl font-semibold'>
 								Create an Account
@@ -122,9 +148,8 @@ function RouteComponent() {
 									<FormItem>
 										<FormLabel>11Labs Api Key</FormLabel>
 										<FormControl>
-											<Input
-												placeholder='API key.'
-												type='text'
+											<PasswordInput
+												placeholder='API key'
 												required
 												{...field}
 											/>
@@ -160,11 +185,29 @@ function RouteComponent() {
 									<FormItem>
 										<FormLabel>Password</FormLabel>
 										<FormControl>
-											<Input
+											<PasswordInput
 												type='password'
 												required
 												placeholder='Enter Your Password'
-												id='pwd'
+												className='input sz-md variant-mixed'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name='confirm_password'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Password</FormLabel>
+										<FormControl>
+											<PasswordInput
+												type='password'
+												required
+												placeholder='Re-Enter Your Password'
 												className='input sz-md variant-mixed'
 												{...field}
 											/>

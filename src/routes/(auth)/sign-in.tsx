@@ -21,6 +21,7 @@ import { LoaderCircle, PhoneIcon } from 'lucide-react'
 import { LoaderComponent } from '@/components/loader'
 import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
+import { PasswordInput } from '@/components/ui/password-input'
 
 export const Route = createFileRoute('/(auth)/sign-in')({
 	component: RouteComponent,
@@ -52,7 +53,6 @@ function RouteComponent() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			auth.signIn(values)
-			toast.success("You've Successfully Singed In")
 			navigate({ to: '/dashboard' })
 		} catch (err) {
 			toast.error('Error While Signing In')
@@ -101,9 +101,8 @@ function RouteComponent() {
 								<FormItem>
 									<FormLabel>Password</FormLabel>
 									<FormControl>
-										<Input
+										<PasswordInput
 											placeholder='enter your password'
-											type='password'
 											required
 											{...field}
 										/>

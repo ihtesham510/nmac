@@ -6,7 +6,7 @@ import {
 	type UseQueryResult,
 } from '@tanstack/react-query'
 import type { Client, ArgsUser, User, ArgsSignIn } from '@/lib/types'
-import { useLocalStorage, useLogger } from '@mantine/hooks'
+import { useLocalStorage } from '@mantine/hooks'
 import { api } from 'convex/_generated/api'
 import {
 	createContext,
@@ -15,6 +15,7 @@ import {
 	type PropsWithChildren,
 } from 'react'
 import { useConvexMutation } from '@convex-dev/react-query'
+import { toast } from 'sonner'
 
 type UserType = 'client' | 'user' | null
 
@@ -54,7 +55,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
 		(params: ArgsUser) => {
 			registerUser.mutate(params, {
 				onSuccess(data) {
+					if (!data) return toast.error('Error While Singing In')
+					toast.success('Successfully Signed In')
 					setToken(data)
+				},
+				onError() {
+					toast.error('Error While Singing In')
 				},
 			})
 		},
