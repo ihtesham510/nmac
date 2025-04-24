@@ -65,3 +65,15 @@ export const signIn = mutation({
 		return null
 	},
 })
+
+export const emailExists = query({
+	args: {
+		email: v.string(),
+	},
+	async handler(ctx, args_0) {
+		return !!(await ctx.db
+			.query('user')
+			.withIndex('by_email', q => q.eq('email', args_0.email))
+			.first())
+	},
+})

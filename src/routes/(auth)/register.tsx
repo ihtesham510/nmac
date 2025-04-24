@@ -1,8 +1,8 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Link } from '@tanstack/react-router'
-import { BuildingIcon, Phone, PhoneCall } from 'lucide-react'
+import { Phone } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,6 +18,8 @@ import {
 import { useAuth } from '@/context/auth-context'
 import { PasswordInput } from '@/components/ui/password-input'
 import { UnProtectedRoute } from '@/hoc/unprotected-route'
+import { useConvex } from 'convex/react'
+import { api } from 'convex/_generated/api'
 
 export const Route = createFileRoute('/(auth)/register')({
 	component: () => (
@@ -28,6 +30,7 @@ export const Route = createFileRoute('/(auth)/register')({
 })
 
 function RouteComponent() {
+	const convex = useConvex()
 	const formSchema = z
 		.object({
 			first_name: z.string().min(1),
@@ -41,12 +44,19 @@ function RouteComponent() {
 				.string()
 				.min(8, { message: "Password must be at least (8) character's long." }),
 		})
-		.superRefine(({ password, confirm_password }, ctx) => {
+		.superRefine(async ({ password, confirm_password, email }, ctx) => {
 			if (password !== confirm_password)
 				ctx.addIssue({
 					code: 'custom',
 					message: 'Password do not match',
 					path: ['confirm_password'],
+				})
+			const emailExists = await convex.query(api.user.emailExists, { email })
+			if (emailExists)
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Email already exists',
+					path: ['email'],
 				})
 		})
 
