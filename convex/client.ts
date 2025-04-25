@@ -63,6 +63,15 @@ export const assignAgent = mutation({
 	},
 })
 
+export const deleteClient = mutation({
+	args: {
+		clientId: v.id('client'),
+	},
+	async handler(ctx, args_0) {
+		return await ctx.db.delete(args_0.clientId)
+	},
+})
+
 export const authenticate = query({
 	args: { id: v.optional(v.string()) },
 	async handler(ctx, args) {

@@ -3,6 +3,12 @@ import { v } from 'convex/values'
 
 export default defineSchema({
 	user: defineTable({
+		image: v.optional(
+			v.object({
+				url: v.string(),
+				storageId: v.id('_storage'),
+			}),
+		),
 		first_name: v.string(),
 		last_name: v.string(),
 		email: v.string(),

@@ -1,5 +1,5 @@
 import { useAuth } from '@/context/auth-context'
-import { useQuery } from 'convex/react'
+import { useMutation, useQuery } from 'convex/react'
 import { api } from 'convex/_generated/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
@@ -16,22 +16,21 @@ import {
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuPortal,
 	DropdownMenuSeparator,
+	DropdownMenuShortcut,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useState } from 'react'
-import { EllipsisIcon, PlusIcon } from 'lucide-react'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog'
-import { CreateClientForm } from '@/components/create-client-form'
+import { useMemo, useState } from 'react'
+import { DeleteIcon, EllipsisIcon, PlusIcon } from 'lucide-react'
+import { rabinKarpSearch } from '@/lib/utils'
+import { useClientState } from '@/context/client-state-context'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -39,27 +38,47 @@ export const Route = createFileRoute('/dashboard/clients/')({
 
 function RouteComponent() {
 	const auth = useAuth()
+
 	const [filter, setFilter] = useState<string>()
+	const { createClientDialog, alert } = useClientState()
 
 	const clients = useQuery(api.client.listClients, { id: auth.user!._id })
+	const deleteClient = useMutation(api.client.deleteClient)
+
+	const filteredClients = useMemo(() => {
+		if (clients && (!filter || filter === '')) {
+			return clients
+		}
+		return clients?.filter(client =>
+			rabinKarpSearch(client.name.toLowerCase(), filter!),
+		)
+	}, [clients, filter])
 
 	return (
-		<Dialog>
-			<div className='h-screen w-full'>
-				<div className='grid grid-cols-1 m-20 gap-10'>
-					<div className='flex justify-between items-center'>
-						<Input
-							placeholder='Search Agents ...'
-							value={filter}
-							className='w-[400px]'
-							onChange={e => setFilter(e.target.value)}
-						/>
-						<DialogTrigger>
-							<Button className='flex gap-2' variant='outline' size='sm'>
-								<PlusIcon /> <p className='hidden md:block'>Create Client</p>
-							</Button>
-						</DialogTrigger>
+		<div className='h-screen w-full'>
+			<div className='grid grid-cols-1 m-20 gap-10'>
+				<div className='flex justify-between items-center'>
+					<Input
+						placeholder='Search Agents ...'
+						value={filter}
+						className='w-[400px]'
+						onChange={e => setFilter(e.target.value)}
+					/>
+					<Button
+						className='flex gap-2'
+						variant='outline'
+						size='sm'
+						onClick={() => createClientDialog.setState(true)}
+					>
+						<PlusIcon /> <p className='hidden md:block'>Create Client</p>
+					</Button>
+				</div>
+				{clients && clients.length === 0 && (
+					<div className='flex justify-center items-center h-40'>
+						<p className='text-primary/50'>You have no clients.</p>
 					</div>
+				)}
+				{clients && clients.length !== 0 && (
 					<Table>
 						<TableCaption className='text-primary/30'>
 							A list of your agents.
@@ -72,8 +91,8 @@ function RouteComponent() {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{clients &&
-								clients.map(client => (
+							{filteredClients &&
+								filteredClients.map(client => (
 									<DropdownMenu key={client._id}>
 										<TableRow
 											key={client._id}
@@ -91,38 +110,60 @@ function RouteComponent() {
 												)}
 											</TableCell>
 											<TableCell className='text-right'>
-												<DropdownMenuTrigger asChild className='pr-6'>
+												<DropdownMenuTrigger asChild className='mr-4'>
 													<Button size='icon' variant='ghost'>
 														<EllipsisIcon className='size-5' />
 													</Button>
 												</DropdownMenuTrigger>
 											</TableCell>
 										</TableRow>
-										<DropdownMenuContent>
+										<DropdownMenuContent className='w-[200px]'>
 											<DropdownMenuLabel>Actions</DropdownMenuLabel>
+											<DropdownMenuGroup>
+												<DropdownMenuItem>Team</DropdownMenuItem>
+												<DropdownMenuSub>
+													<DropdownMenuSubTrigger>
+														Invite users
+													</DropdownMenuSubTrigger>
+													<DropdownMenuPortal>
+														<DropdownMenuSubContent>
+															<DropdownMenuItem>Email</DropdownMenuItem>
+															<DropdownMenuItem>Message</DropdownMenuItem>
+															<DropdownMenuSeparator />
+															<DropdownMenuItem>More...</DropdownMenuItem>
+														</DropdownMenuSubContent>
+													</DropdownMenuPortal>
+												</DropdownMenuSub>
+												<DropdownMenuItem>
+													New Team
+													<DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+												</DropdownMenuItem>
+											</DropdownMenuGroup>
 											<DropdownMenuSeparator />
-											<DropdownMenuItem onClick={() => {}}>
-												Delete Agent
-											</DropdownMenuItem>
-											<DropdownMenuItem onClick={async () => {}}>
-												Copy Agent Id
+											<DropdownMenuItem
+												onClick={() =>
+													alert({
+														dialogTitle: 'Are you absolutely sure?',
+														dialogDescription:
+															'This action cannot be undone. This will permanently delete your account and remove your data from our servers.',
+														async onConfirm() {
+															await deleteClient({ clientId: client._id })
+														},
+													})
+												}
+											>
+												Delete client
+												<DropdownMenuShortcut>
+													<DeleteIcon className='size-4' />
+												</DropdownMenuShortcut>
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>
 								))}
 						</TableBody>
 					</Table>
-				</div>
+				)}
 			</div>
-			<DialogContent>
-				<DialogHeader>
-					<DialogTitle>Create New Client</DialogTitle>
-					<DialogDescription>
-						Create a new client and attach you're agent.
-					</DialogDescription>
-				</DialogHeader>
-				<CreateClientForm />
-			</DialogContent>
-		</Dialog>
+		</div>
 	)
 }

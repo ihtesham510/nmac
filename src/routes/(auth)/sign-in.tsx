@@ -17,6 +17,8 @@ import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
 import { PasswordInput } from '@/components/ui/password-input'
 import { UnProtectedRoute } from '@/hoc/unprotected-route'
+import { useConvex } from 'convex/react'
+import { api } from 'convex/_generated/api'
 
 export const Route = createFileRoute('/(auth)/sign-in')({
 	component: () => (
@@ -26,14 +28,36 @@ export const Route = createFileRoute('/(auth)/sign-in')({
 	),
 })
 
-const formSchema = z.object({
-	username: z.string(),
-	password: z
-		.string()
-		.min(8, { message: "Password must be at least (8) character's long." }),
-})
-
 function RouteComponent() {
+	const convex = useConvex()
+	const formSchema = z
+		.object({
+			username: z.string(),
+			password: z
+				.string()
+				.min(8, { message: "Password must be at least (8) character's long." }),
+		})
+		.superRefine(async ({ username, password }, ctx) => {
+			const user = await convex.query(api.user.checkUser, {
+				username,
+				password,
+			})
+			if (user === 'user_not_found') {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Invalid username does not exists.',
+					path: ['username'],
+				})
+			}
+			if (user === 'incorrect_password') {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Inncorrect Password',
+					path: ['password'],
+				})
+			}
+		})
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})

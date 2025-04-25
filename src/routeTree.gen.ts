@@ -15,6 +15,7 @@ import { Route as R505Import } from './routes/505'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
+import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
 import { Route as DashboardAnalyticsImport } from './routes/dashboard/analytics'
 import { Route as Dashboard505Import } from './routes/dashboard/505'
 import { Route as Dashboard404Import } from './routes/dashboard/404'
@@ -52,6 +53,12 @@ const IndexRoute = IndexImport.update({
 const DashboardIndexRoute = DashboardIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardSettingsRoute = DashboardSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -207,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAnalyticsImport
       parentRoute: typeof DashboardRouteImport
     }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
@@ -299,6 +313,7 @@ interface DashboardRouteRouteChildren {
   Dashboard404Route: typeof Dashboard404Route
   Dashboard505Route: typeof Dashboard505Route
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -308,6 +323,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   Dashboard404Route: Dashboard404Route,
   Dashboard505Route: Dashboard505Route,
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
@@ -326,6 +342,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
@@ -343,6 +360,7 @@ export interface FileRoutesByTo {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
@@ -364,6 +382,7 @@ export interface FileRoutesById {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
@@ -386,6 +405,7 @@ export interface FileRouteTypes {
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
+    | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
@@ -402,6 +422,7 @@ export interface FileRouteTypes {
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
+    | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
@@ -421,6 +442,7 @@ export interface FileRouteTypes {
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
+    | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
@@ -475,6 +497,7 @@ export const routeTree = rootRoute
         "/dashboard/404",
         "/dashboard/505",
         "/dashboard/analytics",
+        "/dashboard/settings",
         "/dashboard/"
       ]
     },
@@ -515,6 +538,10 @@ export const routeTree = rootRoute
     },
     "/dashboard/analytics": {
       "filePath": "dashboard/analytics.tsx",
+      "parent": "/dashboard"
+    },
+    "/dashboard/settings": {
+      "filePath": "dashboard/settings.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/": {

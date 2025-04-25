@@ -1,4 +1,3 @@
-import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -13,6 +12,11 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from './ui/password-input'
+import { useMutation } from 'convex/react'
+import { api } from 'convex/_generated/api'
+import { useAuth } from '@/context/auth-context'
+import { toast } from 'sonner'
+import { useClientState } from '@/context/client-state-context'
 
 const formSchema = z
 	.object({
@@ -37,10 +41,23 @@ export function CreateClientForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
+	const { createClientDialog } = useClientState()
+	const auth = useAuth()
+	const createClient = useMutation(api.client.createClient)
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-		} catch (error) {}
+			await createClient({
+				name: values.name,
+				userId: auth.user!._id,
+				username: values.username,
+				password: values.password,
+			})
+			toast.success('Client Created Successfully.')
+			createClientDialog.setState(false)
+		} catch (error) {
+			toast.error('Error While Creating Client.')
+		}
 	}
 
 	return (
@@ -55,7 +72,6 @@ export function CreateClientForm() {
 							<FormControl>
 								<Input placeholder='Client Name' type='text' {...field} />
 							</FormControl>
-
 							<FormMessage />
 						</FormItem>
 					)}

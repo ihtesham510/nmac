@@ -1,4 +1,4 @@
-import { BotIcon, Users2Icon } from 'lucide-react'
+import { BotIcon, SettingsIcon, Users2Icon } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarFooter } from '../ui/sidebar'
 import { NavHeader } from './nav-header'
 import { useMatchRoute } from '@tanstack/react-router'
@@ -15,21 +15,28 @@ export function AppSidebar() {
 			href: { to: '/dashboard/analytics' },
 			icon: BotIcon,
 			isActive: !!route({ to: '/dashboard/analytics', fuzzy: true }),
-			hidden: auth.isAuthenticated.type === 'client',
+			hidden: auth.type === 'client',
 		},
 		{
 			title: 'Agents',
 			href: { to: '/dashboard/agents' },
 			icon: BotIcon,
 			isActive: !!route({ to: '/dashboard/agents', fuzzy: true }),
-			hidden: auth.isAuthenticated.type === 'client',
+			hidden: auth.type === 'client',
 		},
 		{
 			title: 'Clients',
 			href: { to: '/dashboard/clients' },
 			isActive: !!route({ to: '/dashboard/clients', fuzzy: true }),
-			hidden: auth.isAuthenticated.type === 'client',
+			hidden: auth.type === 'client',
 			icon: Users2Icon,
+		},
+		{
+			title: 'Settings',
+			href: { to: '/dashboard/settings' },
+			icon: SettingsIcon,
+			isActive: !!route({ to: '/dashboard/settings', fuzzy: true }),
+			hidden: auth.type === 'client',
 		},
 	]
 	return (
@@ -43,7 +50,7 @@ export function AppSidebar() {
 					user={{
 						email: 'ihteshamulhaq510@gmail.com',
 						name: 'ihtesham',
-						avatar: '',
+						avatar: auth.user?.image?.url,
 					}}
 				/>
 			</SidebarFooter>

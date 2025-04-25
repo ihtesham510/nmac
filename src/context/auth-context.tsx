@@ -9,6 +9,7 @@ import {
 	type PropsWithChildren,
 } from 'react'
 import type { Id } from 'convex/_generated/dataModel'
+import { toast } from 'sonner'
 
 type UserType = 'client' | 'user' | null
 
@@ -61,23 +62,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 	const signIn = useCallback(
 		async (data: ArgsSignIn) => {
-			const id = await sign_in(data)
-			setToken(id as string)
+			try {
+				const id = await sign_in(data)
+				if (id) {
+					toast.success('Signed In Successfully')
+					setToken(id as string)
+				} else {
+					toast.error('Error While Sigging in.')
+				}
+			} catch (err) {
+				toast.error('Error While Sigging in.')
+			}
 		},
 		[token],
 	)
 
 	const isLoading = user === undefined || client === undefined
-	const isUnauthenticated = user === null || client === null
+	const isUnauthenticated = user === null && client === null
 	const isAuthenticated = !!user || !!client
-
-	useLogger('auth', [
-		user,
-		client,
-		isAuthenticated,
-		isUnauthenticated,
-		isLoading,
-	])
 
 	return (
 		<authContext.Provider
