@@ -107,13 +107,13 @@ export function Profile() {
 		}
 	}
 	return (
-		<div>
+		<div className='space-y-6'>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className='w-full mt-5 flex flex-col'
+					className='w-full mt-5 flex flex-col space-y-6'
 				>
-					<div className='flex justify-between pr-20 px-4 items-center my-5'>
+					<div className='flex justify-between pr-20 px-4 items-center'>
 						<h1 className='text-lg font-bold'>Profile Picture</h1>
 						<input
 							type='file'
@@ -140,7 +140,7 @@ export function Profile() {
 					</div>
 
 					<Separator className='px-20 w-full' />
-					<div className='flex justify-between pr-20 px-4 items-center my-5'>
+					<div className='flex justify-between pr-20 px-4 items-center'>
 						<h1 className='text-lg font-bold'>First Name</h1>
 						<div className='w-[350px]'>
 							<FormField
@@ -162,7 +162,7 @@ export function Profile() {
 							/>
 						</div>
 					</div>
-					<div className='flex justify-between pr-20 px-4 items-center my-5'>
+					<div className='flex justify-between pr-20 px-4 items-center'>
 						<h1 className='text-lg font-bold'>Last Name</h1>
 						<div className='w-[350px]'>
 							<FormField
@@ -179,7 +179,7 @@ export function Profile() {
 							/>
 						</div>
 					</div>
-					<div className='flex justify-between pr-20 px-4 items-center my-5'>
+					<div className='flex justify-between pr-20 px-4 items-center'>
 						<h1 className='text-lg font-bold'>Email</h1>
 						<div className='w-[350px]'>
 							<FormField
@@ -229,7 +229,7 @@ export function Profile() {
 			<ChangePassword />
 
 			<AlertDialog>
-				<div className='flex justify-between pr-20 px-4 items-center my-8'>
+				<div className='flex justify-between pr-20 px-4 items-center'>
 					<h1 className='text-lg font-bold'>Account</h1>
 					<div className='w-[350px]'>
 						<AlertDialogTrigger>
@@ -295,7 +295,7 @@ function ChangePassword() {
 	}
 	return (
 		<Dialog open={open} onOpenChange={e => setIsOpen(e)}>
-			<div className='flex justify-between pr-20 px-4 items-center my-8'>
+			<div className='flex justify-between pr-20 px-4 items-center'>
 				<h1 className='text-lg font-bold'>Password</h1>
 				<div className='w-[350px] flex justify-start'>
 					<DialogTrigger>
