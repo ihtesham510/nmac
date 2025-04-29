@@ -40,18 +40,31 @@ export const queries = {
 			queryKey: ['get_agent', id],
 			queryFn: async () => await client.conversationalAi.getAgent(id),
 		}),
-	get_conversation: (conversationId: string) =>
+	get_conversation: ({
+		conversationId,
+		enabled,
+	}: {
+		conversationId: string
+		enabled: boolean
+	}) =>
 		queryOptions({
-			queryKey: ['get_conversation'],
+			queryKey: ['get_conversation', conversationId],
 			queryFn: async () =>
 				await client.conversationalAi.getConversation(conversationId),
+			enabled,
 		}),
-	list_phone_no: (agentId?: string) =>
+	list_phone_no: ({ filter }: { filter: string[] }) =>
 		queryOptions({
 			queryKey: ['list_phone_no'],
-			queryFn: async () =>
-				agentId
-					? await client.conversationalAi.getPhoneNumber(agentId)
-					: await client.conversationalAi.getPhoneNumbers(),
+			queryFn: async () => {
+				const phone_nos = await client.conversationalAi.getPhoneNumbers()
+				if (filter) {
+					return phone_nos.filter(
+						phone =>
+							phone.assigned_agent &&
+							filter.includes(phone.assigned_agent.agent_id),
+					)
+				}
+			},
 		}),
 }

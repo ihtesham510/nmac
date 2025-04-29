@@ -12,6 +12,7 @@ import {
 	LoaderCircle,
 	MoreHorizontal,
 	PlusIcon,
+	Search,
 	Tag,
 	Trash2,
 } from 'lucide-react'
@@ -67,17 +68,6 @@ import {
 } from '@/components/ui/select'
 import { queries } from '@/api/query-options'
 import { format } from 'date-fns'
-import {
-	AlertDialogContent,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogDescription,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 import {
 	Dialog,
 	DialogContent,
@@ -237,8 +227,8 @@ function RouteComponent() {
 					</form>
 				</Form>
 			</SheetContent>
-			<div className='m-20 rounded-md gap-10 grid'>
-				<div className='grid gap-2'>
+			<div className='m-20 rounded-md gap-6 grid'>
+				<div className='grid gap-2 my-4'>
 					<h1 className='text-4xl font-bold'>Agents</h1>
 					<h1 className='text-lg font-bold text-primary/30'>
 						Create and manage your agents.
@@ -274,12 +264,14 @@ function RouteComponent() {
 				{data && data.length > 0 && (
 					<>
 						<div className='flex justify-between items-center'>
-							<Input
-								placeholder='Search Agents ...'
-								value={filter}
-								className='w-[400px]'
-								onChange={e => setFilter(e.target.value)}
-							/>
+							<div className='relative'>
+								<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+								<Input
+									placeholder='Search Clients...'
+									onChange={e => setFilter(e.target.value)}
+									className='pl-8 w-[400px]'
+								/>
+							</div>
 							<SheetTrigger>
 								<TooltipProvider>
 									<Tooltip delayDuration={1000}>
@@ -336,7 +328,9 @@ function RouteComponent() {
 									<CardHeader>
 										<div className='flex justify-between items-start'>
 											<div>
-												<CardTitle>{agent.name}</CardTitle>
+												<CardTitle className='text-bold text-2xl'>
+													{agent.name}
+												</CardTitle>
 												<CardDescription className='mt-1'>
 													{agent.description}
 												</CardDescription>
@@ -353,7 +347,12 @@ function RouteComponent() {
 													</Button>
 												</DropdownMenuTrigger>
 												<DropdownMenuContent align='end'>
-													<DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={async () => {
+															await navigator.clipboard.writeText(agent.agentId)
+															toast.success('Agent Id Coppied.')
+														}}
+													>
 														<Copy className='h-4 w-4 mr-2' />
 														Copy agent ID
 													</DropdownMenuItem>

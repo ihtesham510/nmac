@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from 'convex/react'
 import type { Client, ArgsUser, User, ArgsSignIn } from '@/lib/types'
-import { useLocalStorage, useLogger } from '@mantine/hooks'
+import { useLocalStorage } from '@mantine/hooks'
 import { api } from 'convex/_generated/api'
 import {
 	createContext,

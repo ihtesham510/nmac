@@ -29,9 +29,10 @@ export interface NavUserProps {
 		email: string
 		avatar?: string
 	}
+	onLogOut?: () => void
 }
 
-export function NavUser({ user }: NavUserProps) {
+export function NavUser({ user, ...props }: NavUserProps) {
 	const { isMobile } = useSidebar()
 
 	return (
@@ -92,7 +93,13 @@ export function NavUser({ user }: NavUserProps) {
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								if (props.onLogOut) {
+									props.onLogOut()
+								}
+							}}
+						>
 							<LogOutIcon />
 							Log out
 						</DropdownMenuItem>

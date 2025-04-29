@@ -20,12 +20,8 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuPortal,
 	DropdownMenuSeparator,
 	DropdownMenuShortcut,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import * as z from 'zod'
@@ -40,7 +36,6 @@ import {
 import { useMemo, useState, type PropsWithChildren } from 'react'
 import {
 	BotIcon,
-	Check,
 	CheckIcon,
 	DeleteIcon,
 	Edit3Icon,
@@ -67,7 +62,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { Id } from 'convex/_generated/dataModel'
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -93,10 +87,20 @@ function RouteComponent() {
 	return (
 		<div className='h-screen w-full'>
 			<div className='grid grid-cols-1 m-20 gap-10'>
+				<div className='grid gap-4'>
+					<h1 className='text-4xl font-bold'>Clients</h1>
+					<p className='font-semibold text-primary/50'>
+						Create and manage clients.
+					</p>
+				</div>
 				<div className='flex justify-between items-center'>
 					<div className='relative'>
 						<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-						<Input placeholder='Search Clients...' className='pl-8 w-[400px]' />
+						<Input
+							placeholder='Search Clients...'
+							onChange={e => setFilter(e.target.value)}
+							className='pl-8 w-[400px]'
+						/>
 					</div>
 					<Button
 						className='flex gap-2'
@@ -119,7 +123,8 @@ function RouteComponent() {
 						</TableCaption>
 						<TableHeader className='bg-muted/40 h-[50px]'>
 							<TableRow>
-								<TableHead className='w-[300px] pl-6'>Name</TableHead>
+								<TableHead className='pl-6'>Name</TableHead>
+								<TableHead>Username</TableHead>
 								<TableHead>Created At</TableHead>
 								<TableHead className='text-right pr-6'>Action</TableHead>
 							</TableRow>
@@ -132,6 +137,7 @@ function RouteComponent() {
 										className='h-[50px] cursor-pointer'
 									>
 										<TableCell className='pl-6'>{client.name}</TableCell>
+										<TableCell>{client.username}</TableCell>
 										<TableCell>
 											{new Date(client._creationTime).toLocaleDateString(
 												'en-US',
@@ -142,7 +148,7 @@ function RouteComponent() {
 												},
 											)}
 										</TableCell>
-										<TableCell className='text-right'>
+										<TableCell className='text-right pr-6'>
 											<ClientDropDownMenu client={client}>
 												<Button size='icon' variant='ghost'>
 													<EllipsisIcon className='size-5' />

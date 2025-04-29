@@ -1,6 +1,6 @@
 import { CallChart } from '@/components/call-chart'
 import { createFileRoute } from '@tanstack/react-router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import {
 	Select,
 	SelectContent,
@@ -10,9 +10,6 @@ import {
 } from '@/components/ui/select'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
-import { useAuth } from '@/context/auth-context'
-import { useConvex } from 'convex/react'
-import { api } from 'convex/_generated/api'
 import type { Agent } from '@/lib/types'
 import { useLogger } from '@mantine/hooks'
 import { LoaderComponent } from '@/components/loader'

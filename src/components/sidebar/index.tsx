@@ -1,4 +1,12 @@
-import { BotIcon, History, SettingsIcon, Users2Icon } from 'lucide-react'
+import {
+	BotIcon,
+	BrainIcon,
+	ChartLine,
+	History,
+	PhoneIcon,
+	SettingsIcon,
+	Users2Icon,
+} from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarFooter } from '../ui/sidebar'
 import { NavHeader } from './nav-header'
 import { useMatchRoute } from '@tanstack/react-router'
@@ -13,7 +21,7 @@ export function AppSidebar() {
 		{
 			title: 'Analytics',
 			href: { to: '/dashboard/analytics' },
-			icon: BotIcon,
+			icon: ChartLine,
 			isActive: !!route({ to: '/dashboard/analytics', fuzzy: true }),
 			hidden: false,
 		},
@@ -30,6 +38,20 @@ export function AppSidebar() {
 			icon: History,
 			isActive: !!route({ to: '/dashboard/history', fuzzy: true }),
 			hidden: auth.type === 'user',
+		},
+		{
+			title: 'Phone Numbers',
+			href: { to: '/dashboard/phone' },
+			icon: PhoneIcon,
+			isActive: !!route({ to: '/dashboard/phone', fuzzy: true }),
+			hidden: false,
+		},
+		{
+			title: 'knowledge Base',
+			href: { to: '/dashboard/knowledge_base' },
+			icon: BrainIcon,
+			isActive: !!route({ to: '/dashboard/knowledge_base', fuzzy: true }),
+			hidden: false,
 		},
 		{
 			title: 'Clients',
@@ -53,13 +75,26 @@ export function AppSidebar() {
 				<NavMain items={items} />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser
-					user={{
-						email: 'ihteshamulhaq510@gmail.com',
-						name: 'ihtesham',
-						avatar: auth.user?.image?.url,
-					}}
-				/>
+				{auth.isAuthenticated && auth.type === 'user' && (
+					<NavUser
+						user={{
+							email: auth.user!.email,
+							name: `${auth.user!.first_name} ${auth.user!.last_name}`,
+							avatar: auth.user?.image?.url,
+						}}
+						onLogOut={() => auth.logOut()}
+					/>
+				)}
+				{auth.isAuthenticated && auth.type === 'client' && (
+					<NavUser
+						user={{
+							email: auth.client?.username!,
+							name: `${auth.client!.name}`,
+							avatar: auth.user?.image?.url,
+						}}
+						onLogOut={() => auth.logOut()}
+					/>
+				)}
 			</SidebarFooter>
 		</Sidebar>
 	)

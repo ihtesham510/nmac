@@ -49,6 +49,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { useLogger } from '@mantine/hooks'
 const badgeVariants = {
 	success:
 		'bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400',
@@ -329,30 +330,26 @@ function ConversationSideSheet({
 	conversationId,
 	children,
 }: { conversationId: string } & PropsWithChildren) {
-	const getStatusBadge = (status: string) => {
-		switch (status.toLowerCase()) {
-			case 'processing':
-				return 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100 dark:bg-yellow-900/30 dark:text-yellow-400'
-			case 'completed':
-				return 'bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400'
-			case 'failed':
-				return 'bg-red-100 text-red-800 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400'
-			default:
-				return ''
-		}
-	}
-	const conversation = useQuery(queries.get_conversation(conversationId))
+	const [open, setIsOpen] = useState(false)
+	const conversation = useQuery(
+		queries.get_conversation({
+			conversationId,
+			enabled: !!(conversationId && open),
+		}),
+	)
 	const queryClient = useQueryClient()
 	useEffect(() => {
-		queryClient.invalidateQueries({
-			queryKey: ['get_conversation', conversationId],
-		})
-	}, [conversationId])
+		if (open) {
+			queryClient.invalidateQueries({
+				queryKey: [conversationId],
+			})
+		}
+	}, [conversationId, open])
 	return (
-		<Sheet>
+		<Sheet open={open} onOpenChange={e => setIsOpen(e)}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			{conversation.data && (
-				<SheetContent className='w-full sm:max-w-md md:max-w-lg'>
+				<SheetContent className='w-full sm:max-w-md md:max-w-xl'>
 					<SheetHeader className='space-y-1'>
 						<SheetTitle>Conversation Details</SheetTitle>
 
@@ -360,11 +357,8 @@ function ConversationSideSheet({
 							<div className='flex flex-col space-y-1'>
 								<div className='flex items-center justify-between'>
 									<span className='text-sm text-muted-foreground'>
-										ID: {conversation.data.conversation_id}
+										{conversation.data.conversation_id}
 									</span>
-									<Badge className={getStatusBadge(status)}>
-										{status.charAt(0).toUpperCase() + status.slice(1)}
-									</Badge>
 								</div>
 								<div className='flex items-center justify-between'>
 									<span className='text-sm text-muted-foreground'>
@@ -417,7 +411,10 @@ function ConversationSideSheet({
 															: 'bg-muted'
 													}`}
 												>
-													{message.message}
+													{typeof message.message === 'undefined' ||
+													message.message === ''
+														? '...'
+														: (message.message ?? '...')}
 												</div>
 												<div className='flex items-center gap-2 text-xs text-muted-foreground'>
 													<span>
