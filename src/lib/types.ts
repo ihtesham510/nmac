@@ -16,5 +16,9 @@ export type CreateAgentReturnOptions = Awaited<
 export type User = (typeof api.user.authenticate)['_returnType']
 export type Client = (typeof api.client.authenticate)['_returnType']
 
+export type Clients = (typeof api.client.listClients)['_returnType']
+
 export type ArgsUser = (typeof api.user.registerUser)['_args']
 export type ArgsSignIn = (typeof api.user.signIn)['_args']
+
+export type Agent = (typeof api.agents.getAgent)['_returnType']

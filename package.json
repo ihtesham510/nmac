@@ -48,6 +48,7 @@
 		"convex": "^1.23.0",
 		"crypto": "^1.0.1",
 		"crypto-js": "^4.2.0",
+		"date-fns": "^4.1.0",
 		"elevenlabs": "^1.56.1",
 		"lucide-react": "^0.483.0",
 		"motion": "^12.5.0",

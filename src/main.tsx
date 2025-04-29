@@ -12,6 +12,18 @@ import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from '@/context/auth-context.tsx'
 
+declare global {
+	interface Array<T> {
+		equals(arr2: T[]): boolean
+	}
+}
+Array.prototype.equals = function (arr2) {
+	return (
+		this.length === arr2.length &&
+		this.every((value, index) => value === arr2[index])
+	)
+}
+
 document.documentElement.classList.add('dark')
 
 const convexURL = import.meta.env.VITE_CONVEX_URL

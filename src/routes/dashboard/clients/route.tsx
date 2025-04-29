@@ -10,12 +10,15 @@ import {
 	DialogDescription,
 } from '@/components/ui/dialog'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { ProtectedUserRoute } from '@/hoc/protected-user-route'
 
 export const Route = createFileRoute('/dashboard/clients')({
 	component: () => (
-		<ClientContextProvider>
-			<RouteComponent />
-		</ClientContextProvider>
+		<ProtectedUserRoute>
+			<ClientContextProvider>
+				<RouteComponent />
+			</ClientContextProvider>
+		</ProtectedUserRoute>
 	),
 })
 

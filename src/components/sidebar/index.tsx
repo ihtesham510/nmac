@@ -1,4 +1,4 @@
-import { BotIcon, SettingsIcon, Users2Icon } from 'lucide-react'
+import { BotIcon, History, SettingsIcon, Users2Icon } from 'lucide-react'
 import { Sidebar, SidebarContent, SidebarFooter } from '../ui/sidebar'
 import { NavHeader } from './nav-header'
 import { useMatchRoute } from '@tanstack/react-router'
@@ -15,7 +15,7 @@ export function AppSidebar() {
 			href: { to: '/dashboard/analytics' },
 			icon: BotIcon,
 			isActive: !!route({ to: '/dashboard/analytics', fuzzy: true }),
-			hidden: auth.type === 'client',
+			hidden: false,
 		},
 		{
 			title: 'Agents',
@@ -23,6 +23,13 @@ export function AppSidebar() {
 			icon: BotIcon,
 			isActive: !!route({ to: '/dashboard/agents', fuzzy: true }),
 			hidden: auth.type === 'client',
+		},
+		{
+			title: 'History',
+			href: { to: '/dashboard/history' },
+			icon: History,
+			isActive: !!route({ to: '/dashboard/history', fuzzy: true }),
+			hidden: auth.type === 'user',
 		},
 		{
 			title: 'Clients',

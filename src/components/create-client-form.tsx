@@ -12,32 +12,59 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from './ui/password-input'
-import { useMutation } from 'convex/react'
+import { useConvex, useMutation } from 'convex/react'
 import { api } from 'convex/_generated/api'
 import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
 import { useClientState } from '@/context/client-state-context'
 
-const formSchema = z
-	.object({
-		name: z.string().min(1).min(2),
-		username: z.string().min(1).min(2),
-		password: z
-			.string()
-			.min(1)
-			.min(8, { message: "Password Must be (8) Character's Long" }),
-		confirm_password: z.string().min(8),
-	})
-	.superRefine(({ password, confirm_password }, ctx) => {
-		if (password !== confirm_password)
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Password do not match',
-				path: ['confirm_password'],
-			})
-	})
-
 export function CreateClientForm() {
+	const convex = useConvex()
+	const formSchema = z
+		.object({
+			name: z.string().min(1).min(2),
+			email: z.string().optional(),
+			username: z.string().min(1).min(2),
+			password: z
+				.string()
+				.min(1)
+				.min(8, { message: "Password Must be (8) Character's Long" }),
+			confirm_password: z.string().min(8),
+		})
+		.superRefine(
+			async ({ password, confirm_password, username, email }, ctx) => {
+				const usernameExists = await convex.query(api.client.usernameExists, {
+					username,
+				})
+				if (usernameExists) {
+					ctx.addIssue({
+						code: 'custom',
+						message: 'username is already taken',
+						path: ['username'],
+					})
+				}
+				if (email) {
+					const emailExists = await convex.query(api.client.emailExists, {
+						email,
+					})
+					if (emailExists) {
+						ctx.addIssue({
+							code: 'custom',
+							message: 'email already exits',
+							path: ['email'],
+						})
+					}
+				}
+
+				if (password !== confirm_password)
+					ctx.addIssue({
+						code: 'custom',
+						message: 'Password do not match',
+						path: ['confirm_password'],
+					})
+			},
+		)
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
@@ -71,6 +98,19 @@ export function CreateClientForm() {
 							<FormLabel>Name</FormLabel>
 							<FormControl>
 								<Input placeholder='Client Name' type='text' {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='email'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Client's Email (Optional)</FormLabel>
+							<FormControl>
+								<Input placeholder='Clients' type='text' {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

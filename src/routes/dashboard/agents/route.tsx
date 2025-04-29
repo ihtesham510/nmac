@@ -1,13 +1,12 @@
-import { queries } from '@/api/query-options'
-import { LoaderComponent } from '@/components/loader'
+import { ProtectedUserRoute } from '@/hoc/protected-user-route'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/agents')({
-	component: RouteComponent,
-	loader: async ({ context: { queryClient } }) => {
-		await queryClient.prefetchQuery(queries.list_agents())
-	},
-	pendingComponent: LoaderComponent,
+	component: () => (
+		<ProtectedUserRoute>
+			<RouteComponent />
+		</ProtectedUserRoute>
+	),
 })
 
 function RouteComponent() {

@@ -20,8 +20,19 @@ export default defineSchema({
 		name: v.string(),
 		username: v.string(),
 		password: v.string(),
-		assigned_Agent: v.optional(v.string()),
+		email: v.optional(v.string()),
+		assigned_Agents: v.array(v.id('agent')),
 	})
 		.index('by_username', ['username'])
+		.index('by_email', ['email'])
 		.index('by_userId', ['userId']),
+	agent: defineTable({
+		name: v.string(),
+		description: v.string(),
+		tags: v.array(v.string()),
+		userId: v.id('user'),
+		agentId: v.string(),
+	})
+		.index('by_userId', ['userId'])
+		.index('by_agentId', ['agentId']),
 })

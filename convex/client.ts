@@ -6,15 +6,18 @@ export const createClient = mutation({
 	args: {
 		userId: v.id('user'),
 		name: v.string(),
+		email: v.optional(v.string()),
 		username: v.string(),
 		password: v.string(),
 	},
-	async handler(ctx, { userId, username, name, password }) {
+	async handler(ctx, { userId, username, name, password, email }) {
 		const secretKey = process.env.SECRET_KEY
 		const encryptedPassword = encrypt(password, secretKey!)
 		return await ctx.db.insert('client', {
 			userId,
+			email,
 			name,
+			assigned_Agents: [],
 			username,
 			password: encryptedPassword,
 		})
@@ -36,14 +39,20 @@ export const updateClient = mutation({
 		clientId: v.id('client'),
 		username: v.string(),
 		name: v.string(),
-		password: v.string(),
+		email: v.optional(v.string()),
+		password: v.optional(v.string()),
 	},
 	async handler(ctx, args) {
+		const secretKey = process.env.SECRET_KEY
 		const client = await ctx.db.get(args.clientId)
+		const encryptedPassword = args.password
+			? encrypt(args.password, secretKey!)
+			: client?.password
 		return await ctx.db.patch(args.clientId, {
 			username: args.username,
-			password: args.password,
+			password: encryptedPassword,
 			name: args.name,
+			email: args.email ?? undefined,
 			...client,
 		})
 	},
@@ -52,14 +61,16 @@ export const updateClient = mutation({
 export const assignAgent = mutation({
 	args: {
 		clientId: v.id('client'),
-		agentId: v.string(),
+		agents: v.array(v.id('agent')),
 	},
 	async handler(ctx, args) {
 		const client = await ctx.db.get(args.clientId)
-		return await ctx.db.patch(args.clientId, {
-			...client,
-			assigned_Agent: args.agentId,
-		})
+		if (client) {
+			await ctx.db.patch(args.clientId, {
+				...client,
+				assigned_Agents: args.agents,
+			})
+		}
 	},
 })
 
@@ -88,5 +99,28 @@ export const authenticate = query({
 			}
 		}
 		return null
+	},
+})
+export const usernameExists = query({
+	args: {
+		username: v.string(),
+	},
+	async handler(ctx, args_0) {
+		return !!(await ctx.db
+			.query('client')
+			.withIndex('by_username', q => q.eq('username', args_0.username))
+			.first())
+	},
+})
+
+export const emailExists = query({
+	args: {
+		email: v.string(),
+	},
+	async handler(ctx, args_0) {
+		return !!(await ctx.db
+			.query('client')
+			.withIndex('by_email', q => q.eq('email', args_0.email))
+			.first())
 	},
 })

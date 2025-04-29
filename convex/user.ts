@@ -168,10 +168,14 @@ export const deleteAccount = mutation({
 		userId: v.id('user'),
 	},
 	async handler(ctx, args) {
+		const user = await ctx.db.get(args.userId)
 		const clients = await ctx.db
 			.query('client')
 			.withIndex('by_userId', q => q.eq('userId', args.userId))
 			.collect()
+		if (user && user.image) {
+			await ctx.storage.delete(user.image.storageId)
+		}
 		await Promise.all([
 			clients.map(async client => await ctx.db.delete(client._id)),
 		])
