@@ -236,7 +236,7 @@ function RouteComponent() {
 						Create and manage your agents.
 					</h1>
 				</div>
-				{(!data || conv_agents.isLoading) && (
+				{!data && conv_agents.isLoading && (
 					<div className='w-full h-80 flex justify-center items-center'>
 						<LoaderCircle className='size-6' />
 					</div>
