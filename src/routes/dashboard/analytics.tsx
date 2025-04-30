@@ -192,7 +192,7 @@ function RouteComponent() {
 								chartTitle='Number of Calls'
 								data={filteredNumberOfCalls}
 								buttonTitle='Total Calls'
-								buttonValue={`${totalNumberofCalls}`}
+								buttonValue={totalNumberofCalls}
 								chartDescription='Total number of calls made each day.'
 								dataKey='calls'
 								chartConfig={{
@@ -207,7 +207,7 @@ function RouteComponent() {
 								data={filteredCallMinutes}
 								dataKey='minutes'
 								buttonTitle='Total Munites'
-								buttonValue={`${totalNumberofMinutes}`}
+								buttonValue={totalNumberofMinutes}
 								chartDescription='The total number of minutes spent on calls each day.'
 								chartConfig={{
 									minutes: {

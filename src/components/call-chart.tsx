@@ -12,13 +12,14 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart'
+import NumberFlow from '@number-flow/react'
 
 export interface Props {
 	chartConfig: ChartConfig
 	chartTitle: string
 	chartDescription: string
 	buttonTitle?: string
-	buttonValue?: string
+	buttonValue?: number
 	data?: any[]
 	dataKey: string
 }
@@ -49,7 +50,7 @@ export function CallChart({
 								{buttonTitle}
 							</span>
 							<span className='text-lg font-bold leading-none sm:text-4xl'>
-								{buttonValue}
+								<NumberFlow value={buttonValue} />
 							</span>
 						</button>
 					</div>
