@@ -15,6 +15,7 @@ import { useLogger } from '@mantine/hooks'
 import { LoaderComponent } from '@/components/loader'
 import { AgentSelect } from '@/components/select-agent'
 import { useAgents } from '@/hooks/use-agents'
+import { useElevenLabsClient } from '@/api/client'
 
 export enum TimeRange {
 	Week = '7d',
@@ -30,6 +31,7 @@ export const Route = createFileRoute('/dashboard/analytics')({
 
 function RouteComponent() {
 	const agents = useAgents()
+	const client = useElevenLabsClient()
 	const queryClient = useQueryClient()
 	const [timeRange, setTimeRange] = React.useState<TimeRange>(
 		TimeRange.NintyDays,
@@ -39,7 +41,7 @@ function RouteComponent() {
 	)
 
 	const conversationsList = useQuery(
-		queries.list_conversations({
+		queries.list_conversations(client, {
 			agent_id: selectedAgent?.agentId,
 			filter: agents.map(agent => agent.agentId),
 		}),

@@ -1,5 +1,7 @@
+import { LoaderComponent } from '@/components/loader'
+import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/auth-context'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
 	component: App,
@@ -7,9 +9,18 @@ export const Route = createFileRoute('/')({
 
 function App() {
 	const auth = useAuth()
+	if (auth.isLoading) return <LoaderComponent />
 	return (
-		<div className='w-full'>
-			<pre>{JSON.stringify({ auth }, null, 2)}</pre>
+		<div className='w-full h-screen flex justify-center items-center'>
+			{auth.isAuthenticated ? (
+				<Link to='/dashboard'>
+					<Button>Go to Dashboard</Button>
+				</Link>
+			) : (
+				<Link to='/sign-in'>
+					<Button>Sign In</Button>
+				</Link>
+			)}
 		</div>
 	)
 }

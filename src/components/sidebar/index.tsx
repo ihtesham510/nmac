@@ -39,6 +39,7 @@ export function AppSidebar() {
 			isActive: !!route({ to: '/dashboard/history', fuzzy: true }),
 			hidden: auth.type === 'user',
 		},
+
 		{
 			title: 'Phone Numbers',
 			href: { to: '/dashboard/phone' },
@@ -66,6 +67,13 @@ export function AppSidebar() {
 			icon: SettingsIcon,
 			isActive: !!route({ to: '/dashboard/settings', fuzzy: true }),
 			hidden: auth.type === 'client',
+		},
+		{
+			title: 'Project Settings',
+			href: { to: '/dashboard/project-setttings' },
+			icon: SettingsIcon,
+			isActive: !!route({ to: '/dashboard/project-setttings', fuzzy: true }),
+			hidden: auth.type === 'user',
 		},
 	]
 	return (

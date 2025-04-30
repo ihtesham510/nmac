@@ -86,7 +86,7 @@ function RouteComponent() {
 
 	return (
 		<div className='h-screen w-full'>
-			<div className='grid grid-cols-1 m-20 gap-10'>
+			<div className='grid grid-cols-1 m-20 gap-6 space-y-6'>
 				<div className='grid gap-4'>
 					<h1 className='text-4xl font-bold'>Clients</h1>
 					<p className='font-semibold text-primary/50'>

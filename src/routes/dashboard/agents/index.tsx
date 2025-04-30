@@ -78,6 +78,7 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog'
 import { useDialog } from '@/hooks/use-dialogs'
+import { useElevenLabsClient } from '@/api/client'
 
 export const Route = createFileRoute('/dashboard/agents/')({
 	component: RouteComponent,
@@ -92,8 +93,9 @@ const formSchema = z.object({
 
 function RouteComponent() {
 	const auth = useAuth()
+	const client = useElevenLabsClient()
 	const [sheet, setSheet] = useState(false)
-	const conv_agents = useTanstackQuery(queries.list_agents())
+	const conv_agents = useTanstackQuery(queries.list_agents(client))
 	const createAgent = useMutation(api.agents.createAgent)
 	const deleteAgent = useMutation(api.agents.deleteAgent)
 	const data = useQuery(api.agents.getAgents, { userId: auth.user!._id })
@@ -227,7 +229,7 @@ function RouteComponent() {
 					</form>
 				</Form>
 			</SheetContent>
-			<div className='m-20 rounded-md gap-6 grid'>
+			<div className='m-10 rounded-md gap-6 grid'>
 				<div className='grid gap-2 my-4'>
 					<h1 className='text-4xl font-bold'>Agents</h1>
 					<h1 className='text-lg font-bold text-primary/30'>

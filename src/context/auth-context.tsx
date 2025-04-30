@@ -22,6 +22,7 @@ export const authContext = createContext<{
 	isAuthenticated: boolean
 	isUnauthenticated: boolean
 	isLoading: boolean
+	api_key?: string
 	signIn: (data: ArgsSignIn) => void
 } | null>(null)
 
@@ -80,6 +81,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 	const isLoading = user === undefined || client === undefined
 	const isUnauthenticated = user === null && client === null
 	const isAuthenticated = !!user || !!client
+	const api_key = user?.elevenLabs_api_key ?? client?.api_key
 
 	return (
 		<authContext.Provider
@@ -90,6 +92,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 				isAuthenticated,
 				isUnauthenticated,
 				isLoading,
+				api_key,
 				logOut,
 				signUp,
 				signIn,

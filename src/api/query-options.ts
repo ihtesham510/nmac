@@ -1,20 +1,23 @@
 import { queryOptions } from '@tanstack/react-query'
-import { client } from '@/api/client'
 import { type ConversationSummaryResponseModel } from 'elevenlabs/api'
+import type { ElevenLabsClient } from 'elevenlabs'
 
 export const queries = {
-	list_agents: () =>
+	list_agents: (client: ElevenLabsClient) =>
 		queryOptions({
 			queryKey: ['list_agents'],
 			queryFn: async () => await client.conversationalAi.getAgents(),
 		}),
-	list_conversations: ({
-		agent_id,
-		filter,
-	}: {
-		agent_id?: string
-		filter: string[]
-	}) =>
+	list_conversations: (
+		client: ElevenLabsClient,
+		{
+			agent_id,
+			filter,
+		}: {
+			agent_id?: string
+			filter: string[]
+		},
+	) =>
 		queryOptions({
 			queryKey: ['list_conversations', agent_id, filter],
 			queryFn: async () => {
@@ -35,25 +38,28 @@ export const queries = {
 				return { conversations }
 			},
 		}),
-	get_agent: (id: string) =>
+	get_agent: (client: ElevenLabsClient, id: string) =>
 		queryOptions({
 			queryKey: ['get_agent', id],
 			queryFn: async () => await client.conversationalAi.getAgent(id),
 		}),
-	get_conversation: ({
-		conversationId,
-		enabled,
-	}: {
-		conversationId: string
-		enabled: boolean
-	}) =>
+	get_conversation: (
+		client: ElevenLabsClient,
+		{
+			conversationId,
+			enabled,
+		}: {
+			conversationId: string
+			enabled: boolean
+		},
+	) =>
 		queryOptions({
 			queryKey: ['get_conversation', conversationId],
 			queryFn: async () =>
 				await client.conversationalAi.getConversation(conversationId),
 			enabled,
 		}),
-	list_phone_no: ({ filter }: { filter: string[] }) =>
+	list_phone_no: (client: ElevenLabsClient, { filter }: { filter: string[] }) =>
 		queryOptions({
 			queryKey: ['list_phone_no'],
 			queryFn: async () => {
@@ -66,5 +72,10 @@ export const queries = {
 					)
 				}
 			},
+		}),
+	list_knoledge_base: (client: ElevenLabsClient) =>
+		queryOptions({
+			queryKey: ['list_knoledge_base'],
+			queryFn: async () => await client.conversationalAi.getKnowledgeBaseList(),
 		}),
 }

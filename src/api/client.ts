@@ -1,5 +1,6 @@
+import { useAuth } from '@/context/auth-context'
 import { ElevenLabsClient } from 'elevenlabs'
-
-const apiKey = import.meta.env.VITE_ELEVEN_LABS_API_KEY
-
-export const client = new ElevenLabsClient({ apiKey: apiKey })
+export function useElevenLabsClient() {
+	const auth = useAuth()
+	return new ElevenLabsClient({ apiKey: auth!.api_key })
+}

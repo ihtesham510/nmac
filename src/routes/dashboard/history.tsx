@@ -50,6 +50,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useLogger } from '@mantine/hooks'
+import { useElevenLabsClient } from '@/api/client'
 const badgeVariants = {
 	success:
 		'bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400',
@@ -63,8 +64,11 @@ export const Route = createFileRoute('/dashboard/history')({
 
 function RouteComponent() {
 	const agents = useAgents()
+	const client = useElevenLabsClient()
 	const conversations = useQuery(
-		queries.list_conversations({ filter: agents.map(agent => agent.agentId) }),
+		queries.list_conversations(client, {
+			filter: agents.map(agent => agent.agentId),
+		}),
 	)
 
 	return (
@@ -331,8 +335,9 @@ function ConversationSideSheet({
 	children,
 }: { conversationId: string } & PropsWithChildren) {
 	const [open, setIsOpen] = useState(false)
+	const client = useElevenLabsClient()
 	const conversation = useQuery(
-		queries.get_conversation({
+		queries.get_conversation(client, {
 			conversationId,
 			enabled: !!(conversationId && open),
 		}),
