@@ -16,6 +16,7 @@ import { LoaderComponent } from '@/components/loader'
 import { AgentSelect } from '@/components/select-agent'
 import { useAgents } from '@/hooks/use-agents'
 import { useElevenLabsClient } from '@/api/client'
+import { BotIcon } from 'lucide-react'
 
 export enum TimeRange {
 	Week = '7d',
@@ -148,8 +149,20 @@ function RouteComponent() {
 					See call analytics for your agents.
 				</h2>
 			</span>
+			{agents.length === 0 && (
+				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
+					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+						<BotIcon className='h-10 w-10 text-muted-foreground' />
+					</div>
+					<h2 className='text-xl font-semibold mb-2'>No phone numbers found</h2>
+					<p className='text-muted-foreground text-center max-w-md mb-8'>
+						You haven't added any agents yet. Add agent to see analytics.
+					</p>
+				</div>
+			)}
 			{conversationsList.isLoading && <LoaderComponent />}
 			{!conversationsList.isLoading &&
+				agents.length !== 0 &&
 				!conversationsList.isError &&
 				conversationsList.data && (
 					<div className='grid gap-6'>

@@ -48,7 +48,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
 	const signUp = useCallback(
 		async (params: ArgsUser) => {
 			const id = await registerUser(params)
-			console.log(id)
 			setToken(id)
 		},
 		[token],
