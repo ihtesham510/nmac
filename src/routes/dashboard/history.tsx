@@ -2,13 +2,12 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState, type PropsWithChildren } from 'react'
 import {
 	ArrowUpDown,
+	BotIcon,
 	Calendar,
 	Check,
 	Clock,
 	Filter,
 	MessageSquare,
-	Mic,
-	MicOff,
 	Search,
 	User,
 	X,
@@ -46,10 +45,9 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { useLogger } from '@mantine/hooks'
 import { useElevenLabsClient } from '@/api/client'
 const badgeVariants = {
 	success:
@@ -401,7 +399,7 @@ function ConversationSideSheet({
 										>
 											{message.role !== 'user' && (
 												<Avatar className='size-10 flex justify-center items-center bg-muted'>
-													<User className='size-4' />
+													<BotIcon className='size-4' />
 												</Avatar>
 											)}
 											<div

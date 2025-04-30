@@ -1,5 +1,6 @@
-import { client } from '@/api/client'
 import type { api } from 'convex/_generated/api'
+import { useElevenLabsClient } from '@/api/client'
+const client = useElevenLabsClient()
 
 export type CreateAgentOptions = Parameters<
 	typeof client.conversationalAi.createAgent

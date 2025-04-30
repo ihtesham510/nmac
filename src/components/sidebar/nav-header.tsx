@@ -1,4 +1,4 @@
-import { ArrowUpCircleIcon, PhoneIcon } from 'lucide-react'
+import { PhoneIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import {
 	SidebarHeader,
