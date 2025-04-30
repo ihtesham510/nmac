@@ -86,7 +86,7 @@ export function CallChart({
 						<XAxis
 							dataKey='date'
 							tickLine={false}
-							axisLine={false}
+							axisLine={true}
 							tickMargin={8}
 							minTickGap={32}
 							tickFormatter={value => {
@@ -98,7 +98,7 @@ export function CallChart({
 							}}
 						/>
 						<ChartTooltip
-							cursor={false}
+							cursor={true}
 							content={
 								<ChartTooltipContent
 									labelFormatter={value => {
@@ -107,7 +107,7 @@ export function CallChart({
 											day: 'numeric',
 										})
 									}}
-									indicator='dot'
+									indicator='line'
 								/>
 							}
 						/>
