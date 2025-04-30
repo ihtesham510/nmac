@@ -149,7 +149,7 @@ function RouteComponent() {
 					See call analytics for your agents.
 				</h2>
 			</span>
-			{agents.length === 0 && (
+			{agents.length === 0 && !conversationsList.isLoading && (
 				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
 					<div className='bg-muted/50 p-4 rounded-full mb-4'>
 						<BotIcon className='h-10 w-10 text-muted-foreground' />
