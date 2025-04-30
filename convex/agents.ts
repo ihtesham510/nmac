@@ -39,6 +39,20 @@ export const deleteAgent = mutation({
 		agentId: v.id('agent'),
 	},
 	async handler(ctx, args_0) {
+		const clients = await ctx.db.query('client').collect()
+		await Promise.all(
+			clients.map(async client => {
+				const contains_agent = client.assigned_Agents.includes(args_0.agentId)
+				if (contains_agent) {
+					await ctx.db.patch(client._id, {
+						...client,
+						assigned_Agents: client.assigned_Agents.filter(
+							agent => agent !== args_0.agentId,
+						),
+					})
+				}
+			}),
+		)
 		return await ctx.db.delete(args_0.agentId)
 	},
 })
