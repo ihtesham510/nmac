@@ -11,6 +11,7 @@ import { Toaster } from 'sonner'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuth } from '@/context/auth-context.tsx'
+import { ConvexQueryCacheProvider } from './cache/provider.tsx'
 
 declare global {
 	interface Array<T> {
@@ -76,11 +77,13 @@ if (rootElement && !rootElement.innerHTML) {
 		<StrictMode>
 			<Toaster />
 			<ConvexProvider client={convexReactClient}>
-				<QueryClientProvider client={queryClient}>
-					<AuthProvider>
-						<App />
-					</AuthProvider>
-				</QueryClientProvider>
+				<ConvexQueryCacheProvider>
+					<QueryClientProvider client={queryClient}>
+						<AuthProvider>
+							<App />
+						</AuthProvider>
+					</QueryClientProvider>
+				</ConvexQueryCacheProvider>
 			</ConvexProvider>
 		</StrictMode>,
 	)
