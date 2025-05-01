@@ -43,6 +43,7 @@ import {
 	LoaderCircle,
 	PlusIcon,
 	Search,
+	Tag,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { rabinKarpSearch } from '@/lib/utils'
@@ -62,6 +63,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { Id } from 'convex/_generated/dataModel'
+import { LoaderComponent } from '@/components/loader'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -93,24 +95,29 @@ function RouteComponent() {
 						Create and manage clients.
 					</p>
 				</div>
-				<div className='flex justify-between items-center'>
-					<div className='relative'>
-						<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-						<Input
-							placeholder='Search Clients...'
-							onChange={e => setFilter(e.target.value)}
-							className='pl-8 w-[400px]'
-						/>
+				{clients && clients.length !== 0 && (
+					<div className='flex justify-between items-center'>
+						<div className='relative'>
+							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+							<Input
+								placeholder='Search Clients...'
+								onChange={e => setFilter(e.target.value)}
+								className='pl-8 w-[400px]'
+							/>
+						</div>
+						<Button
+							className='flex gap-2'
+							variant='outline'
+							size='sm'
+							onClick={() => createClientDialog.setState(true)}
+						>
+							<PlusIcon /> <p className='hidden md:block'>Create Client</p>
+						</Button>
 					</div>
-					<Button
-						className='flex gap-2'
-						variant='outline'
-						size='sm'
-						onClick={() => createClientDialog.setState(true)}
-					>
-						<PlusIcon /> <p className='hidden md:block'>Create Client</p>
-					</Button>
-				</div>
+				)}
+				{typeof clients === 'undefined' && (
+					<LoaderComponent className='h-[60vh]' />
+				)}
 				{clients && clients.length === 0 && (
 					<div className='flex justify-center items-center h-40'>
 						<p className='text-primary/50'>You have no clients.</p>
@@ -498,7 +505,7 @@ function ClientDropDownMenu({
 								</div>
 								<ScrollArea className='h-[300px] rounded-md border'>
 									<div
-										className={`p-2 grid gap-2 ${filteredAgents && filteredAgents.length === 0 ? 'flex justify-center items-center h-[300px]' : ''}`}
+										className={`p-2 grid gap-2 ${filteredAgents && filteredAgents.length === 0 && 'flex justify-center items-center h-[300px]'}`}
 									>
 										{filteredAgents && (
 											<>
@@ -510,7 +517,7 @@ function ClientDropDownMenu({
 													filteredAgents.map(agent => (
 														<div
 															key={agent._id}
-															className={`flex items-center justify-between rounded-md p-2 hover:bg-muted`}
+															className='flex flex-col w-full hover:bg-muted rounded-lg p-2'
 															onClick={() =>
 																setAssignedAgents(prev =>
 																	prev.includes(agent._id)
@@ -519,23 +526,30 @@ function ClientDropDownMenu({
 																)
 															}
 														>
-															<div className='flex items-center gap-3'>
-																<div>
-																	<p className='text-sm font-medium'>
-																		{agent.name}
-																	</p>
-																	<p className='text-xs text-muted-foreground'>
-																		{agent.description}
-																	</p>
-																	<div className='flex items-center mt-4 gap-2'>
-																		{agent.tags.map(tag => (
-																			<Badge className='text-xs'>{tag}</Badge>
-																		))}
-																	</div>
-																</div>
+															<div className='flex w-full items-center justify-between'>
+																<span className='font-medium'>
+																	{agent.name}
+																</span>
+																{assignedAgents.includes(agent._id) && (
+																	<CheckIcon className='size-5 mr-3' />
+																)}
 															</div>
-															{assignedAgents.includes(agent._id) && (
-																<CheckIcon className='size-5 mr-3' />
+															<p className='text-xs text-muted-foreground line-clamp-1 text-left'>
+																{agent.description}
+															</p>
+															{agent.tags.length > 0 && (
+																<div className='flex flex-wrap gap-1 mt-1'>
+																	{agent.tags.map(tag => (
+																		<Badge
+																			key={tag}
+																			variant='secondary'
+																			className='text-xs'
+																		>
+																			<Tag className='h-3 w-3 mr-1' />
+																			{tag}
+																		</Badge>
+																	))}
+																</div>
 															)}
 														</div>
 													))

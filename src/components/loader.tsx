@@ -1,8 +1,14 @@
+import { cn } from '@/lib/utils'
 import { LoaderCircle } from 'lucide-react'
 
-export function LoaderComponent() {
+export function LoaderComponent({ className }: { className?: string }) {
 	return (
-		<div className='h-screen w-full flex justify-center items-center'>
+		<div
+			className={cn(
+				'h-screen w-full flex justify-center items-center',
+				className,
+			)}
+		>
 			<LoaderCircle className='size-8 animate-spin' />
 		</div>
 	)
