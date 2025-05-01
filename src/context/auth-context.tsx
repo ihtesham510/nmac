@@ -1,4 +1,5 @@
-import { useQuery, useMutation } from 'convex/react'
+import { useMutation } from 'convex/react'
+import { useQuery } from '@/cache/useQuery'
 import type { Client, ArgsUser, User, ArgsSignIn } from '@/lib/types'
 import { useLocalStorage } from '@mantine/hooks'
 import { api } from 'convex/_generated/api'

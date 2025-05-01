@@ -43,7 +43,8 @@ import {
 	CardFooter,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { useMutation, useQuery } from 'convex/react'
+import { useMutation } from 'convex/react'
+import { useQuery } from '@/cache/useQuery'
 import { api } from 'convex/_generated/api'
 import { useAuth } from '@/context/auth-context'
 import { z } from 'zod'

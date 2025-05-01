@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/auth-context'
-import { useConvex, useMutation, useQuery } from 'convex/react'
+import { useConvex, useMutation } from 'convex/react'
+import { useQuery } from '@/cache/useQuery'
 import { api } from 'convex/_generated/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
