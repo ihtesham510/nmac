@@ -155,7 +155,7 @@ function RouteComponent() {
 					<div className='bg-muted/50 p-4 rounded-full mb-4'>
 						<BotIcon className='h-10 w-10 text-muted-foreground' />
 					</div>
-					<h2 className='text-xl font-semibold mb-2'>No phone numbers found</h2>
+					<h2 className='text-xl font-semibold mb-2'>No Agents found</h2>
 					<p className='text-muted-foreground text-center max-w-md mb-8'>
 						You haven't added any agents yet. Add agent to see analytics.
 					</p>
