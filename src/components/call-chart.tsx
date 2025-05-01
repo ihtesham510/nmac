@@ -40,7 +40,7 @@ export function CallChart({
 					<CardTitle>{chartTitle}</CardTitle>
 					<CardDescription>{chartDescription}</CardDescription>
 				</div>
-				{buttonTitle && buttonValue && (
+				{buttonTitle && (
 					<div className='hidden sm:flex'>
 						<button
 							data-active={false}
@@ -50,7 +50,11 @@ export function CallChart({
 								{buttonTitle}
 							</span>
 							<span className='text-lg font-bold leading-none sm:text-4xl'>
-								<NumberFlow value={buttonValue} />
+								{buttonValue && buttonValue > 0 ? (
+									<NumberFlow value={buttonValue} />
+								) : (
+									'0'
+								)}
 							</span>
 						</button>
 					</div>

@@ -138,6 +138,7 @@ function RouteComponent() {
 	}, [filteredConversations, timeRange])
 
 	const totalNumberofMinutes = useMemo(() => {
+		if (filteredCallMinutes.length === 0) return 0
 		return filteredCallMinutes.reduce((acc, item) => (acc += item.minutes), 0)
 	}, [filteredCallMinutes])
 
