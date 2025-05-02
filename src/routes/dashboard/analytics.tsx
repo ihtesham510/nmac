@@ -1,6 +1,6 @@
 import { CallChart } from '@/components/call-chart'
 import { createFileRoute } from '@tanstack/react-router'
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import {
 	Select,
 	SelectContent,
@@ -8,7 +8,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
 import type { Agent } from '@/lib/types'
 import { useLogger } from '@mantine/hooks'
@@ -33,7 +33,6 @@ export const Route = createFileRoute('/dashboard/analytics')({
 function RouteComponent() {
 	const agents = useAgents()
 	const client = useElevenLabsClient()
-	const queryClient = useQueryClient()
 	const [timeRange, setTimeRange] = React.useState<TimeRange>(
 		TimeRange.NintyDays,
 	)
@@ -43,16 +42,9 @@ function RouteComponent() {
 
 	const conversationsList = useQuery(
 		queries.list_conversations(client, {
-			agent_id: selectedAgent?.agentId,
 			filter: agents.map(agent => agent.agentId),
 		}),
 	)
-
-	useEffect(() => {
-		queryClient.invalidateQueries({
-			queryKey: ['list_conversations'],
-		})
-	}, [selectedAgent])
 
 	const filteredConversations = useMemo(() => {
 		if (!selectedAgent && conversationsList.data) {
@@ -63,6 +55,15 @@ function RouteComponent() {
 				),
 			}
 		}
+		if (selectedAgent) {
+			return {
+				...conversationsList.data,
+				conversations: conversationsList.data!.conversations.filter(
+					conv => conv.agent_id === selectedAgent.agentId,
+				),
+			}
+		}
+
 		return conversationsList.data
 	}, [conversationsList.data, selectedAgent])
 

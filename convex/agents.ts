@@ -17,8 +17,15 @@ export const createAgent = mutation({
 export const getAgents = query({
 	args: {
 		userId: v.optional(v.id('user')),
+		agents: v.optional(v.array(v.id('agent'))),
 	},
-	async handler(ctx, { userId }) {
+	async handler(ctx, { userId, agents }) {
+		if (agents) {
+			const res = await Promise.all(
+				agents.map(async agent => await ctx.db.get(agent)),
+			)
+			return res.filter(res => !!res)
+		}
 		if (userId)
 			return await ctx.db
 				.query('agent')
@@ -28,9 +35,10 @@ export const getAgents = query({
 })
 
 export const getAgent = query({
-	args: { agentId: v.id('agent') },
+	args: { agentId: v.optional(v.id('agent')) },
 	async handler(ctx, args) {
-		return await ctx.db.get(args.agentId)
+		if (args.agentId) return await ctx.db.get(args.agentId)
+		return null
 	},
 })
 
