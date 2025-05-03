@@ -18,7 +18,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import type { Agent } from '@/lib/types'
 
-interface AgentSelectProps {
+export interface AgentSelectProps {
 	agents: Agent[]
 	value: Agent
 	onSelect: (agent: Agent) => void
@@ -42,7 +42,7 @@ export function AgentSelect({
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					className={cn('w-full justify-between', className)}
+					className={cn('min-w-[200px] justify-between max-w-max', className)}
 				>
 					{value ? value.name : placeholder}
 					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />

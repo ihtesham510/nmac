@@ -10,7 +10,9 @@ export const Route = createFileRoute('/dashboard/agents/$agent_id')({
 function RouteComponent() {
 	const { agent_id } = Route.useParams()
 	const client = useElevenLabsClient()
-	const { data, isLoading } = useQuery(queries.get_agent(client, agent_id))
+	const { data, isLoading } = useQuery(
+		queries.get_agent(client, { id: agent_id, enabled: true }),
+	)
 	return (
 		<div>
 			{isLoading && <div>loading..................</div>}

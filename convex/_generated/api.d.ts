@@ -15,7 +15,6 @@ import type {
 } from "convex/server";
 import type * as agents from "../agents.js";
 import type * as client from "../client.js";
-import type * as http from "../http.js";
 import type * as image from "../image.js";
 import type * as user from "../user.js";
 import type * as utils from "../utils.js";
@@ -31,7 +30,6 @@ import type * as utils from "../utils.js";
 declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   client: typeof client;
-  http: typeof http;
   image: typeof image;
   user: typeof user;
   utils: typeof utils;

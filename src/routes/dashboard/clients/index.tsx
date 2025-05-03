@@ -45,6 +45,7 @@ import {
 	PlusIcon,
 	Search,
 	Tag,
+	UserIcon,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { rabinKarpSearch } from '@/lib/utils'
@@ -120,8 +121,21 @@ function RouteComponent() {
 					<LoaderComponent className='h-[60vh]' />
 				)}
 				{clients && clients.length === 0 && (
-					<div className='flex justify-center items-center h-40'>
-						<p className='text-primary/50'>You have no clients.</p>
+					<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
+						<div className='bg-muted/50 p-4 rounded-full mb-4'>
+							<UserIcon className='h-10 w-10 text-muted-foreground' />
+						</div>
+						<h2 className='text-xl font-semibold mb-2'>No Clients found</h2>
+						<p className='text-muted-foreground text-center max-w-md mb-8'>
+							You haven't added any clients yet.
+						</p>
+						<Button
+							className='flex gap-2'
+							size='sm'
+							onClick={() => createClientDialog.setState(true)}
+						>
+							<PlusIcon /> <p className='hidden md:block'>Create Client</p>
+						</Button>
 					</div>
 				)}
 				{clients && clients.length !== 0 && (

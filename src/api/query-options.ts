@@ -38,10 +38,15 @@ export const queries = {
 				return { conversations }
 			},
 		}),
-	get_agent: (client: ElevenLabsClient, id: string) =>
+	get_agent: (
+		client: ElevenLabsClient,
+		{ id, enabled }: { id?: string; enabled: boolean },
+	) =>
 		queryOptions({
 			queryKey: ['get_agent', id],
-			queryFn: async () => await client.conversationalAi.getAgent(id),
+			queryFn: async () =>
+				id ? await client.conversationalAi.getAgent(id) : null,
+			enabled,
 		}),
 	get_conversation: (
 		client: ElevenLabsClient,
