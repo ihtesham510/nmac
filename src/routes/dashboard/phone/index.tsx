@@ -336,7 +336,7 @@ function ClientSheetForm() {
 									<AgentSelect
 										agents={agents}
 										value={selectedAgent}
-										className='w-full'
+										className='min-w-full'
 										placeholder='Select Agent'
 										onSelect={agent => setSelectedAgent(agent!)}
 									/>
