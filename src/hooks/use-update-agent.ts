@@ -34,7 +34,6 @@ export function useUpdateAgent(agentId: string) {
 					},
 				},
 			})
-			console.log(res)
 			return res
 		},
 	})
