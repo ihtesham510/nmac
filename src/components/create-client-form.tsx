@@ -25,6 +25,7 @@ export function CreateClientForm() {
 			name: z.string().min(1).min(2),
 			email: z.string().optional(),
 			username: z.string().min(1).min(2),
+			credits: z.number(),
 			password: z
 				.string()
 				.min(1)
@@ -67,6 +68,9 @@ export function CreateClientForm() {
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			credits: 10000,
+		},
 	})
 	const { createClientDialog } = useClientState()
 	const auth = useAuth()
@@ -76,6 +80,7 @@ export function CreateClientForm() {
 		try {
 			await createClient({
 				name: values.name,
+				credits: values.credits,
 				userId: auth.user!._id,
 				username: values.username,
 				password: values.password,

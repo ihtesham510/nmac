@@ -147,6 +147,7 @@ function RouteComponent() {
 							<TableRow>
 								<TableHead className='pl-6'>Name</TableHead>
 								<TableHead>Username</TableHead>
+								<TableHead>Credits</TableHead>
 								<TableHead>Created At</TableHead>
 								<TableHead className='text-right pr-6'>Action</TableHead>
 							</TableRow>
@@ -160,6 +161,7 @@ function RouteComponent() {
 									>
 										<TableCell className='pl-6'>{client.name}</TableCell>
 										<TableCell>{client.username}</TableCell>
+										<TableCell>{client.credits}</TableCell>
 										<TableCell>
 											{new Date(client._creationTime).toLocaleDateString(
 												'en-US',
