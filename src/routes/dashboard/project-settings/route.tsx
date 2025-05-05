@@ -27,10 +27,6 @@ function RouteComponent() {
 			title: 'Agent',
 			href: { to: '/dashboard/project-settings/agent' },
 		},
-		{
-			title: 'Advance',
-			href: { to: '/dashboard/project-settings/advance' },
-		},
 	]
 
 	return (

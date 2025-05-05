@@ -31,7 +31,6 @@ import { Route as DashboardPhoneIndexImport } from './routes/dashboard/phone/ind
 import { Route as DashboardClientsIndexImport } from './routes/dashboard/clients/index'
 import { Route as DashboardAgentsIndexImport } from './routes/dashboard/agents/index'
 import { Route as DashboardProjectSettingsAgentImport } from './routes/dashboard/project-settings/agent'
-import { Route as DashboardProjectSettingsAdvanceImport } from './routes/dashboard/project-settings/advance'
 import { Route as DashboardAgents505Import } from './routes/dashboard/agents/505'
 import { Route as DashboardAgents404Import } from './routes/dashboard/agents/404'
 import { Route as DashboardAgentsAgentidImport } from './routes/dashboard/agents/$agent_id'
@@ -158,13 +157,6 @@ const DashboardProjectSettingsAgentRoute =
   DashboardProjectSettingsAgentImport.update({
     id: '/agent',
     path: '/agent',
-    getParentRoute: () => DashboardProjectSettingsRouteRoute,
-  } as any)
-
-const DashboardProjectSettingsAdvanceRoute =
-  DashboardProjectSettingsAdvanceImport.update({
-    id: '/advance',
-    path: '/advance',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
 
@@ -316,13 +308,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAgents505Import
       parentRoute: typeof DashboardAgentsRouteImport
     }
-    '/dashboard/project-settings/advance': {
-      id: '/dashboard/project-settings/advance'
-      path: '/advance'
-      fullPath: '/dashboard/project-settings/advance'
-      preLoaderRoute: typeof DashboardProjectSettingsAdvanceImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
-    }
     '/dashboard/project-settings/agent': {
       id: '/dashboard/project-settings/agent'
       path: '/agent'
@@ -394,14 +379,12 @@ const DashboardClientsRouteRouteWithChildren =
   )
 
 interface DashboardProjectSettingsRouteRouteChildren {
-  DashboardProjectSettingsAdvanceRoute: typeof DashboardProjectSettingsAdvanceRoute
   DashboardProjectSettingsAgentRoute: typeof DashboardProjectSettingsAgentRoute
   DashboardProjectSettingsIndexRoute: typeof DashboardProjectSettingsIndexRoute
 }
 
 const DashboardProjectSettingsRouteRouteChildren: DashboardProjectSettingsRouteRouteChildren =
   {
-    DashboardProjectSettingsAdvanceRoute: DashboardProjectSettingsAdvanceRoute,
     DashboardProjectSettingsAgentRoute: DashboardProjectSettingsAgentRoute,
     DashboardProjectSettingsIndexRoute: DashboardProjectSettingsIndexRoute,
   }
@@ -463,7 +446,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/project-settings/advance': typeof DashboardProjectSettingsAdvanceRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/agents/': typeof DashboardAgentsIndexRoute
   '/dashboard/clients/': typeof DashboardClientsIndexRoute
@@ -486,7 +468,6 @@ export interface FileRoutesByTo {
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/project-settings/advance': typeof DashboardProjectSettingsAdvanceRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/agents': typeof DashboardAgentsIndexRoute
   '/dashboard/clients': typeof DashboardClientsIndexRoute
@@ -514,7 +495,6 @@ export interface FileRoutesById {
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/project-settings/advance': typeof DashboardProjectSettingsAdvanceRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/agents/': typeof DashboardAgentsIndexRoute
   '/dashboard/clients/': typeof DashboardClientsIndexRoute
@@ -543,7 +523,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
-    | '/dashboard/project-settings/advance'
     | '/dashboard/project-settings/agent'
     | '/dashboard/agents/'
     | '/dashboard/clients/'
@@ -565,7 +544,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
-    | '/dashboard/project-settings/advance'
     | '/dashboard/project-settings/agent'
     | '/dashboard/agents'
     | '/dashboard/clients'
@@ -591,7 +569,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
-    | '/dashboard/project-settings/advance'
     | '/dashboard/project-settings/agent'
     | '/dashboard/agents/'
     | '/dashboard/clients/'
@@ -676,7 +653,6 @@ export const routeTree = rootRoute
       "filePath": "dashboard/project-settings/route.tsx",
       "parent": "/dashboard",
       "children": [
-        "/dashboard/project-settings/advance",
         "/dashboard/project-settings/agent",
         "/dashboard/project-settings/"
       ]
@@ -726,10 +702,6 @@ export const routeTree = rootRoute
     "/dashboard/agents/505": {
       "filePath": "dashboard/agents/505.tsx",
       "parent": "/dashboard/agents"
-    },
-    "/dashboard/project-settings/advance": {
-      "filePath": "dashboard/project-settings/advance.tsx",
-      "parent": "/dashboard/project-settings"
     },
     "/dashboard/project-settings/agent": {
       "filePath": "dashboard/project-settings/agent.tsx",
