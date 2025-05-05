@@ -22,6 +22,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar'
+import { Progress } from '../ui/progress'
 
 export interface NavUserProps {
 	user: {
@@ -29,11 +30,24 @@ export interface NavUserProps {
 		email: string
 		avatar?: string
 	}
+	credits?: {
+		total: number
+		remaining: number
+	}
 	onLogOut?: () => void
 }
 
-export function NavUser({ user, ...props }: NavUserProps) {
+export function NavUser({ user, credits, ...props }: NavUserProps) {
 	const { isMobile } = useSidebar()
+	const getCreditColor = (percent: number) => {
+		if (percent >= 90) return 'text-red-500 ring-red-500'
+		if (percent >= 70) return 'text-amber-500 ring-amber-500'
+		return 'text-emerald-500 ring-emerald-500'
+	}
+	const total = credits?.total ?? 100
+	const remaining = credits?.remaining ?? 100
+	const percentUsed = ((total - remaining) / total) * 100
+	const creditColor = getCreditColor(percentUsed)
 
 	return (
 		<SidebarMenu>
@@ -77,7 +91,45 @@ export function NavUser({ user, ...props }: NavUserProps) {
 								</div>
 							</div>
 						</DropdownMenuLabel>
+
 						<DropdownMenuSeparator />
+						{credits && (
+							<>
+								<DropdownMenuLabel asChild>
+									<div className='px-2 py-2 space-y-2'>
+										<div className='flex items-center justify-between'>
+											<span className='text-xs font-medium'>Credits</span>
+											<span className={`text-xs font-bold ${creditColor}`}>
+												{remaining} / {total}
+											</span>
+										</div>
+										<div className='space-y-1'>
+											<Progress
+												value={percentUsed}
+												className='h-1.5'
+												indicatorClassName={
+													percentUsed >= 90
+														? 'bg-red-500'
+														: percentUsed >= 70
+															? 'bg-amber-500'
+															: 'bg-emerald-500'
+												}
+											/>
+											<div className='flex justify-between items-center'>
+												<span className='text-[10px] text-muted-foreground'>
+													{percentUsed.toFixed(0)}% used
+												</span>
+												<span className='text-[10px] text-muted-foreground'>
+													{remaining} remaining
+												</span>
+											</div>
+										</div>
+									</div>
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+							</>
+						)}
+
 						<DropdownMenuGroup>
 							<DropdownMenuItem>
 								<UserCircleIcon />
