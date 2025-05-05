@@ -327,6 +327,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 									variant='ghost'
 									type='reset'
 									size='sm'
+									onClick={() => form.reset()}
 								>
 									clear
 								</Button>
