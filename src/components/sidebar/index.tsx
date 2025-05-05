@@ -4,6 +4,7 @@ import {
 	ChartLine,
 	History,
 	PhoneIcon,
+	Settings,
 	SettingsIcon,
 	Users2Icon,
 } from 'lucide-react'
@@ -70,9 +71,9 @@ export function AppSidebar() {
 		},
 		{
 			title: 'Project Settings',
-			href: { to: '/dashboard/project-setttings' },
-			icon: SettingsIcon,
-			isActive: !!route({ to: '/dashboard/project-setttings', fuzzy: true }),
+			href: { to: '/dashboard/project-settings/agent' },
+			icon: Settings,
+			isActive: !!route({ to: '/dashboard/project-settings', fuzzy: true }),
 			hidden: auth.type === 'user',
 		},
 	]
