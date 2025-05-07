@@ -100,7 +100,7 @@ export function NavUser({ user, credits, ...props }: NavUserProps) {
 										<div className='flex items-center justify-between'>
 											<span className='text-xs font-medium'>Credits</span>
 											<span className={`text-xs font-bold ${creditColor}`}>
-												{remaining} / {total}
+												{Math.round(remaining)} / {Math.round(total)}
 											</span>
 										</div>
 										<div className='space-y-1'>
