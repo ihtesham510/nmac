@@ -27,6 +27,10 @@ function RouteComponent() {
 			title: 'Agent',
 			href: { to: '/dashboard/project-settings/agent' },
 		},
+		{
+			title: 'Preview',
+			href: { to: '/dashboard/project-settings/preview' },
+		},
 	]
 
 	return (
