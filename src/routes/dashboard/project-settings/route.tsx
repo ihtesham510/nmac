@@ -10,6 +10,9 @@ import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/project-settings')({
+	async beforeLoad({ context: { queryClient } }) {
+		await queryClient.invalidateQueries({ queryKey: ['get_agent'] })
+	},
 	component: () => (
 		<ProtectedClientRoute>
 			<ProjectSettingContextProvider>

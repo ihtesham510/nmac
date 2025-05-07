@@ -45,7 +45,9 @@ export function ProjectSettingContextProvider({ children }: PropsWithChildren) {
 	useEffect(() => {
 		if (selectedAgent) {
 			agent.refetch()
-			queryClient.invalidateQueries({ queryKey: [selectedAgent.agentId] })
+			queryClient.invalidateQueries({
+				queryKey: [selectedAgent.agentId, 'get_agent'],
+			})
 		}
 	}, [selectedAgent])
 
