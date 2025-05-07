@@ -9,6 +9,7 @@ import {
 import {
 	Bot,
 	Copy,
+	LinkIcon,
 	LoaderCircle,
 	MoreHorizontal,
 	PlusIcon,
@@ -358,6 +359,17 @@ function RouteComponent() {
 													>
 														<Copy className='h-4 w-4 mr-2' />
 														Copy agent ID
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={async () => {
+															await navigator.clipboard.writeText(
+																`${window.location.host}/agents/${agent._id}`,
+															)
+															toast.success('Link Coppied.')
+														}}
+													>
+														<LinkIcon className='h-4 w-4 mr-2' />
+														Copy Link
 													</DropdownMenuItem>
 													<DialogTrigger asChild>
 														<DropdownMenuItem>

@@ -21,6 +21,7 @@ import { Route as DashboardHistoryImport } from './routes/dashboard/history'
 import { Route as DashboardAnalyticsImport } from './routes/dashboard/analytics'
 import { Route as Dashboard505Import } from './routes/dashboard/505'
 import { Route as Dashboard404Import } from './routes/dashboard/404'
+import { Route as AgentsAgentIdImport } from './routes/agents.$agentId'
 import { Route as authSignInImport } from './routes/(auth)/sign-in'
 import { Route as authRegisterImport } from './routes/(auth)/register'
 import { Route as DashboardProjectSettingsRouteImport } from './routes/dashboard/project-settings/route'
@@ -95,6 +96,12 @@ const Dashboard404Route = Dashboard404Import.update({
   id: '/404',
   path: '/404',
   getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const AgentsAgentIdRoute = AgentsAgentIdImport.update({
+  id: '/agents/$agentId',
+  path: '/agents/$agentId',
+  getParentRoute: () => rootRoute,
 } as any)
 
 const authSignInRoute = authSignInImport.update({
@@ -236,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof authSignInImport
+      parentRoute: typeof rootRoute
+    }
+    '/agents/$agentId': {
+      id: '/agents/$agentId'
+      path: '/agents/$agentId'
+      fullPath: '/agents/$agentId'
+      preLoaderRoute: typeof AgentsAgentIdImport
       parentRoute: typeof rootRoute
     }
     '/dashboard/404': {
@@ -436,6 +450,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
   '/register': typeof authRegisterRoute
   '/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -458,6 +473,7 @@ export interface FileRoutesByTo {
   '/505': typeof R505Route
   '/register': typeof authRegisterRoute
   '/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -485,6 +501,7 @@ export interface FileRoutesById {
   '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
   '/(auth)/register': typeof authRegisterRoute
   '/(auth)/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
@@ -513,6 +530,7 @@ export interface FileRouteTypes {
     | '/dashboard/project-settings'
     | '/register'
     | '/sign-in'
+    | '/agents/$agentId'
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
@@ -534,6 +552,7 @@ export interface FileRouteTypes {
     | '/505'
     | '/register'
     | '/sign-in'
+    | '/agents/$agentId'
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
@@ -559,6 +578,7 @@ export interface FileRouteTypes {
     | '/dashboard/project-settings'
     | '/(auth)/register'
     | '/(auth)/sign-in'
+    | '/agents/$agentId'
     | '/dashboard/404'
     | '/dashboard/505'
     | '/dashboard/analytics'
@@ -583,6 +603,7 @@ export interface RootRouteChildren {
   R505Route: typeof R505Route
   authRegisterRoute: typeof authRegisterRoute
   authSignInRoute: typeof authSignInRoute
+  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -591,6 +612,7 @@ const rootRouteChildren: RootRouteChildren = {
   R505Route: R505Route,
   authRegisterRoute: authRegisterRoute,
   authSignInRoute: authSignInRoute,
+  AgentsAgentIdRoute: AgentsAgentIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -607,7 +629,8 @@ export const routeTree = rootRoute
         "/dashboard",
         "/505",
         "/(auth)/register",
-        "/(auth)/sign-in"
+        "/(auth)/sign-in",
+        "/agents/$agentId"
       ]
     },
     "/": {
@@ -662,6 +685,9 @@ export const routeTree = rootRoute
     },
     "/(auth)/sign-in": {
       "filePath": "(auth)/sign-in.tsx"
+    },
+    "/agents/$agentId": {
+      "filePath": "agents.$agentId.tsx"
     },
     "/dashboard/404": {
       "filePath": "dashboard/404.tsx",
