@@ -120,7 +120,7 @@ export function NavUser({ user, credits, ...props }: NavUserProps) {
 													{percentUsed.toFixed(0)}% used
 												</span>
 												<span className='text-[10px] text-muted-foreground'>
-													{remaining} remaining
+													{Math.round(remaining)} remaining
 												</span>
 											</div>
 										</div>
