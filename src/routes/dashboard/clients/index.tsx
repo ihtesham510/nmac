@@ -231,7 +231,7 @@ function ClientDropDownMenu({
 					const emailExists = await convex.query(api.client.emailExists, {
 						email,
 					})
-					if (emailExists) {
+					if (emailExists && client.email !== email) {
 						ctx.addIssue({
 							code: 'custom',
 							message: 'username is already taken',
@@ -242,7 +242,7 @@ function ClientDropDownMenu({
 				const usernameExists = await convex.query(api.client.usernameExists, {
 					username,
 				})
-				if (usernameExists) {
+				if (usernameExists && client.username !== username) {
 					ctx.addIssue({
 						code: 'custom',
 						message: 'username already taken',

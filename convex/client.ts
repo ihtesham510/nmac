@@ -47,16 +47,30 @@ export const updateClient = mutation({
 	async handler(ctx, args) {
 		const secretKey = process.env.SECRET_KEY
 		const client = await ctx.db.get(args.clientId)
-		const encryptedPassword = args.password
-			? encrypt(args.password, secretKey!)
-			: client?.password
-		return await ctx.db.patch(args.clientId, {
-			username: args.username,
-			password: encryptedPassword,
-			name: args.name,
-			email: args.email ?? undefined,
-			...client,
-		})
+		if (client) {
+			const encryptedPassword = args.password
+				? encrypt(args.password, secretKey!)
+				: client?.password
+
+			console.log({
+				userId: client.userId,
+				credits: client.credits,
+				password: encryptedPassword,
+				email: args.email ?? client.email,
+				username: args.username ?? client.username,
+				assigned_Agents: client.assigned_Agents,
+				name: args.name ?? client.name,
+			})
+			return await ctx.db.patch(args.clientId, {
+				userId: client.userId,
+				credits: client.credits,
+				password: encryptedPassword,
+				email: args.email ?? client.email,
+				username: args.username ?? client.username,
+				assigned_Agents: client.assigned_Agents,
+				name: args.name ?? client.name,
+			})
+		}
 	},
 })
 
