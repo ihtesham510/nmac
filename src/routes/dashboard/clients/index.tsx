@@ -225,42 +225,28 @@ function ClientDropDownMenu({
 			password: z.string().min(2).optional(),
 			confirm_password: z.string().min(2).optional(),
 		})
-		.superRefine(
-			async ({ password, confirm_password, username, email }, ctx) => {
-				const userExists = await convex.query(api.client.usernameExists, {
-					username,
+		.superRefine(async ({ password, confirm_password, email }, ctx) => {
+			if (email) {
+				const emailExists = await convex.query(api.client.emailExists, {
+					email,
 				})
-
-				if (userExists) {
+				if (emailExists) {
 					ctx.addIssue({
 						code: 'custom',
 						message: 'username is already taken',
 						path: ['username'],
 					})
 				}
+			}
 
-				if (email) {
-					const emailExists = await convex.query(api.client.emailExists, {
-						email,
-					})
-					if (emailExists) {
-						ctx.addIssue({
-							code: 'custom',
-							message: 'username is already taken',
-							path: ['username'],
-						})
-					}
-				}
-
-				if (password !== confirm_password) {
-					ctx.addIssue({
-						code: 'custom',
-						message: 'Password do not match',
-						path: ['confirm_password'],
-					})
-				}
-			},
-		)
+			if (password !== confirm_password) {
+				ctx.addIssue({
+					code: 'custom',
+					message: 'Password do not match',
+					path: ['confirm_password'],
+				})
+			}
+		})
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
