@@ -83,4 +83,12 @@ export const queries = {
 			queryKey: ['list_knoledge_base'],
 			queryFn: async () => await client.conversationalAi.getKnowledgeBaseList(),
 		}),
+
+	list_voices: (client: ElevenLabsClient) =>
+		queryOptions({
+			queryKey: ['list_voices'],
+			queryFn: async () => {
+				return await client.voices.getAll()
+			},
+		}),
 }

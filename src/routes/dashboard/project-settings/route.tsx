@@ -31,6 +31,10 @@ function RouteComponent() {
 			href: { to: '/dashboard/project-settings/agent' },
 		},
 		{
+			title: 'Voice',
+			href: { to: '/dashboard/project-settings/voice' },
+		},
+		{
 			title: 'Preview',
 			href: { to: '/dashboard/project-settings/preview' },
 		},

@@ -81,7 +81,7 @@ function CommandList({
 		<CommandPrimitive.List
 			data-slot='command-list'
 			className={cn(
-				'max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto',
+				'max-h-[300px] min-h-max scroll-py-1 overflow-x-hidden overflow-y-hidden',
 				className,
 			)}
 			{...props}
@@ -95,7 +95,7 @@ function CommandEmpty({
 	return (
 		<CommandPrimitive.Empty
 			data-slot='command-empty'
-			className='py-6 text-center text-sm'
+			className='py-4 text-center text-sm'
 			{...props}
 		/>
 	)

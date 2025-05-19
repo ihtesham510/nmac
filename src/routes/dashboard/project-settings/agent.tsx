@@ -1,16 +1,8 @@
 import { Models } from '@/lib/types'
 import { createFileRoute } from '@tanstack/react-router'
-import { type PropsWithChildren } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { InfoIcon, LoaderCircle, TriangleAlert } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { LoaderCircle, TriangleAlert } from 'lucide-react'
 
 import {
 	Select,
@@ -19,7 +11,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { Slider } from '@/components/ui/slider'
 import { useQueryClient } from '@tanstack/react-query'
 import { type GetAgentResponseModel } from 'elevenlabs/api'
 import { useForm } from 'react-hook-form'
@@ -32,12 +23,13 @@ import {
 	FormItem,
 	FormMessage,
 } from '@/components/ui/form'
-import NumberFlow from '@number-flow/react'
 import { useUpdateAgent } from '@/hooks/use-update-agent'
 import { toast } from 'sonner'
 import { useProjetSettings } from '@/context/project-setting-context'
 import { ConfigSection } from '@/components/configuration-text-area'
 import { Button } from '@/components/ui/button'
+import { SliderSetting } from '@/components/project-settings/slider-setting'
+import { SelectSetting } from '@/components/project-settings/select-setting'
 
 export const Route = createFileRoute('/dashboard/project-settings/agent')({
 	component: RouteComponent,
@@ -47,94 +39,14 @@ function RouteComponent() {
 	const { agent } = useProjetSettings()
 	return (
 		<div>
+			{agent.isLoading && (
+				<div className='flex w-full h-[40vh] justify-center items-center'>
+					<LoaderCircle className='size-8 animate-spin' />
+				</div>
+			)}
 			{agent.data && (
 				<UpdateAgentForm data={agent.data} key={agent.dataUpdatedAt} />
 			)}
-		</div>
-	)
-}
-
-interface SpeechSettingProps {
-	title: string
-	description: string
-	value: number
-	defaultValue: number
-	min?: number
-	max?: number
-	step?: number
-	onChange: (value: number[]) => void
-	className?: string
-}
-
-function SliderSetting({
-	title,
-	description,
-	value,
-	defaultValue,
-	min = 0,
-	max = 100,
-	step = 1,
-	onChange,
-	className,
-}: SpeechSettingProps) {
-	return (
-		<div className={cn('rounded-lg bg-primary-foreground p-4', className)}>
-			<div className='mb-2 flex justify-between items-center'>
-				<div className='flex items-center gap-1.5'>
-					<h3 className='text-base font-medium text-white'>{title}</h3>
-					<TooltipProvider>
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<InfoIcon className='h-4 w-4 text-zinc-400' />
-							</TooltipTrigger>
-							<TooltipContent side='top' className='max-w-xs'>
-								{description}
-							</TooltipContent>
-						</Tooltip>
-					</TooltipProvider>
-				</div>
-				<p className='font-semibold text-md'>
-					<NumberFlow value={value} />
-				</p>
-			</div>
-			<p className='mb-4 text-sm text-primary/50'>{description}</p>
-			<Slider
-				value={[value]}
-				defaultValue={[defaultValue]}
-				max={max}
-				min={min}
-				step={step}
-				onValueChange={onChange}
-				className='py-1'
-			/>
-		</div>
-	)
-}
-
-function SelectSetting(
-	props: {
-		className?: string
-		title: string
-		description: string
-		child?: {
-			className: string
-		}
-	} & PropsWithChildren,
-) {
-	return (
-		<div
-			className={cn(
-				'rounded-lg bg-primary-foreground p-4 flex justify-between items-center',
-				props.className,
-			)}
-		>
-			<div className='flex flex-col gap-1'>
-				<h1 className='text-lg font-medium text-white'>{props.title}</h1>
-				<p className='mb-4 text-sm text-primary/50'>{props.description}</p>
-			</div>
-			<div className={cn('min-w-[200px] p-[20px]', props.child?.className)}>
-				{props.children}
-			</div>
 		</div>
 	)
 }
