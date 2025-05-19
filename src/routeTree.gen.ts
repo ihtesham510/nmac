@@ -33,7 +33,6 @@ import { Route as DashboardClientsIndexImport } from './routes/dashboard/clients
 import { Route as DashboardAgentsIndexImport } from './routes/dashboard/agents/index'
 import { Route as DashboardProjectSettingsVoiceImport } from './routes/dashboard/project-settings/voice'
 import { Route as DashboardProjectSettingsPreviewImport } from './routes/dashboard/project-settings/preview'
-import { Route as DashboardProjectSettingsKnowledgebaseImport } from './routes/dashboard/project-settings/knowledge_base'
 import { Route as DashboardProjectSettingsAgentImport } from './routes/dashboard/project-settings/agent'
 import { Route as DashboardAgents505Import } from './routes/dashboard/agents/505'
 import { Route as DashboardAgents404Import } from './routes/dashboard/agents/404'
@@ -174,13 +173,6 @@ const DashboardProjectSettingsPreviewRoute =
   DashboardProjectSettingsPreviewImport.update({
     id: '/preview',
     path: '/preview',
-    getParentRoute: () => DashboardProjectSettingsRouteRoute,
-  } as any)
-
-const DashboardProjectSettingsKnowledgebaseRoute =
-  DashboardProjectSettingsKnowledgebaseImport.update({
-    id: '/knowledge_base',
-    path: '/knowledge_base',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
 
@@ -353,13 +345,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProjectSettingsAgentImport
       parentRoute: typeof DashboardProjectSettingsRouteImport
     }
-    '/dashboard/project-settings/knowledge_base': {
-      id: '/dashboard/project-settings/knowledge_base'
-      path: '/knowledge_base'
-      fullPath: '/dashboard/project-settings/knowledge_base'
-      preLoaderRoute: typeof DashboardProjectSettingsKnowledgebaseImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
-    }
     '/dashboard/project-settings/preview': {
       id: '/dashboard/project-settings/preview'
       path: '/preview'
@@ -439,7 +424,6 @@ const DashboardClientsRouteRouteWithChildren =
 
 interface DashboardProjectSettingsRouteRouteChildren {
   DashboardProjectSettingsAgentRoute: typeof DashboardProjectSettingsAgentRoute
-  DashboardProjectSettingsKnowledgebaseRoute: typeof DashboardProjectSettingsKnowledgebaseRoute
   DashboardProjectSettingsPreviewRoute: typeof DashboardProjectSettingsPreviewRoute
   DashboardProjectSettingsVoiceRoute: typeof DashboardProjectSettingsVoiceRoute
   DashboardProjectSettingsIndexRoute: typeof DashboardProjectSettingsIndexRoute
@@ -448,8 +432,6 @@ interface DashboardProjectSettingsRouteRouteChildren {
 const DashboardProjectSettingsRouteRouteChildren: DashboardProjectSettingsRouteRouteChildren =
   {
     DashboardProjectSettingsAgentRoute: DashboardProjectSettingsAgentRoute,
-    DashboardProjectSettingsKnowledgebaseRoute:
-      DashboardProjectSettingsKnowledgebaseRoute,
     DashboardProjectSettingsPreviewRoute: DashboardProjectSettingsPreviewRoute,
     DashboardProjectSettingsVoiceRoute: DashboardProjectSettingsVoiceRoute,
     DashboardProjectSettingsIndexRoute: DashboardProjectSettingsIndexRoute,
@@ -514,7 +496,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/knowledge_base': typeof DashboardProjectSettingsKnowledgebaseRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
   '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
   '/dashboard/agents/': typeof DashboardAgentsIndexRoute
@@ -540,7 +521,6 @@ export interface FileRoutesByTo {
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/knowledge_base': typeof DashboardProjectSettingsKnowledgebaseRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
   '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
   '/dashboard/agents': typeof DashboardAgentsIndexRoute
@@ -571,7 +551,6 @@ export interface FileRoutesById {
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/knowledge_base': typeof DashboardProjectSettingsKnowledgebaseRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
   '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
   '/dashboard/agents/': typeof DashboardAgentsIndexRoute
@@ -603,7 +582,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/knowledge_base'
     | '/dashboard/project-settings/preview'
     | '/dashboard/project-settings/voice'
     | '/dashboard/agents/'
@@ -628,7 +606,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/knowledge_base'
     | '/dashboard/project-settings/preview'
     | '/dashboard/project-settings/voice'
     | '/dashboard/agents'
@@ -657,7 +634,6 @@ export interface FileRouteTypes {
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/knowledge_base'
     | '/dashboard/project-settings/preview'
     | '/dashboard/project-settings/voice'
     | '/dashboard/agents/'
@@ -747,7 +723,6 @@ export const routeTree = rootRoute
       "parent": "/dashboard",
       "children": [
         "/dashboard/project-settings/agent",
-        "/dashboard/project-settings/knowledge_base",
         "/dashboard/project-settings/preview",
         "/dashboard/project-settings/voice",
         "/dashboard/project-settings/"
@@ -804,10 +779,6 @@ export const routeTree = rootRoute
     },
     "/dashboard/project-settings/agent": {
       "filePath": "dashboard/project-settings/agent.tsx",
-      "parent": "/dashboard/project-settings"
-    },
-    "/dashboard/project-settings/knowledge_base": {
-      "filePath": "dashboard/project-settings/knowledge_base.tsx",
       "parent": "/dashboard/project-settings"
     },
     "/dashboard/project-settings/preview": {
