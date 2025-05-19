@@ -198,6 +198,7 @@ export function SelectVoice(props: {
 												]}
 												onSelect={() => {
 													setSelectedVoice(voice.voice_id)
+													setDialogs('popover', false)
 												}}
 												className='flex justify-between'
 											>
