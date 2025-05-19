@@ -53,7 +53,7 @@ export function AppSidebar() {
 			href: { to: '/dashboard/knowledge_base' },
 			icon: BrainIcon,
 			isActive: !!route({ to: '/dashboard/knowledge_base', fuzzy: true }),
-			hidden: false,
+			hidden: auth.type === 'client',
 		},
 		{
 			title: 'Clients',

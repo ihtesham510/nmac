@@ -35,6 +35,10 @@ function RouteComponent() {
 			href: { to: '/dashboard/project-settings/voice' },
 		},
 		{
+			title: 'Knowledge Base',
+			href: { to: '/dashboard/project-settings/knowledge_base' },
+		},
+		{
 			title: 'Preview',
 			href: { to: '/dashboard/project-settings/preview' },
 		},

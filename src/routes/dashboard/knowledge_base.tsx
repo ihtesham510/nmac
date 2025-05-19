@@ -43,7 +43,7 @@ export const Route = createFileRoute('/dashboard/knowledge_base')({
 
 function RouteComponent() {
 	const client = useElevenLabsClient()
-	const knowledge_base = useQuery(queries.list_knoledge_base(client))
+	const knowledge_base = useQuery(queries.list_knoledge_base(client, {}))
 
 	return (
 		<div className='h-screen w-full'>

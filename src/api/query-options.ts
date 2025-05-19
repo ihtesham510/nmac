@@ -78,12 +78,24 @@ export const queries = {
 				}
 			},
 		}),
-	list_knoledge_base: (client: ElevenLabsClient) =>
+	list_knoledge_base: (
+		client: ElevenLabsClient,
+		{ filter }: { filter?: string[] },
+	) =>
 		queryOptions({
 			queryKey: ['list_knoledge_base'],
-			queryFn: async () => await client.conversationalAi.getKnowledgeBaseList(),
+			queryFn: async () => {
+				const docs = await client.conversationalAi.getKnowledgeBaseList()
+				const filteredDocs = filter
+					? docs.documents.filter(doc =>
+							doc.dependent_agents.some((agent: any) =>
+								filter.includes(agent.id),
+							),
+						)
+					: docs.documents
+				return { ...docs, documents: filteredDocs }
+			},
 		}),
-
 	list_voices: (client: ElevenLabsClient) =>
 		queryOptions({
 			queryKey: ['list_voices'],
