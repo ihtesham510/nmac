@@ -1,4 +1,4 @@
-import { Models } from '@/lib/types'
+import { Llm as Models } from 'elevenlabs/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -75,11 +75,18 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		await updateAgent.mutateAsync(
 			{
-				first_message: values.first_message,
-				prompt: values.prompt,
-				temperature: values.temperature,
-				max_duration: values.max_duration,
-				model: values.llm as Models,
+				agent: {
+					first_message: values.first_message,
+					prompt: {
+						prompt: values.prompt,
+						temperature: values.temperature,
+						llm: values.llm as Models,
+					},
+				},
+				conversation: {
+					max_duration_seconds: values.max_duration,
+				},
+				...data,
 			},
 			{
 				onSuccess(data) {

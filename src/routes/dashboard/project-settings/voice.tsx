@@ -1,251 +1,248 @@
+import { SelectVoice } from '@/components/project-settings/select-voice'
+import { useProjetSettings } from '@/context/project-setting-context'
+import { createFileRoute } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { TtsOutputFormat as AudioFormat } from 'elevenlabs/api'
+import { z } from 'zod'
+import type { ConversationalConfigApiModelInput } from 'elevenlabs/api'
+import { LoaderComponent } from '@/components/loader'
+import { SliderSetting } from '@/components/project-settings/slider-setting'
+import { Button } from '@/components/ui/button'
+import { TriangleAlert, LoaderCircle } from 'lucide-react'
 import { SelectSetting } from '@/components/project-settings/select-setting'
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	CommandList,
-} from '@/components/ui/command'
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { useQuery as useTanstackQuery } from '@tanstack/react-query'
-import { queries } from '@/api/query-options'
-import { useElevenLabsClient } from '@/api/client'
-import { Check, ChevronsUpDownIcon, PauseIcon, PlayIcon } from 'lucide-react'
-import { type Voice } from 'elevenlabs/api'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
-import { useProjetSettings } from '@/context/project-setting-context'
-import { LoaderComponent } from '@/components/loader'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { useDialog } from '@/hooks/use-dialogs'
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { useUpdateAgent } from '@/hooks/use-update-agent'
+import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/dashboard/project-settings/voice')({
 	component: RouteComponent,
 })
 
+const formSchema = z.object({
+	similarity: z.number(),
+	stability: z.number(),
+	speed: z.number(),
+	voice_id: z.string(),
+	audio_format: z.string(),
+})
+
 function RouteComponent() {
 	const { agent } = useProjetSettings()
-	const [dialogs, setDialogs] = useDialog({
-		popover: false,
-	})
-	const client = useElevenLabsClient()
-	const voices = useTanstackQuery(queries.list_voices(client))
-
-	const [selectedVoice, setSelectedVoice] = useState<string | undefined>()
-	const [selectedVoiceData, setSelectedVoiceData] = useState<
-		Voice | undefined
-	>()
-
-	const [audio, setAudio] = useState<{
-		audio: string
-		voice_id: string
-		playing: boolean
-	} | null>()
-
-	const [testAudioPlaying, setTestAudioPlaying] = useState<boolean>(false)
-
-	const audioRef = useRef<HTMLAudioElement | null>(null)
-	const testAudioRef = useRef<HTMLAudioElement | null>(null)
-
-	function playAudio(url: string, voice_id: string) {
-		if (audioRef.current && audio && audio.playing) {
-			if (audio.voice_id === voice_id) {
-				audioRef.current.pause()
-				setAudio(prev => (prev ? { ...prev, playing: false } : null))
-				return
-			}
-			audioRef.current.pause()
-			audioRef.current.currentTime = 0
-			setAudio(prev =>
-				prev && prev.playing ? { ...prev, playing: false } : null,
-			)
-		}
-		const newAudio = new Audio(url)
-		newAudio.play()
-		setAudio({ audio: url, voice_id, playing: true })
-		audioRef.current = newAudio
-		audioRef.current.onended = () => {
-			setAudio(null)
-			audioRef.current = null
-		}
-	}
-
-	function testAudio() {
-		if (selectedVoiceData) {
-			if (testAudioRef.current && testAudioPlaying) {
-				testAudioRef.current.pause()
-				testAudioRef.current = null
-				setTestAudioPlaying(false)
-				return
-			}
-			const audio = new Audio(selectedVoiceData.preview_url)
-			testAudioRef.current = audio
-			testAudioRef.current.play()
-			setTestAudioPlaying(true)
-			testAudioRef.current.onended = () => setTestAudioPlaying(false)
-		}
-	}
-
-	useEffect(() => {
-		if (audioRef.current && !dialogs.popover) {
-			audioRef.current.pause()
-			audioRef.current = null
-			setAudio(null)
-		}
-		if (testAudioRef.current && testAudioPlaying) {
-			testAudioRef.current.pause()
-			testAudioRef.current = null
-			setTestAudioPlaying(false)
-		}
-		return () => {
-			if (audioRef.current) {
-				audioRef.current.pause()
-				audioRef.current = null
-				setAudio(null)
-			}
-
-			if (testAudioRef.current) {
-				testAudioRef.current.pause()
-				testAudioRef.current = null
-				setTestAudioPlaying(false)
-			}
-		}
-	}, [dialogs.popover])
-
-	const currentVoiceData = useMemo(() => {
-		if (voices.data) {
-			return (
-				voices.data.voices.find(voice => voice.voice_id === selectedVoice) ??
-				undefined
-			)
-		}
-		return undefined
-	}, [selectedVoice, voices.data])
-
-	useEffect(() => {
-		setSelectedVoice(agent.data?.conversation_config.tts?.voice_id)
-	}, [agent])
-
-	useEffect(() => {
-		setSelectedVoiceData(currentVoiceData)
-	}, [currentVoiceData])
-
 	return (
 		<div>
 			{agent.isLoading && <LoaderComponent className='h-[50vh]' />}
-
 			{agent.data && !agent.isLoading && (
-				<Popover
-					open={dialogs.popover}
-					onOpenChange={e => setDialogs('popover', e)}
-				>
-					<SelectSetting
-						title='Voice'
-						description='Select the ElevenLabs voice you want to use for the agent.'
-						className='w-full'
-					>
-						<PopoverTrigger asChild>
-							{selectedVoice && (
-								<Button
-									variant='outline'
-									className='w-full flex justify-between px-2'
-								>
-									<div className='flex justify-between w-full items-center'>
-										<div className='flex gap-2 items-center'>
-											<span
-												className='p-1 rounded-full bg-primary text-primary-foreground'
-												onClick={e => {
-													e.stopPropagation()
-													testAudio()
-												}}
-											>
-												{testAudioPlaying ? (
-													<PauseIcon className='size-3' />
-												) : (
-													<PlayIcon className='size-3' />
-												)}
-											</span>
-											<p>{selectedVoiceData?.name}</p>
-										</div>
-										<ChevronsUpDownIcon className='size-3.5' />
-									</div>
-								</Button>
-							)}
-						</PopoverTrigger>
-					</SelectSetting>
-					<PopoverContent className='p-0 max-w-2xl min-w-md'>
-						<Command>
-							<CommandInput placeholder='Type a command or search...' />
-							<CommandList>
-								<CommandEmpty>No voices found.</CommandEmpty>
-								<CommandGroup>
-									<ScrollArea className='h-[280px] pr-1.5'>
-										{voices.data &&
-											voices.data.voices.map(voice => (
-												<CommandItem
-													key={voice.voice_id}
-													value={voice.name}
-													keywords={[
-														voice.name ?? '',
-														voice.description ?? '',
-														...Object.keys(voice.labels ?? {}).map(
-															([_, value]) => value,
-														),
-													]}
-													onSelect={() => {
-														setSelectedVoice(voice.voice_id)
-													}}
-													className='flex justify-between'
-												>
-													<div className='flex items-center gap-2'>
-														<span
-															className='p-1 group cursor-pointer text-primary-foreground bg-primary rounded-full'
-															onClick={e => {
-																e.stopPropagation()
-																voice.preview_url &&
-																	playAudio(voice.preview_url, voice.voice_id)
-															}}
-														>
-															{audio &&
-															audio.voice_id === voice.voice_id &&
-															audio.playing ? (
-																<PauseIcon className='size-3 group-hover:text-muted-foreground' />
-															) : (
-																<PlayIcon className='size-3 group-hover:text-muted-foreground' />
-															)}
-														</span>
-														<div className='flex flex-col'>
-															<span className='font-medium'>{voice.name}</span>
-															<span className='text-xs text-muted-foreground'>
-																{`${voice.labels?.accent} ${voice.labels?.accent && '•'}`}{' '}
-																{voice.labels?.gender} • {voice.category}
-															</span>
-														</div>
-													</div>
-													<Check
-														className={cn(
-															'mr-2 h-4 w-4',
-															selectedVoice === voice.voice_id
-																? 'opacity-100'
-																: 'opacity-0',
-														)}
-													/>
-												</CommandItem>
-											))}
-									</ScrollArea>
-								</CommandGroup>
-							</CommandList>
-						</Command>
-					</PopoverContent>
-				</Popover>
+				<VoiceForm
+					conversation_config={agent.data.conversation_config}
+					agent_id={agent.data.agent_id}
+				/>
 			)}
 		</div>
+	)
+}
+
+function VoiceForm({
+	conversation_config,
+	agent_id,
+}: {
+	conversation_config: ConversationalConfigApiModelInput
+	agent_id: string
+}) {
+	const updateAgent = useUpdateAgent(agent_id)
+	const queryClient = useQueryClient()
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			similarity: conversation_config.tts?.similarity_boost,
+			stability: conversation_config.tts?.stability,
+			speed: conversation_config.tts?.speed,
+			voice_id: conversation_config.tts?.voice_id,
+			audio_format: conversation_config.tts
+				?.agent_output_audio_format as AudioFormat,
+		},
+	})
+	async function onSubmit(values: z.infer<typeof formSchema>) {
+		try {
+			await updateAgent.mutateAsync(
+				{
+					tts: {
+						voice_id: values.voice_id,
+						speed: values.speed,
+						stability: values.stability,
+						similarity_boost: values.similarity,
+						agent_output_audio_format: values.audio_format as AudioFormat,
+					},
+				},
+				{
+					onSuccess(data) {
+						queryClient.invalidateQueries({ queryKey: [agent_id] })
+						form.reset(
+							{
+								similarity: data.conversation_config.tts?.similarity_boost,
+								stability: data.conversation_config.tts?.stability,
+								speed: data.conversation_config.tts?.speed,
+								voice_id: data.conversation_config.tts?.voice_id,
+								audio_format: data.conversation_config.tts
+									?.agent_output_audio_format as AudioFormat,
+							},
+							{ keepValues: true },
+						)
+					},
+				},
+			)
+			return toast.success('Agent updated successfully')
+		} catch (err) {
+			return toast.error('Error while updating agent')
+		}
+	}
+	return (
+		<Form {...form}>
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className='my-5 mb-60 space-y-4'
+			>
+				<FormField
+					control={form.control}
+					name='voice_id'
+					render={({ field: { value, onChange } }) => (
+						<FormItem>
+							<FormControl>
+								<SelectVoice value={value} onChange={e => onChange(e)} />
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='similarity'
+					render={({ field: { value, onChange } }) => (
+						<FormItem>
+							<FormControl>
+								<SliderSetting
+									title='Similarity'
+									description='Higher values will boost the overall clarity and consistency of the voice. Very high values may lead to artifacts. Adjusting this value to find the right balance is recommended.'
+									min={0}
+									max={1}
+									step={0.05}
+									defaultValue={form.getValues('similarity')}
+									value={value}
+									onChange={([val]) => onChange(val)}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='speed'
+					render={({ field: { value, onChange } }) => (
+						<FormItem>
+							<FormControl>
+								<SliderSetting
+									title='Speed'
+									description='Controls the speed of the generated speech. Values below 1.0 will slow down the speech, while values above 1.0 will speed it up. Extreme values may affect the quality of the generated speech.'
+									min={0.7}
+									max={1.2}
+									step={0.05}
+									defaultValue={form.getValues('speed')}
+									value={value}
+									onChange={([val]) => onChange(val)}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='stability'
+					render={({ field: { value, onChange } }) => (
+						<FormItem>
+							<FormControl>
+								<SliderSetting
+									title='Stability'
+									description='Higher values will make speech more consistent, but it can also make it sound monotone. Lower values will make speech sound more expressive, but may lead to instabilities.'
+									min={0}
+									max={1}
+									step={0.05}
+									defaultValue={form.getValues('stability')}
+									value={value}
+									onChange={([val]) => onChange(val)}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='audio_format'
+					render={({ field: { value, onChange } }) => (
+						<FormItem>
+							<FormControl>
+								<Select
+									value={value as AudioFormat}
+									onValueChange={e => onChange(e as AudioFormat)}
+								>
+									<FormControl>
+										<SelectSetting
+											title='TTS output format'
+											description='Select the output format you want to use for ElevenLabs text to speech.'
+											className='w-full'
+										>
+											<SelectTrigger id='llm-model' className='w-full'>
+												<SelectValue
+													placeholder='Select model'
+													className='w-full'
+												/>
+											</SelectTrigger>
+										</SelectSetting>
+									</FormControl>
+									<SelectContent>
+										{Object.values(AudioFormat).map(format => (
+											<SelectItem key={format} value={format}>
+												{format}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
+				{form.formState.isDirty && (
+					<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
+						<div className='flex gap-2'>
+							<TriangleAlert className='size-4' />
+							<p className='font-semibold text-sm'>Changes Detected</p>
+						</div>
+						<div className='flex gap-2'>
+							<Button
+								className='text-sm font-semibold'
+								variant='outline'
+								type='reset'
+								onClick={() => form.reset()}
+							>
+								clear
+							</Button>
+							<Button type='submit' className='text-sm font-semibold' size='sm'>
+								{form.formState.isSubmitting ? (
+									<LoaderCircle className='size-4 m-1 animate-spin' />
+								) : (
+									'save'
+								)}
+							</Button>
+						</div>
+					</div>
+				)}
+			</form>
+		</Form>
 	)
 }

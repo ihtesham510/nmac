@@ -1,38 +1,16 @@
 import { useElevenLabsClient } from '@/api/client'
-import type { Models } from '@/lib/types'
 import { useMutation } from '@tanstack/react-query'
+import type { ConversationalConfigApiModelOutput } from 'elevenlabs/api'
 
 export function useUpdateAgent(agentId: string) {
 	const client = useElevenLabsClient()
 	return useMutation({
 		mutationKey: ['update_agent'],
-		mutationFn: async ({
-			first_message,
-			prompt,
-			temperature,
-			model,
-			max_duration,
-		}: {
-			first_message: string
-			prompt: string
-			temperature: number
-			model: Models
-			max_duration: number
-		}) => {
+		mutationFn: async (
+			conversation_config: ConversationalConfigApiModelOutput,
+		) => {
 			const res = await client.conversationalAi.updateAgent(agentId, {
-				conversation_config: {
-					agent: {
-						first_message,
-						prompt: {
-							prompt,
-							llm: model,
-							temperature,
-						},
-					},
-					conversation: {
-						max_duration_seconds: max_duration,
-					},
-				},
+				conversation_config: conversation_config as Record<string, unknown>,
 			})
 			return res
 		},
