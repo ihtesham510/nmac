@@ -152,7 +152,7 @@ function VoiceForm({
 									description='Controls the speed of the generated speech. Values below 1.0 will slow down the speech, while values above 1.0 will speed it up. Extreme values may affect the quality of the generated speech.'
 									min={0.7}
 									max={1.2}
-									step={0.05}
+									step={0.01}
 									defaultValue={form.getValues('speed')}
 									value={value}
 									onChange={([val]) => onChange(val)}
