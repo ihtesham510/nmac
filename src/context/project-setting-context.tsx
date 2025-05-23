@@ -34,7 +34,10 @@ export function ProjectSettingContextProvider({ children }: PropsWithChildren) {
 		undefined,
 	)
 	const agent = useQuery(
-		queries.get_agent(client, { id: selectedAgent?.agentId, enabled: false }),
+		queries.get_agent(client, {
+			id: selectedAgent?.agentId,
+			enabled: !!selectedAgent,
+		}),
 	)
 	useEffect(() => {
 		if (agents && agents.length > 0) {

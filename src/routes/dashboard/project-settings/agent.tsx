@@ -2,8 +2,20 @@ import { Llm as Models } from 'elevenlabs/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { LoaderCircle, TriangleAlert } from 'lucide-react'
-
+import {
+	FileIcon,
+	FileType,
+	Globe,
+	LoaderCircle,
+	TrashIcon,
+	TriangleAlert,
+} from 'lucide-react'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
 	Select,
 	SelectContent,
@@ -30,6 +42,12 @@ import { ConfigSection } from '@/components/configuration-text-area'
 import { Button } from '@/components/ui/button'
 import { SliderSetting } from '@/components/project-settings/slider-setting'
 import { SelectSetting } from '@/components/project-settings/select-setting'
+import { useDialog } from '@/hooks/use-dialogs'
+import { AddUrlForm } from '@/components/project-settings/add-url-form'
+import { AddTextForm } from '@/components/project-settings/add-text-form'
+import { Switch } from '@/components/ui/switch'
+import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
+import { useElevenLabsClient } from '@/api/client'
 
 export const Route = createFileRoute('/dashboard/project-settings/agent')({
 	component: RouteComponent,
@@ -53,6 +71,16 @@ function RouteComponent() {
 
 function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 	const updateAgent = useUpdateAgent(data.agent_id)
+	const client = useElevenLabsClient()
+	const { deleteKnowledgeBase } = useKnowledgeBase(client, data)
+	const knowledge_base = data.conversation_config.agent?.prompt?.knowledge_base
+
+	const [dialogs, setDialogs] = useDialog({
+		dropdownMenu: false,
+		linkDialog: false,
+		textDialog: false,
+	})
+
 	const queryClient = useQueryClient()
 	const formSchema = z.object({
 		first_message: z.string(),
@@ -60,6 +88,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 		temperature: z.number(),
 		llm: z.string(),
 		max_duration: z.number(),
+		rag: z.boolean().optional(),
 	})
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -69,6 +98,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 			temperature: data.conversation_config.agent?.prompt?.temperature,
 			llm: data.conversation_config.agent?.prompt?.llm,
 			max_duration: data.conversation_config.conversation?.max_duration_seconds,
+			rag: data.conversation_config.agent?.prompt?.rag?.enabled,
 		},
 	})
 
@@ -81,6 +111,9 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 						prompt: values.prompt,
 						temperature: values.temperature,
 						llm: values.llm as Models,
+						rag: {
+							enabled: values.rag,
+						},
 					},
 				},
 				conversation: {
@@ -100,6 +133,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 							llm: data.conversation_config.agent?.prompt?.llm,
 							max_duration:
 								data.conversation_config.conversation?.max_duration_seconds,
+							rag: data.conversation_config.agent?.prompt?.rag?.enabled,
 						},
 						{ keepValues: true },
 					)
@@ -107,165 +141,288 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 			},
 		)
 	}
+
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className='my-5 mb-60'>
-				<div className='grid relative gap-6 mb-6'>
-					<FormField
-						control={form.control}
-						name='first_message'
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<ConfigSection
-										title='First message'
-										description='The first message the agent will say. If empty, the agent will wait for the user to start the conversation.'
-									>
-										<Textarea
-											id='first-message'
-											className='h-[100px]'
-											placeholder="Enter the agent's first message..."
-											{...field}
-										/>
-										<FormMessage />
-									</ConfigSection>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name='prompt'
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<ConfigSection
-										title='System prompt'
-										description='The system prompt is used to determine the persona of the agent and the context of the conversation.'
-										infoTooltip='The system prompt helps define how your AI agent will behave and respond to users.'
-									>
-										<Textarea
-											id='prompt'
-											className='min-h-[300px] max-h-[500px] font-mono text-sm'
-											placeholder="Enter the agent's prompt here..."
-											{...field}
-										/>
-
-										<FormMessage />
-									</ConfigSection>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='llm'
-						render={({ field }) => (
-							<FormItem>
-								<Select
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-								>
+		<div>
+			<AddUrlForm
+				data={data}
+				open={dialogs.linkDialog}
+				onOpenChange={e => setDialogs('linkDialog', e)}
+			/>
+			<AddTextForm
+				data={data}
+				open={dialogs.textDialog}
+				onOpenChange={e => setDialogs('textDialog', e)}
+			/>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className='my-5 mb-60'>
+					<div className='grid relative gap-6 mb-6'>
+						<FormField
+							control={form.control}
+							name='first_message'
+							render={({ field }) => (
+								<FormItem>
 									<FormControl>
-										<SelectSetting
-											title='LLM'
-											description='Select which provider and model to use for the LLM.
+										<ConfigSection
+											title='First message'
+											description='The first message the agent will say. If empty, the agent will wait for the user to start the conversation.'
+										>
+											<Textarea
+												id='first-message'
+												className='h-[100px]'
+												placeholder="Enter the agent's first message..."
+												{...field}
+											/>
+											<FormMessage />
+										</ConfigSection>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name='prompt'
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<ConfigSection
+											title='System prompt'
+											description='The system prompt is used to determine the persona of the agent and the context of the conversation.'
+											infoTooltip='The system prompt helps define how your AI agent will behave and respond to users.'
+										>
+											<Textarea
+												id='prompt'
+												className='min-h-[300px] max-h-[500px] font-mono text-sm'
+												placeholder="Enter the agent's prompt here..."
+												{...field}
+											/>
+											<FormMessage />
+										</ConfigSection>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='llm'
+							render={({ field }) => (
+								<FormItem>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectSetting
+												title='LLM'
+												description='Select which provider and model to use for the LLM.
               If your chosen LLM is not available at the moment or something goes wrong, we will redirect the conversation to another LLM.
                 Currently, the LLM cost is covered by us. In the future, this cost will be passed onto you.'
-											className='w-full'
+												className='w-full'
+											>
+												<SelectTrigger id='llm-model'>
+													<SelectValue
+														placeholder='Select model'
+														className='w-full'
+													/>
+												</SelectTrigger>
+											</SelectSetting>
+										</FormControl>
+										<SelectContent>
+											{Object.values(Models).map(model => (
+												<SelectItem key={model} value={model}>
+													{model}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name='temperature'
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<SliderSetting
+											title='Temperature'
+											description='Temperature is a parameter that controls the creativity or randomness of the responses generated by the LLM.'
+											min={0}
+											max={1}
+											step={0.05}
+											defaultValue={form.getValues('temperature')}
+											value={field.value}
+											onChange={([val]) => field.onChange(val)}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<div className='grid rounded-lg bg-primary-foreground gap-4 p-4'>
+							<div className='flex justify-between items-center'>
+								<div className='flex flex-col gap-1'>
+									<h1 className='text-lg font-medium text-white'>
+										Knowledge Based
+									</h1>
+									<p className='mb-4 text-sm text-primary/50'>
+										Provide the LLM with domain-specific information to help it
+										answer questions more accurately.
+									</p>
+								</div>
+								<div className='min-w-[200px] p-[20px]'>
+									<DropdownMenu
+										open={dialogs.dropdownMenu}
+										onOpenChange={e => setDialogs('dropdownMenu', e)}
+									>
+										<DropdownMenuTrigger asChild>
+											<Button
+												variant='outline'
+												type='button'
+												className='w-full'
+											>
+												Add Document
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent className='w-max'>
+											<DropdownMenuItem
+												className='flex gap-2 items-center'
+												onClick={() => {
+													setDialogs('linkDialog', true)
+													setDialogs('dropdownMenu', false)
+												}}
+											>
+												<Globe className='size-4' />
+												Url
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												className='flex gap-2 items-center'
+												onClick={() => {
+													setDialogs('textDialog', true)
+													setDialogs('dropdownMenu', true)
+												}}
+											>
+												<FileType className='size-4' />
+												Text
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+							</div>
+							<div className='grid w-full rounded-lg bg-background'>
+								{knowledge_base?.map(doc => (
+									<div
+										className='flex justify-between items-center p-2'
+										key={doc.id}
+									>
+										<div className='flex justify-center gap-4 items-center'>
+											<Button variant='secondary' size='icon' type='button'>
+												{doc.type === 'text' && <FileType className='size-4' />}
+												{doc.type === 'url' && <Globe className='size-4' />}
+												{doc.type === 'file' && <FileIcon className='size-4' />}
+											</Button>
+											<p>{doc.name}</p>
+										</div>
+										<div>
+											<Button
+												variant='outline'
+												size='icon'
+												type='button'
+												onClick={async () => {
+													await deleteKnowledgeBase.mutateAsync(doc.id)
+												}}
+											>
+												<TrashIcon className='size-4' />
+											</Button>
+										</div>
+									</div>
+								))}
+							</div>
+							{knowledge_base?.length !== 0 && (
+								<div className='flex justify-between items-center'>
+									<div className='flex flex-col gap-1'>
+										<h1 className='text-lg font-medium text-white'>Use RAG</h1>
+										<p className='mb-4 text-sm text-primary/50'>
+											Retrieval-Augmented Generation (RAG) increases the agent's
+											maximum Knowledge Base size. The agent will have access to
+											relevant pieces of attached Knowledge Base during answer
+											generation.
+										</p>
+									</div>
+									<div className='min-w-[80px] p-[20px]'>
+										<FormField
+											control={form.control}
+											name='rag'
+											render={({ field }) => (
+												<FormControl>
+													<Switch
+														checked={field.value}
+														onCheckedChange={field.onChange}
+													/>
+												</FormControl>
+											)}
+										/>
+									</div>
+								</div>
+							)}
+						</div>
+						<FormField
+							control={form.control}
+							name='max_duration'
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<SelectSetting
+											title='Max conversation duration'
+											description='The maximum number of seconds that a conversation can last.'
+											className='gap-0.5'
 										>
-											<SelectTrigger id='llm-model'>
-												<SelectValue
-													placeholder='Select model'
-													className='w-full'
-												/>
-											</SelectTrigger>
+											<Input
+												type='number'
+												className='min-w-[100px]'
+												{...field}
+											/>
 										</SelectSetting>
 									</FormControl>
-									<SelectContent>
-										{Object.values(Models).map(model => (
-											<SelectItem key={model} value={model}>
-												{model}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='temperature'
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<SliderSetting
-										title='Temperature'
-										description='Temperature is a parameter that controls the creativity or randomness of the responses generated by the LLM.'
-										min={0}
-										max={1}
-										step={0.05}
-										defaultValue={form.getValues('temperature')}
-										value={field.value}
-										onChange={([val]) => field.onChange(val)}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='max_duration'
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<SelectSetting
-										title='Max conversation duration'
-										description='The maximum number of seconds that a conversation can last.'
-										className='gap-0.5'
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						{form.formState.isDirty && (
+							<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
+								<div className='flex gap-2'>
+									<TriangleAlert className='size-4' />
+									<p className='font-semibold text-sm'>Changes Detected</p>
+								</div>
+								<div className='flex gap-2'>
+									<Button
+										className='text-sm font-semibold'
+										variant='ghost'
+										type='reset'
+										size='sm'
+										onClick={() => form.reset()}
 									>
-										<Input type='number' className='min-w-[100px]' {...field} />
-									</SelectSetting>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
+										clear
+									</Button>
+									<Button
+										type='submit'
+										className='text-sm font-semibold'
+										size='sm'
+									>
+										{form.formState.isSubmitting ? (
+											<LoaderCircle className='size-4 m-1 animate-spin' />
+										) : (
+											'save'
+										)}
+									</Button>
+								</div>
+							</div>
 						)}
-					/>
-					{form.formState.isDirty && (
-						<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
-							<div className='flex gap-2'>
-								<TriangleAlert className='size-4' />
-								<p className='font-semibold text-sm'>Changes Detected</p>
-							</div>
-							<div className='flex gap-2'>
-								<Button
-									className='text-sm font-semibold'
-									variant='ghost'
-									type='reset'
-									size='sm'
-									onClick={() => form.reset()}
-								>
-									clear
-								</Button>
-								<Button
-									type='submit'
-									className='text-sm font-semibold'
-									size='sm'
-								>
-									{form.formState.isSubmitting ? (
-										<LoaderCircle className='size-4 m-1 animate-spin' />
-									) : (
-										'save'
-									)}
-								</Button>
-							</div>
-						</div>
-					)}
-				</div>
-			</form>
-		</Form>
+					</div>
+				</form>
+			</Form>
+		</div>
 	)
 }
