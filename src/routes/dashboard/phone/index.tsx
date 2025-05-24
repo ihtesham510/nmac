@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { isValidPhoneNumber } from 'react-phone-number-input'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -161,7 +162,9 @@ function AdminSheetForm() {
 	const addPhoneNo = useAddPhoneNo()
 	const formSchema = z.object({
 		label: z.string().min(1),
-		phone_no: z.string(),
+		phone_no: z
+			.string()
+			.refine(isValidPhoneNumber, { message: 'Invalid Phone No.' }),
 		sid: z.string(),
 		token: z.string(),
 	})

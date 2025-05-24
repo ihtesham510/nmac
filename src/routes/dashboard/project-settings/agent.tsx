@@ -7,8 +7,11 @@ import {
 	FileType,
 	Globe,
 	LoaderCircle,
+	LoaderIcon,
 	TrashIcon,
 	TriangleAlert,
+	WebhookIcon,
+	Wrench,
 } from 'lucide-react'
 import {
 	DropdownMenu,
@@ -48,6 +51,7 @@ import { AddTextForm } from '@/components/project-settings/add-text-form'
 import { Switch } from '@/components/ui/switch'
 import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
 import { useElevenLabsClient } from '@/api/client'
+import { AddTransferToHumanTool } from '@/components/project-settings/tools/add-transfer-to-human'
 
 export const Route = createFileRoute('/dashboard/project-settings/agent')({
 	component: RouteComponent,
@@ -74,11 +78,14 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 	const client = useElevenLabsClient()
 	const { deleteKnowledgeBase } = useKnowledgeBase(client, data)
 	const knowledge_base = data.conversation_config.agent?.prompt?.knowledge_base
+	const tools = data.conversation_config.agent?.prompt?.tools
 
 	const [dialogs, setDialogs] = useDialog({
 		dropdownMenu: false,
 		linkDialog: false,
 		textDialog: false,
+		addTool: false,
+		addTransferToHuman: false,
 	})
 
 	const queryClient = useQueryClient()
@@ -154,6 +161,13 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 				open={dialogs.textDialog}
 				onOpenChange={e => setDialogs('textDialog', e)}
 			/>
+			{data && (
+				<AddTransferToHumanTool
+					open={dialogs.addTransferToHuman}
+					onOpenChange={e => setDialogs('addTransferToHuman', e)}
+					data={data}
+				/>
+			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='my-5 mb-60'>
 					<div className='grid relative gap-6 mb-6'>
@@ -368,6 +382,71 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 								</div>
 							)}
 						</div>
+						<div className='grid rounded-lg bg-primary-foreground gap-4 p-4'>
+							<div className='flex justify-between items-center'>
+								<div className='flex flex-col gap-1'>
+									<h1 className='text-lg font-medium text-white'>Tools</h1>
+									<p className='mb-4 text-sm text-primary/50'>
+										Provide the agent with tools it can use to help users.
+									</p>
+								</div>
+								<div className='min-w-[200px] p-[20px]'>
+									<DropdownMenu
+										open={dialogs.addTool}
+										onOpenChange={e => setDialogs('addTool', e)}
+									>
+										<DropdownMenuTrigger asChild>
+											<Button
+												variant='outline'
+												type='button'
+												className='w-full'
+											>
+												Add tools
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent className='w-max'>
+											<DropdownMenuItem
+												onClick={() => setDialogs('addTransferToHuman', true)}
+											>
+												Transfer to Human
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+							</div>
+							<div className='grid w-full rounded-lg bg-background'>
+								{tools?.map((tool, i) => (
+									<div
+										className='flex justify-between items-center p-2'
+										key={i}
+									>
+										<div className='flex justify-center gap-4 items-center'>
+											<Button variant='secondary' size='icon' type='button'>
+												{tool.type === 'system' && (
+													<Wrench className='size-4' />
+												)}
+												{tool.type === 'webhook' && (
+													<WebhookIcon className='size-4' />
+												)}
+											</Button>
+											<div className='flex flex-col gap-2'>
+												<p>{tool.name}</p>
+
+												{!tool.description ||
+													(tool.description == '' && (
+														<p className='text-primary/50'>
+															{tool.description}
+														</p>
+													))}
+											</div>
+										</div>
+										<div>
+											<DeleteToolButton data={data} toolId={(tool as any).id} />
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
 						<FormField
 							control={form.control}
 							name='max_duration'
@@ -424,5 +503,52 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 				</form>
 			</Form>
 		</div>
+	)
+}
+
+function DeleteToolButton({
+	data,
+	toolId,
+}: {
+	data: GetAgentResponseModel
+	toolId: string
+}) {
+	const updateAgent = useUpdateAgent(data.agent_id)
+	const queryClient = useQueryClient()
+	return (
+		<Button
+			variant='outline'
+			size='icon'
+			type='button'
+			onClick={async () => {
+				await updateAgent.mutateAsync(
+					{
+						agent: {
+							prompt: {
+								tools: [
+									...(data.conversation_config.agent?.prompt?.tools?.filter(
+										(t: any) => t.id !== toolId,
+									) ?? []),
+								],
+							},
+						},
+					},
+					{
+						async onSuccess() {
+							await queryClient.invalidateQueries({
+								queryKey: ['get_agent', data.agent_id],
+							})
+							toast.success('Tool Removed Successfully')
+						},
+					},
+				)
+			}}
+		>
+			{updateAgent.isPending ? (
+				<LoaderIcon className='size-4 animate-spin' />
+			) : (
+				<TrashIcon className='size-4' />
+			)}
+		</Button>
 	)
 }
