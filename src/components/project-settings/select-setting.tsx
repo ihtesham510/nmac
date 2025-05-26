@@ -14,7 +14,7 @@ export function SelectSetting(
 	return (
 		<div
 			className={cn(
-				'rounded-lg bg-primary-foreground p-4 flex justify-between items-center',
+				'rounded-lg bg-card border-border border p-4 flex justify-between items-center',
 				props.className,
 			)}
 		>

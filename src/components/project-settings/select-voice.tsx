@@ -149,15 +149,15 @@ export function SelectVoice(props: {
 					className='w-full'
 				>
 					<PopoverTrigger asChild>
-						{selectedVoice && (
+						{selectedVoice && selectedVoiceData && (
 							<Button
 								variant='outline'
 								className='w-full flex justify-between px-2'
 							>
 								<div className='flex justify-between w-full items-center'>
-									<div className='flex gap-2 items-center'>
+									<div className='flex gap-2 items-center min-w-0'>
 										<span
-											className='p-1 rounded-full bg-primary text-primary-foreground'
+											className='p-1 rounded-full inline-block bg-primary text-primary-foreground'
 											onClick={e => {
 												e.stopPropagation()
 												testAudio()
@@ -169,7 +169,9 @@ export function SelectVoice(props: {
 												<PlayIcon className='size-3' />
 											)}
 										</span>
-										<p>{selectedVoiceData?.name}</p>
+										<p className='truncate min-w-0'>
+											{selectedVoiceData?.name}
+										</p>
 									</div>
 									<ChevronsUpDownIcon className='size-3.5' />
 								</div>
