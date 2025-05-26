@@ -221,7 +221,12 @@ export function AddTransferToHumanTool({
 						</ScrollArea>
 						<SheetFooter>
 							<div className='flex justify-end gap-2 items-center'>
-								<Button type='button' variant='outline' className='w-max'>
+								<Button
+									type='button'
+									variant='outline'
+									className='w-max'
+									onClick={() => onOpenChange?.(false)}
+								>
 									Cancel
 								</Button>
 								<Button
