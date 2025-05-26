@@ -6,8 +6,11 @@ import { cn } from '@/lib/utils'
 function ScrollArea({
 	className,
 	children,
+	scrollBar,
 	...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & {
+	scrollBar?: 'hidden' | string
+}) {
 	return (
 		<ScrollAreaPrimitive.Root
 			data-slot='scroll-area'
@@ -20,7 +23,7 @@ function ScrollArea({
 			>
 				{children}
 			</ScrollAreaPrimitive.Viewport>
-			<ScrollBar />
+			<ScrollBar className={scrollBar} />
 			<ScrollAreaPrimitive.Corner />
 		</ScrollAreaPrimitive.Root>
 	)

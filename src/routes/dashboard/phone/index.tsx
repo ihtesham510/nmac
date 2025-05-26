@@ -35,6 +35,7 @@ import { useAgents } from '@/hooks/use-agents'
 import {
 	Sheet,
 	SheetContent,
+	SheetFooter,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
@@ -46,6 +47,7 @@ import { useAuth } from '@/context/auth-context'
 import { AgentSelect } from '@/components/select-agent'
 import type { Agent } from '@/lib/types'
 import React, { useEffect } from 'react'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 export const Route = createFileRoute('/dashboard/phone/')({
 	component: RouteComponent,
@@ -298,23 +300,20 @@ function ClientSheetForm() {
 			form.setValue('agent_id', selectedAgent._id)
 		}
 	}, [selectedAgent])
-	function onSubmit({
+
+	async function onSubmit({
 		phone_no,
 		label,
 		sid,
 		token,
 	}: z.infer<typeof formSchema>) {
-		try {
-			addPhoneNo.mutate({
-				phone_number: phone_no,
-				label,
-				sid,
-				token,
-				agentId: selectedAgent?.agentId,
-			})
-		} catch (error) {
-			toast.error('Failed to submit the form. Please try again.')
-		}
+		await addPhoneNo.mutateAsync({
+			phone_number: phone_no,
+			label,
+			sid,
+			token,
+			agentId: selectedAgent?.agentId,
+		})
 	}
 
 	return (
@@ -328,102 +327,108 @@ function ClientSheetForm() {
 				</SheetTitle>
 			</SheetHeader>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 m-5'>
-					<FormField
-						control={form.control}
-						name='agent_id'
-						render={() => (
-							<FormItem>
-								<FormLabel>Agent</FormLabel>
-								<FormControl>
-									<AgentSelect
-										agents={agents}
-										value={selectedAgent}
-										className='min-w-full'
-										placeholder='Select Agent'
-										onSelect={agent => setSelectedAgent(agent!)}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='label'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Label</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Your Phone No Label'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='phone_no'
-						render={({ field }) => (
-							<FormItem className='flex flex-col items-start'>
-								<FormLabel>Phone Number</FormLabel>
-								<FormControl className='w-full'>
-									<PhoneInput
-										placeholder='Your Phone Number'
-										{...field}
-										defaultCountry='TR'
-									/>
-								</FormControl>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
+					<ScrollArea scrollBar='hidden' className='mx-4 my-2 px-1'>
+						<div className='space-y-8 max-h-[70vh]'>
+							<FormField
+								control={form.control}
+								name='agent_id'
+								render={() => (
+									<FormItem>
+										<FormLabel>Agent</FormLabel>
+										<FormControl>
+											<AgentSelect
+												agents={agents}
+												value={selectedAgent}
+												className='min-w-full'
+												placeholder='Select Agent'
+												onSelect={agent => setSelectedAgent(agent!)}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name='label'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Label</FormLabel>
+										<FormControl>
+											<Input
+												placeholder='Your Phone No Label'
+												type='text'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name='phone_no'
+								render={({ field }) => (
+									<FormItem className='flex flex-col items-start'>
+										<FormLabel>Phone Number</FormLabel>
+										<FormControl className='w-full'>
+											<PhoneInput
+												placeholder='Your Phone Number'
+												{...field}
+												defaultCountry='TR'
+											/>
+										</FormControl>
 
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-					<FormField
-						control={form.control}
-						name='sid'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Twilio Sid</FormLabel>
-								<FormControl>
-									<PasswordInput
-										placeholder='Your SID'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
+							<FormField
+								control={form.control}
+								name='sid'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Twilio Sid</FormLabel>
+										<FormControl>
+											<PasswordInput
+												placeholder='Your SID'
+												type='text'
+												{...field}
+											/>
+										</FormControl>
 
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-					<FormField
-						control={form.control}
-						name='token'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Token</FormLabel>
-								<FormControl>
-									<PasswordInput
-										placeholder='Twilio Token'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
+							<FormField
+								control={form.control}
+								name='token'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Token</FormLabel>
+										<FormControl>
+											<PasswordInput
+												placeholder='Twilio Token'
+												type='text'
+												{...field}
+											/>
+										</FormControl>
 
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit' className='w-full'>
-						Add
-					</Button>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+					</ScrollArea>
+					<SheetFooter>
+						<Button type='submit' className='w-full'>
+							Add
+						</Button>
+					</SheetFooter>
 				</form>
 			</Form>
 		</SheetContent>
