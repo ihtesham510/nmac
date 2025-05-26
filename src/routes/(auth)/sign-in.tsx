@@ -130,7 +130,7 @@ function RouteComponent() {
 						type='submit'
 					>
 						{form.formState.isSubmitting ? (
-							<LoaderCircle className='size-4 animte-spin' />
+							<LoaderCircle className='size-4 animate-spin' />
 						) : (
 							'Continue'
 						)}
