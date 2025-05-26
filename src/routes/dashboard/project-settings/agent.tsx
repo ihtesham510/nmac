@@ -275,7 +275,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 								</FormItem>
 							)}
 						/>
-						<div className='grid rounded-lg bg-primary-foreground gap-4 p-4'>
+						<div className='grid rounded-lg bg-card border border-border gap-4 p-4'>
 							<div className='flex justify-between items-center'>
 								<div className='flex flex-col gap-1'>
 									<h1 className='text-lg font-medium text-white'>
@@ -325,7 +325,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 									</DropdownMenu>
 								</div>
 							</div>
-							<div className='grid w-full rounded-lg bg-background'>
+							<div className='grid w-full rounded-lg bg-primary-foreground'>
 								{knowledge_base?.map(doc => (
 									<div
 										className='flex justify-between items-center p-2'
@@ -382,7 +382,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 								</div>
 							)}
 						</div>
-						<div className='grid rounded-lg bg-primary-foreground gap-4 p-4'>
+						<div className='grid rounded-lg bg-card border-border border gap-4 p-4'>
 							<div className='flex justify-between items-center'>
 								<div className='flex flex-col gap-1'>
 									<h1 className='text-lg font-medium text-white'>Tools</h1>
@@ -414,7 +414,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 									</DropdownMenu>
 								</div>
 							</div>
-							<div className='grid w-full rounded-lg bg-background'>
+							<div className='grid w-full rounded-lg bg-primary-foreground'>
 								{tools?.map((tool, i) => (
 									<div
 										className='flex justify-between items-center p-2'

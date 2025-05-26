@@ -25,7 +25,9 @@ export function ConfigSection({
 	className,
 }: ConfigSectionProps) {
 	return (
-		<div className={cn('rounded-lg bg-primary-foreground p-4', className)}>
+		<div
+			className={cn('rounded-lg bg-card border-border border p-4', className)}
+		>
 			<div className='mb-2 flex items-center gap-1.5'>
 				<h3 className='text-base font-medium text-white'>{title}</h3>
 				{infoTooltip && (

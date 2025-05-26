@@ -223,10 +223,10 @@ function VoiceForm({
 							<TriangleAlert className='size-4' />
 							<p className='font-semibold text-sm'>Changes Detected</p>
 						</div>
-						<div className='flex gap-2'>
+						<div className='flex gap-2 items-center'>
 							<Button
 								className='text-sm font-semibold'
-								variant='outline'
+								variant='ghost'
 								type='reset'
 								onClick={() => form.reset()}
 							>
