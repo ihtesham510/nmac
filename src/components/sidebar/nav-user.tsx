@@ -1,4 +1,4 @@
-import { LogOutIcon } from 'lucide-react'
+import { CreditCardIcon, LogOutIcon } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -7,6 +7,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import NumberFlow from '@number-flow/react'
 
 export interface NavUserProps {
 	user: {
@@ -35,29 +36,38 @@ export function NavUser({ user, credits, ...props }: NavUserProps) {
 						<AvatarFallback className='rounded-lg'>CN</AvatarFallback>
 					</Avatar>
 					<div className='grid flex-1 text-left text-sm leading-tight'>
-						<span className='truncate font-medium'>{user.name}</span>
+						<span className='truncate font-medium text-lg'>{user.name}</span>
 						<span className='truncate text-xs text-muted-foreground'>
 							{user.email}
 						</span>
 					</div>
 				</div>
 			</SidebarMenuItem>
+			<Separator className='my-1' />
 			{credits && (
 				<SidebarMenuItem className='flex flex-col space-y-2 my-1 mx-1'>
-					<span className='font-medium flex justify-between items-center text-sm'>
-						<p>Total :</p>
-						<p> {credits?.total}</p>
-					</span>
-					<span className='font-medium flex justify-between items-center text-sm'>
-						<p>Remaining :</p>
-						<p> {Math.round(credits.remaining)}</p>
-					</span>
-					<Progress
-						value={100 - percentUsed}
-						max={100}
-						destructive={100 - percentUsed < 20}
-						className='w-auto h-1.5'
-					/>
+					<div className='flex gap-2 items-center'>
+						<CreditCardIcon className='size-4' />
+						<p className='font-medium text-sm'>Credits</p>
+					</div>
+					<div className='flex flex-col gap-2'>
+						<div className='flex flex-col py-2 gap-2'>
+							<span className='font-medium flex justify-between items-center text-sm'>
+								<p>Total :</p>
+								<p> {credits?.total}</p>
+							</span>
+							<span className='font-medium flex justify-between items-center text-sm'>
+								<p>Remaining :</p>
+								<NumberFlow value={Math.round(credits.remaining)} />
+							</span>
+						</div>
+						<Progress
+							value={100 - percentUsed}
+							max={100}
+							destructive={100 - percentUsed < 20}
+							className='w-auto h-1.5'
+						/>
+					</div>
 				</SidebarMenuItem>
 			)}
 			<Separator className='my-1 mb-2' />
