@@ -17,6 +17,13 @@ declare global {
 	interface Array<T> {
 		equals(arr2: T[]): boolean
 	}
+	interface String {
+		capitalize(): string
+	}
+}
+
+String.prototype.capitalize = function (): string {
+	return this.charAt(0).toUpperCase() + this.slice(1)
 }
 Array.prototype.equals = function (arr2) {
 	return (

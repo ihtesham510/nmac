@@ -52,6 +52,7 @@ import { Switch } from '@/components/ui/switch'
 import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
 import { useElevenLabsClient } from '@/api/client'
 import { AddTransferToHumanTool } from '@/components/project-settings/tools/add-transfer-to-human'
+import { AddWebhook } from '@/components/project-settings/tools/add-webhook'
 
 export const Route = createFileRoute('/dashboard/project-settings/agent')({
 	component: RouteComponent,
@@ -85,6 +86,7 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 		linkDialog: false,
 		textDialog: false,
 		addTool: false,
+		addWebhook: false,
 		addTransferToHuman: false,
 	})
 
@@ -165,6 +167,13 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 				<AddTransferToHumanTool
 					open={dialogs.addTransferToHuman}
 					onOpenChange={e => setDialogs('addTransferToHuman', e)}
+					data={data}
+				/>
+			)}
+			{data && (
+				<AddWebhook
+					open={dialogs.addWebhook}
+					onOpenChange={e => setDialogs('addWebhook', e)}
 					data={data}
 				/>
 			)}
@@ -409,6 +418,11 @@ function UpdateAgentForm({ data }: { data: GetAgentResponseModel }) {
 												onClick={() => setDialogs('addTransferToHuman', true)}
 											>
 												Transfer to Human
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => setDialogs('addWebhook', true)}
+											>
+												Add Webhook
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>

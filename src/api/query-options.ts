@@ -47,6 +47,7 @@ export const queries = {
 			queryFn: async () =>
 				id ? await client.conversationalAi.getAgent(id) : null,
 			enabled,
+			refetchOnWindowFocus: false,
 		}),
 	get_conversation: (
 		client: ElevenLabsClient,
