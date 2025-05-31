@@ -1,6 +1,5 @@
 import {
 	BotIcon,
-	BrainIcon,
 	ChartLine,
 	History,
 	PhoneIcon,
@@ -47,13 +46,6 @@ export function AppSidebar() {
 			icon: PhoneIcon,
 			isActive: !!route({ to: '/dashboard/phone', fuzzy: true }),
 			hidden: false,
-		},
-		{
-			title: 'knowledge Base',
-			href: { to: '/dashboard/knowledge_base' },
-			icon: BrainIcon,
-			isActive: !!route({ to: '/dashboard/knowledge_base', fuzzy: true }),
-			hidden: auth.type === 'client',
 		},
 		{
 			title: 'Clients',

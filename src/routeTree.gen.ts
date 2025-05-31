@@ -16,7 +16,6 @@ import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
 import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
-import { Route as DashboardKnowledgebaseImport } from './routes/dashboard/knowledge_base'
 import { Route as DashboardHistoryImport } from './routes/dashboard/history'
 import { Route as DashboardAnalyticsImport } from './routes/dashboard/analytics'
 import { Route as Dashboard505Import } from './routes/dashboard/505'
@@ -67,12 +66,6 @@ const DashboardIndexRoute = DashboardIndexImport.update({
 const DashboardSettingsRoute = DashboardSettingsImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-
-const DashboardKnowledgebaseRoute = DashboardKnowledgebaseImport.update({
-  id: '/knowledge_base',
-  path: '/knowledge_base',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -296,13 +289,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardHistoryImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/dashboard/knowledge_base': {
-      id: '/dashboard/knowledge_base'
-      path: '/knowledge_base'
-      fullPath: '/dashboard/knowledge_base'
-      preLoaderRoute: typeof DashboardKnowledgebaseImport
-      parentRoute: typeof DashboardRouteImport
-    }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/settings'
@@ -450,7 +436,6 @@ interface DashboardRouteRouteChildren {
   Dashboard505Route: typeof Dashboard505Route
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardHistoryRoute: typeof DashboardHistoryRoute
-  DashboardKnowledgebaseRoute: typeof DashboardKnowledgebaseRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardPhoneIndexRoute: typeof DashboardPhoneIndexRoute
@@ -465,7 +450,6 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   Dashboard505Route: Dashboard505Route,
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardHistoryRoute: DashboardHistoryRoute,
-  DashboardKnowledgebaseRoute: DashboardKnowledgebaseRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardPhoneIndexRoute: DashboardPhoneIndexRoute,
@@ -489,7 +473,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/knowledge_base': typeof DashboardKnowledgebaseRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
@@ -514,7 +497,6 @@ export interface FileRoutesByTo {
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/knowledge_base': typeof DashboardKnowledgebaseRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
@@ -544,7 +526,6 @@ export interface FileRoutesById {
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/knowledge_base': typeof DashboardKnowledgebaseRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
@@ -575,7 +556,6 @@ export interface FileRouteTypes {
     | '/dashboard/505'
     | '/dashboard/analytics'
     | '/dashboard/history'
-    | '/dashboard/knowledge_base'
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/agents/$agent_id'
@@ -599,7 +579,6 @@ export interface FileRouteTypes {
     | '/dashboard/505'
     | '/dashboard/analytics'
     | '/dashboard/history'
-    | '/dashboard/knowledge_base'
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/agents/$agent_id'
@@ -627,7 +606,6 @@ export interface FileRouteTypes {
     | '/dashboard/505'
     | '/dashboard/analytics'
     | '/dashboard/history'
-    | '/dashboard/knowledge_base'
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/agents/$agent_id'
@@ -692,7 +670,6 @@ export const routeTree = rootRoute
         "/dashboard/505",
         "/dashboard/analytics",
         "/dashboard/history",
-        "/dashboard/knowledge_base",
         "/dashboard/settings",
         "/dashboard/",
         "/dashboard/phone/"
@@ -751,10 +728,6 @@ export const routeTree = rootRoute
     },
     "/dashboard/history": {
       "filePath": "dashboard/history.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/knowledge_base": {
-      "filePath": "dashboard/knowledge_base.tsx",
       "parent": "/dashboard"
     },
     "/dashboard/settings": {
