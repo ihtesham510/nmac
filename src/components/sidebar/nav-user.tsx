@@ -56,7 +56,9 @@ export function NavUser({ user, credits, ...props }: NavUserProps) {
 							<div className='flex flex-col py-2 gap-2'>
 								<span className='font-medium flex justify-between items-center text-sm'>
 									<p>Total :</p>
-									<p> {credits?.total}</p>
+									<p>
+										<NumberFlow value={Math.round(credits.total)} />
+									</p>
 								</span>
 								<span className='font-medium flex justify-between items-center text-sm'>
 									<p>Remaining :</p>
