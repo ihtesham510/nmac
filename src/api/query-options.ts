@@ -65,7 +65,10 @@ export const queries = {
 				await client.conversationalAi.getConversation(conversationId),
 			enabled,
 		}),
-	list_phone_no: (client: ElevenLabsClient, { filter }: { filter: string[] }) =>
+	list_phone_no: (
+		client: ElevenLabsClient,
+		{ filter }: { filter?: string[] },
+	) =>
 		queryOptions({
 			queryKey: ['list_phone_no'],
 			queryFn: async () => {
@@ -77,6 +80,7 @@ export const queries = {
 							filter.includes(phone.assigned_agent.agent_id),
 					)
 				}
+				return phone_nos
 			},
 		}),
 	list_knoledge_base: (
@@ -103,5 +107,10 @@ export const queries = {
 			queryFn: async () => {
 				return await client.voices.getAll()
 			},
+		}),
+	get_phone_no: (client: ElevenLabsClient, id: string) =>
+		queryOptions({
+			queryKey: ['get_phone_no'],
+			queryFn: async () => await client.conversationalAi.getPhoneNumber(id),
 		}),
 }

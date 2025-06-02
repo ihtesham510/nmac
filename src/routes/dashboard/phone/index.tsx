@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { isValidPhoneNumber } from 'react-phone-number-input'
 import { useForm } from 'react-hook-form'
@@ -15,8 +15,20 @@ import {
 import { Input } from '@/components/ui/input'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { PasswordInput } from '@/components/ui/password-input'
-
-import { Phone, PhoneIcon, PlusIcon } from 'lucide-react'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
+	CopyIcon,
+	EllipsisVertical,
+	Phone,
+	PhoneIcon,
+	PlusIcon,
+	TrashIcon,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -61,12 +73,12 @@ function RouteComponent() {
 	const isClient = auth.isAuthenticated && auth.type === 'client'
 	const phoneNos = useQuery(
 		queries.list_phone_no(client, {
-			filter: agents.map(agent => agent.agentId),
+			filter: isClient ? agents.map(agent => agent.agentId) : undefined,
 		}),
 	)
 	return (
 		<Sheet open={dialog.sheet} onOpenChange={e => setDialog('sheet', e)}>
-			{isClient ? <ClientSheetForm /> : <AdminSheetForm />}
+			<SheetForm isClient={isClient} />
 			<div className='m-10 grid space-y-6'>
 				<div className='flex items-center justify-between mb-6'>
 					<div className='grid gap-2'>
@@ -100,6 +112,7 @@ function PhoneNumbersTable({
 	phoneNos: GetPhoneNumberResponseModel[]
 	onAddPhoneClick: () => void
 }) {
+	const navigate = useNavigate()
 	return (
 		<>
 			{phoneNos.length !== 0 && (
@@ -107,20 +120,27 @@ function PhoneNumbersTable({
 					<TableCaption>A list of your phone numbers.</TableCaption>
 					<TableHeader>
 						<TableRow>
-							<TableHead className='w-[150px]'>Phone No.</TableHead>
 							<TableHead>Label</TableHead>
-							<TableHead className='w-[150px]'>Assigned Agent</TableHead>
-							<TableHead className='w-[70px]'>Provider</TableHead>
-							<TableHead className='text-ring'>Actions</TableHead>
+							<TableHead>Phone No.</TableHead>
+							<TableHead>Assigned Agent</TableHead>
+							<TableHead>Provider</TableHead>
 						</TableRow>
 					</TableHeader>
-					<TableBody>
+					<TableBody className='mt-2'>
 						{phoneNos.map(phoneNo => (
-							<TableRow>
+							<TableRow
+								className='h-14'
+								onClick={() =>
+									navigate({
+										to: '/dashboard/phone/$id',
+										params: { id: phoneNo.phone_number_id },
+									})
+								}
+							>
+								<TableCell>{phoneNo.label}</TableCell>
 								<TableCell className='font-medium'>
 									{phoneNo.phone_number}
 								</TableCell>
-								<TableCell>{phoneNo.label}</TableCell>
 								<TableCell>
 									{phoneNo.assigned_agent ? (
 										phoneNo.assigned_agent.agent_name
@@ -128,13 +148,41 @@ function PhoneNumbersTable({
 										<Badge variant='outline'>No Assigned Agent</Badge>
 									)}
 								</TableCell>
-								<TableCell className='text-right'>
+								<TableCell>
 									<Badge
 										variant='outline'
 										className={getProviderBadgeColor(phoneNo.provider)}
 									>
 										{phoneNo.provider}
 									</Badge>
+								</TableCell>
+								<TableCell>
+									<DropdownMenu>
+										<DropdownMenuTrigger>
+											<Button variant='ghost' size='icon'>
+												<EllipsisVertical className='size-4' />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<DropdownMenuItem
+												className='flex gap-2'
+												onClick={async e => {
+													e.stopPropagation()
+													await window.navigator.clipboard.writeText(
+														phoneNo.phone_number,
+													)
+													toast.success('Nubmer Copied To Clipboard')
+												}}
+											>
+												<CopyIcon className='size-4' />{' '}
+												<p>Copy Phone Number</p>{' '}
+											</DropdownMenuItem>
+											<DropdownMenuItem className='flex gap-2'>
+												<TrashIcon className='size-4' />{' '}
+												<p>Delete Nubmer</p>{' '}
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</TableCell>
 							</TableRow>
 						))}
@@ -160,8 +208,11 @@ function PhoneNumbersTable({
 		</>
 	)
 }
-function AdminSheetForm() {
+
+function SheetForm({ isClient }: { isClient: boolean }) {
 	const addPhoneNo = useAddPhoneNo()
+	const agents = useAgents()
+	const [selectedAgent, setSelectedAgent] = React.useState<Agent>(agents[0])
 	const formSchema = z.object({
 		label: z.string().min(1),
 		phone_no: z
@@ -169,134 +220,14 @@ function AdminSheetForm() {
 			.refine(isValidPhoneNumber, { message: 'Invalid Phone No.' }),
 		sid: z.string(),
 		token: z.string(),
-	})
-
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-	})
-	function onSubmit({
-		phone_no,
-		label,
-		sid,
-		token,
-	}: z.infer<typeof formSchema>) {
-		try {
-			addPhoneNo.mutate({ phone_number: phone_no, label, sid, token })
-		} catch (error) {
-			toast.error('Failed to submit the form. Please try again.')
-		}
-	}
-
-	return (
-		<SheetContent>
-			<SheetHeader>
-				<SheetTitle className='flex items-center gap-2'>
-					<Button variant='outline' size='icon'>
-						<PhoneIcon className='size-4' />
-					</Button>
-					Import Phone Number from Twilio.
-				</SheetTitle>
-			</SheetHeader>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 m-5'>
-					<FormField
-						control={form.control}
-						name='label'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Label</FormLabel>
-								<FormControl>
-									<Input
-										placeholder='Your Phone No Label'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name='phone_no'
-						render={({ field }) => (
-							<FormItem className='flex flex-col items-start'>
-								<FormLabel>Phone Number</FormLabel>
-								<FormControl className='w-full'>
-									<PhoneInput
-										placeholder='Your Phone Number'
-										{...field}
-										defaultCountry='TR'
-									/>
-								</FormControl>
-
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name='sid'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Twilio Sid</FormLabel>
-								<FormControl>
-									<PasswordInput
-										placeholder='Your SID'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
-
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name='token'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Token</FormLabel>
-								<FormControl>
-									<PasswordInput
-										placeholder='Twilio Token'
-										type='text'
-										{...field}
-									/>
-								</FormControl>
-
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit' className='w-full'>
-						Add
-					</Button>
-				</form>
-			</Form>
-		</SheetContent>
-	)
-}
-function ClientSheetForm() {
-	const addPhoneNo = useAddPhoneNo()
-	const agents = useAgents()
-	const [selectedAgent, setSelectedAgent] = React.useState<Agent>(agents[0])
-	const formSchema = z.object({
-		label: z.string().min(1),
-		phone_no: z.string(),
-		sid: z.string(),
-		token: z.string(),
-		agent_id: z.string(),
+		agent_id: z.string().optional(),
 	})
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 	})
 	useEffect(() => {
-		if (selectedAgent) {
+		if (selectedAgent && isClient) {
 			form.setValue('agent_id', selectedAgent._id)
 		}
 	}, [selectedAgent])
@@ -328,27 +259,29 @@ function ClientSheetForm() {
 			</SheetHeader>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<ScrollArea scrollBar='hidden' className='mx-4 my-2 px-1'>
-						<div className='space-y-8 max-h-[70vh]'>
-							<FormField
-								control={form.control}
-								name='agent_id'
-								render={() => (
-									<FormItem>
-										<FormLabel>Agent</FormLabel>
-										<FormControl>
-											<AgentSelect
-												agents={agents}
-												value={selectedAgent}
-												className='min-w-full'
-												placeholder='Select Agent'
-												onSelect={agent => setSelectedAgent(agent!)}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+					<ScrollArea scrollBar='hidden' className='mx-4 my-2 px-1 h-[68vh]'>
+						<div className='space-y-8 '>
+							{isClient && (
+								<FormField
+									control={form.control}
+									name='agent_id'
+									render={() => (
+										<FormItem>
+											<FormLabel>Agent</FormLabel>
+											<FormControl>
+												<AgentSelect
+													agents={agents}
+													value={selectedAgent}
+													className='min-w-full'
+													placeholder='Select Agent'
+													onSelect={agent => setSelectedAgent(agent!)}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							)}
 							<FormField
 								control={form.control}
 								name='label'
