@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
 	Sheet,
 	SheetContent,
@@ -10,7 +10,6 @@ import {
 	Bot,
 	Copy,
 	LinkIcon,
-	LoaderCircle,
 	MoreHorizontal,
 	PlusIcon,
 	Search,
@@ -36,13 +35,14 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
 import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardContent,
-	CardFooter,
-} from '@/components/ui/card'
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { useMutation } from 'convex/react'
 import { useQuery } from '@/cache/useQuery'
@@ -77,7 +77,6 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from '@/components/ui/dialog'
 import { useDialog } from '@/hooks/use-dialogs'
 import { useElevenLabsClient } from '@/api/client'
@@ -95,6 +94,7 @@ const formSchema = z.object({
 
 function RouteComponent() {
 	const auth = useAuth()
+	const navigate = useNavigate()
 	const client = useElevenLabsClient()
 	const [sheet, setSheet] = useState(false)
 	const conv_agents = useTanstackQuery(queries.list_agents(client))
@@ -103,6 +103,8 @@ function RouteComponent() {
 	const data = useQuery(api.agents.getAgents, { userId: auth.user!._id })
 	const [filter, setFilter] = useState<string>()
 	const [dialogs, setDialogs] = useDialog({ alertDelete: false })
+	const [selectedAgent, setSelectedAgent] = useState<any>(null)
+
 	const agents = useMemo(() => {
 		if (data && (!filter || filter === '')) {
 			return data
@@ -118,6 +120,7 @@ function RouteComponent() {
 			agent_tags: [],
 		},
 	})
+
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			if (auth.user) {
@@ -133,6 +136,19 @@ function RouteComponent() {
 			}
 		} catch (error) {
 			toast.error('Error while importing agent. Please try again.')
+		}
+	}
+
+	const handleDeleteClick = (agent: any) => {
+		setSelectedAgent(agent)
+		setDialogs('alertDelete', true)
+	}
+
+	const handleDeleteConfirm = () => {
+		if (selectedAgent) {
+			deleteAgent({ agentId: selectedAgent._id })
+			setDialogs('alertDelete', false)
+			setSelectedAgent(null)
 		}
 	}
 
@@ -231,6 +247,45 @@ function RouteComponent() {
 					</form>
 				</Form>
 			</SheetContent>
+
+			<Dialog
+				open={dialogs.alertDelete}
+				onOpenChange={e => setDialogs('alertDelete', e)}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Are you absolutely sure?</DialogTitle>
+						<DialogDescription>
+							This action cannot be undone. This will permanently delete your
+							agent and remove your data from our servers.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button
+							type='button'
+							variant='ghost'
+							size='sm'
+							onClick={() => {
+								setDialogs('alertDelete', false)
+								setSelectedAgent(null)
+							}}
+							className='cursor-pointer'
+						>
+							Cancel
+						</Button>
+						<Button
+							type='button'
+							size='sm'
+							variant='destructive'
+							className='cursor-pointer'
+							onClick={handleDeleteConfirm}
+						>
+							Delete
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
 			<div className='m-10 rounded-md gap-6 grid'>
 				<div className='grid gap-2 my-4'>
 					<h1 className='text-4xl font-bold'>Agents</h1>
@@ -238,31 +293,83 @@ function RouteComponent() {
 						Create and manage your agents.
 					</h1>
 				</div>
-				{!data && conv_agents.isLoading && (
-					<div className='w-full h-80 flex justify-center items-center'>
-						<LoaderCircle className='size-6' />
-					</div>
-				)}
-				{data && data?.length === 0 && !conv_agents.isLoading && (
-					<>
-						<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg'>
-							<div className='bg-muted/50 p-4 rounded-full mb-4'>
-								<Bot className='h-10 w-10 text-muted-foreground' />
-							</div>
-							<h2 className='text-xl font-semibold mb-2'>No agents found</h2>
-							<p className='text-muted-foreground text-center max-w-md mb-8'>
-								You haven't created any agents yet. Add a new agent to get
-								started.
-							</p>
 
-							<SheetTrigger>
-								<Button>
-									<PlusIcon className='size-4' />
-									Add Agent
-								</Button>
-							</SheetTrigger>
+				{!data && conv_agents.isLoading && (
+					<>
+						<div className='flex justify-between items-center'>
+							<div className='relative'>
+								<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+								<Input
+									placeholder='Search Agents...'
+									disabled
+									className='pl-8 w-[400px]'
+								/>
+							</div>
+							<Button disabled className='flex gap-2'>
+								<PlusIcon />
+								<p className='hidden lg:inline'>Create Agent</p>
+							</Button>
+						</div>
+
+						<div className='border rounded-lg'>
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead className='px-4'>Name</TableHead>
+										<TableHead className='hidden md:flex items-center'>
+											Description
+										</TableHead>
+										<TableHead>Tags</TableHead>
+										<TableHead>Created</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{Array.from({ length: 5 }).map((_, index) => (
+										<TableRow key={index}>
+											<TableCell className='px-4'>
+												<Skeleton className='h-4 w-[150px]' />
+											</TableCell>
+											<TableCell className='hidden md:flex items-center'>
+												<Skeleton className='h-4 w-[250px]' />
+											</TableCell>
+											<TableCell>
+												<div className='flex gap-1'>
+													<Skeleton className='h-5 w-[60px] rounded-full' />
+													<Skeleton className='h-5 w-[80px] rounded-full' />
+													<Skeleton className='h-5 w-[70px] rounded-full' />
+												</div>
+											</TableCell>
+											<TableCell>
+												<Skeleton className='h-4 w-[100px]' />
+											</TableCell>
+											<TableCell>
+												<Skeleton className='h-8 w-8 rounded-md' />
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
 						</div>
 					</>
+				)}
+
+				{data && data?.length === 0 && !conv_agents.isLoading && (
+					<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg'>
+						<div className='bg-muted/50 p-4 rounded-full mb-4'>
+							<Bot className='h-10 w-10 text-muted-foreground' />
+						</div>
+						<h2 className='text-xl font-semibold mb-2'>No agents found</h2>
+						<p className='text-muted-foreground text-center max-w-md mb-8'>
+							You haven't created any agents yet. Add a new agent to get
+							started.
+						</p>
+						<SheetTrigger>
+							<Button>
+								<PlusIcon className='size-4' />
+								Add Agent
+							</Button>
+						</SheetTrigger>
+					</div>
 				)}
 
 				{data && data.length > 0 && (
@@ -271,7 +378,7 @@ function RouteComponent() {
 							<div className='relative'>
 								<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
 								<Input
-									placeholder='Search Clients...'
+									placeholder='Search Agents...'
 									onChange={e => setFilter(e.target.value)}
 									className='pl-8 w-[400px]'
 								/>
@@ -292,112 +399,109 @@ function RouteComponent() {
 								</TooltipProvider>
 							</SheetTrigger>
 						</div>
-						{agents?.map(agent => (
-							<Dialog
-								open={dialogs.alertDelete}
-								onOpenChange={e => setDialogs('alertDelete', e)}
-							>
-								<DialogContent>
-									<DialogHeader>
-										<DialogTitle>Are you absolutely sure?</DialogTitle>
-										<DialogDescription>
-											This action cannot be undone. This will permanently delete
-											your account and remove your data from our servers.
-										</DialogDescription>
-									</DialogHeader>
-									<DialogFooter>
-										<Button
-											type='button'
-											variant='ghost'
-											size='sm'
-											onClick={() => setDialogs('alertDelete', false)}
+
+						<div className='border rounded-lg'>
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead className='px-4'>Name</TableHead>
+										<TableHead className='hidden md:flex items-center'>
+											Description
+										</TableHead>
+										<TableHead>Tags</TableHead>
+										<TableHead>Created</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{agents?.map(agent => (
+										<TableRow
+											key={agent._id}
 											className='cursor-pointer'
+											onClick={() =>
+												navigate({
+													to: '/dashboard/agents/$agent/agent',
+													params: { agent: agent.agentId },
+												})
+											}
 										>
-											cancel
-										</Button>
-										<Button
-											type='button'
-											size='sm'
-											className='cursor-pointer'
-											onClick={() => {
-												deleteAgent({ agentId: agent._id })
-												setDialogs('alertDelete', false)
-											}}
-										>
-											Continue
-										</Button>
-									</DialogFooter>
-								</DialogContent>
-								<Card>
-									<CardHeader>
-										<div className='flex justify-between items-start'>
-											<div>
-												<CardTitle className='text-bold text-2xl'>
-													{agent.name}
-												</CardTitle>
-												<CardDescription className='mt-1'>
-													{agent.description}
-												</CardDescription>
-											</div>
-											<DropdownMenu>
-												<DropdownMenuTrigger asChild>
-													<Button
-														variant='ghost'
-														size='icon'
-														className='h-8 w-8'
-													>
-														<MoreHorizontal className='h-4 w-4' />
-														<span className='sr-only'>Open menu</span>
-													</Button>
-												</DropdownMenuTrigger>
-												<DropdownMenuContent align='end'>
-													<DropdownMenuItem
-														onClick={async () => {
-															await navigator.clipboard.writeText(agent.agentId)
-															toast.success('Agent Id Coppied.')
-														}}
-													>
-														<Copy className='h-4 w-4 mr-2' />
-														Copy agent ID
-													</DropdownMenuItem>
-													<DropdownMenuItem
-														onClick={async () => {
-															await navigator.clipboard.writeText(
-																`${window.location.host}/agents/${agent._id}`,
-															)
-															toast.success('Link Coppied.')
-														}}
-													>
-														<LinkIcon className='h-4 w-4 mr-2' />
-														Copy Link
-													</DropdownMenuItem>
-													<DialogTrigger asChild>
-														<DropdownMenuItem>
+											<TableCell className='font-medium px-4'>
+												{agent.name}
+											</TableCell>
+											<TableCell className='max-w-[300px] hidden md:table-cell items-center truncate'>
+												{agent.description}
+											</TableCell>
+											<TableCell>
+												<div className='flex flex-wrap gap-1'>
+													{agent.tags.slice(0, 3).map(tag => (
+														<Badge
+															key={tag}
+															variant='secondary'
+															className='text-xs'
+														>
+															<Tag className='h-3 w-3 mr-1' />
+															{tag}
+														</Badge>
+													))}
+													{agent.tags.length > 3 && (
+														<Badge variant='outline' className='text-xs'>
+															+{agent.tags.length - 3}
+														</Badge>
+													)}
+												</div>
+											</TableCell>
+											<TableCell className='text-sm text-muted-foreground'>
+												{format(agent._creationTime, 'MMM d, yyyy')}
+											</TableCell>
+											<TableCell onClick={e => e.stopPropagation()}>
+												<DropdownMenu>
+													<DropdownMenuTrigger asChild>
+														<Button
+															variant='ghost'
+															size='icon'
+															className='h-8 w-8'
+														>
+															<MoreHorizontal className='h-4 w-4' />
+															<span className='sr-only'>Open menu</span>
+														</Button>
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align='end'>
+														<DropdownMenuItem
+															onClick={async () => {
+																await navigator.clipboard.writeText(
+																	agent.agentId,
+																)
+																toast.success('Agent ID copied.')
+															}}
+														>
+															<Copy className='h-4 w-4 mr-2' />
+															Copy agent ID
+														</DropdownMenuItem>
+														<DropdownMenuItem
+															onClick={async () => {
+																await navigator.clipboard.writeText(
+																	`${window.location.host}/agents/${agent._id}`,
+																)
+																toast.success('Link copied.')
+															}}
+														>
+															<LinkIcon className='h-4 w-4 mr-2' />
+															Copy Link
+														</DropdownMenuItem>
+														<DropdownMenuItem
+															onClick={() => handleDeleteClick(agent)}
+															className='text-destructive'
+														>
 															<Trash2 className='h-4 w-4 mr-2' />
 															Delete agent
 														</DropdownMenuItem>
-													</DialogTrigger>
-												</DropdownMenuContent>
-											</DropdownMenu>
-										</div>
-									</CardHeader>
-									<CardContent className='flex flex-wrap items-center gap-2'>
-										{agent.tags.map(tag => (
-											<Badge key={tag} variant='secondary' className='text-xs'>
-												<Tag className='h-3 w-3 mr-1' />
-												{tag}
-											</Badge>
-										))}
-									</CardContent>
-									<CardFooter>
-										<p className='text-xs text-muted-foreground'>
-											Created{' '}
-											{format(agent._creationTime, "MMM d, yyyy 'at' h:mm a")}
-										</p>
-									</CardFooter>
-								</Card>
-							</Dialog>
-						))}
+													</DropdownMenuContent>
+												</DropdownMenu>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</div>
 					</>
 				)}
 			</div>

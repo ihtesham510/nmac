@@ -36,7 +36,11 @@ import { Route as DashboardProjectSettingsAgentImport } from './routes/dashboard
 import { Route as DashboardPhoneIdImport } from './routes/dashboard/phone/$id'
 import { Route as DashboardAgents505Import } from './routes/dashboard/agents/505'
 import { Route as DashboardAgents404Import } from './routes/dashboard/agents/404'
-import { Route as DashboardAgentsAgentidImport } from './routes/dashboard/agents/$agent_id'
+import { Route as DashboardAgentsAgentRouteImport } from './routes/dashboard/agents/$agent/route'
+import { Route as DashboardAgentsAgentIndexImport } from './routes/dashboard/agents/$agent/index'
+import { Route as DashboardAgentsAgentVoiceImport } from './routes/dashboard/agents/$agent/voice'
+import { Route as DashboardAgentsAgentPreviewImport } from './routes/dashboard/agents/$agent/preview'
+import { Route as DashboardAgentsAgentAgentImport } from './routes/dashboard/agents/$agent/agent'
 
 // Create/Update Routes
 
@@ -195,10 +199,35 @@ const DashboardAgents404Route = DashboardAgents404Import.update({
   getParentRoute: () => DashboardAgentsRouteRoute,
 } as any)
 
-const DashboardAgentsAgentidRoute = DashboardAgentsAgentidImport.update({
-  id: '/$agent_id',
-  path: '/$agent_id',
+const DashboardAgentsAgentRouteRoute = DashboardAgentsAgentRouteImport.update({
+  id: '/$agent',
+  path: '/$agent',
   getParentRoute: () => DashboardAgentsRouteRoute,
+} as any)
+
+const DashboardAgentsAgentIndexRoute = DashboardAgentsAgentIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardAgentsAgentRouteRoute,
+} as any)
+
+const DashboardAgentsAgentVoiceRoute = DashboardAgentsAgentVoiceImport.update({
+  id: '/voice',
+  path: '/voice',
+  getParentRoute: () => DashboardAgentsAgentRouteRoute,
+} as any)
+
+const DashboardAgentsAgentPreviewRoute =
+  DashboardAgentsAgentPreviewImport.update({
+    id: '/preview',
+    path: '/preview',
+    getParentRoute: () => DashboardAgentsAgentRouteRoute,
+  } as any)
+
+const DashboardAgentsAgentAgentRoute = DashboardAgentsAgentAgentImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => DashboardAgentsAgentRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -310,11 +339,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/dashboard/agents/$agent_id': {
-      id: '/dashboard/agents/$agent_id'
-      path: '/$agent_id'
-      fullPath: '/dashboard/agents/$agent_id'
-      preLoaderRoute: typeof DashboardAgentsAgentidImport
+    '/dashboard/agents/$agent': {
+      id: '/dashboard/agents/$agent'
+      path: '/$agent'
+      fullPath: '/dashboard/agents/$agent'
+      preLoaderRoute: typeof DashboardAgentsAgentRouteImport
       parentRoute: typeof DashboardAgentsRouteImport
     }
     '/dashboard/agents/404': {
@@ -387,20 +416,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProjectSettingsIndexImport
       parentRoute: typeof DashboardProjectSettingsRouteImport
     }
+    '/dashboard/agents/$agent/agent': {
+      id: '/dashboard/agents/$agent/agent'
+      path: '/agent'
+      fullPath: '/dashboard/agents/$agent/agent'
+      preLoaderRoute: typeof DashboardAgentsAgentAgentImport
+      parentRoute: typeof DashboardAgentsAgentRouteImport
+    }
+    '/dashboard/agents/$agent/preview': {
+      id: '/dashboard/agents/$agent/preview'
+      path: '/preview'
+      fullPath: '/dashboard/agents/$agent/preview'
+      preLoaderRoute: typeof DashboardAgentsAgentPreviewImport
+      parentRoute: typeof DashboardAgentsAgentRouteImport
+    }
+    '/dashboard/agents/$agent/voice': {
+      id: '/dashboard/agents/$agent/voice'
+      path: '/voice'
+      fullPath: '/dashboard/agents/$agent/voice'
+      preLoaderRoute: typeof DashboardAgentsAgentVoiceImport
+      parentRoute: typeof DashboardAgentsAgentRouteImport
+    }
+    '/dashboard/agents/$agent/': {
+      id: '/dashboard/agents/$agent/'
+      path: '/'
+      fullPath: '/dashboard/agents/$agent/'
+      preLoaderRoute: typeof DashboardAgentsAgentIndexImport
+      parentRoute: typeof DashboardAgentsAgentRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface DashboardAgentsAgentRouteRouteChildren {
+  DashboardAgentsAgentAgentRoute: typeof DashboardAgentsAgentAgentRoute
+  DashboardAgentsAgentPreviewRoute: typeof DashboardAgentsAgentPreviewRoute
+  DashboardAgentsAgentVoiceRoute: typeof DashboardAgentsAgentVoiceRoute
+  DashboardAgentsAgentIndexRoute: typeof DashboardAgentsAgentIndexRoute
+}
+
+const DashboardAgentsAgentRouteRouteChildren: DashboardAgentsAgentRouteRouteChildren =
+  {
+    DashboardAgentsAgentAgentRoute: DashboardAgentsAgentAgentRoute,
+    DashboardAgentsAgentPreviewRoute: DashboardAgentsAgentPreviewRoute,
+    DashboardAgentsAgentVoiceRoute: DashboardAgentsAgentVoiceRoute,
+    DashboardAgentsAgentIndexRoute: DashboardAgentsAgentIndexRoute,
+  }
+
+const DashboardAgentsAgentRouteRouteWithChildren =
+  DashboardAgentsAgentRouteRoute._addFileChildren(
+    DashboardAgentsAgentRouteRouteChildren,
+  )
+
 interface DashboardAgentsRouteRouteChildren {
-  DashboardAgentsAgentidRoute: typeof DashboardAgentsAgentidRoute
+  DashboardAgentsAgentRouteRoute: typeof DashboardAgentsAgentRouteRouteWithChildren
   DashboardAgents404Route: typeof DashboardAgents404Route
   DashboardAgents505Route: typeof DashboardAgents505Route
   DashboardAgentsIndexRoute: typeof DashboardAgentsIndexRoute
 }
 
 const DashboardAgentsRouteRouteChildren: DashboardAgentsRouteRouteChildren = {
-  DashboardAgentsAgentidRoute: DashboardAgentsAgentidRoute,
+  DashboardAgentsAgentRouteRoute: DashboardAgentsAgentRouteRouteWithChildren,
   DashboardAgents404Route: DashboardAgents404Route,
   DashboardAgents505Route: DashboardAgents505Route,
   DashboardAgentsIndexRoute: DashboardAgentsIndexRoute,
@@ -491,7 +568,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
@@ -502,6 +579,10 @@ export interface FileRoutesByFullPath {
   '/dashboard/clients/': typeof DashboardClientsIndexRoute
   '/dashboard/phone': typeof DashboardPhoneIndexRoute
   '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -516,7 +597,6 @@ export interface FileRoutesByTo {
   '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
@@ -527,6 +607,10 @@ export interface FileRoutesByTo {
   '/dashboard/clients': typeof DashboardClientsIndexRoute
   '/dashboard/phone': typeof DashboardPhoneIndexRoute
   '/dashboard/project-settings': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentIndexRoute
 }
 
 export interface FileRoutesById {
@@ -546,7 +630,7 @@ export interface FileRoutesById {
   '/dashboard/history': typeof DashboardHistoryRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/agents/$agent_id': typeof DashboardAgentsAgentidRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
@@ -557,6 +641,10 @@ export interface FileRoutesById {
   '/dashboard/clients/': typeof DashboardClientsIndexRoute
   '/dashboard/phone/': typeof DashboardPhoneIndexRoute
   '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -577,7 +665,7 @@ export interface FileRouteTypes {
     | '/dashboard/history'
     | '/dashboard/settings'
     | '/dashboard/'
-    | '/dashboard/agents/$agent_id'
+    | '/dashboard/agents/$agent'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/phone/$id'
@@ -588,6 +676,10 @@ export interface FileRouteTypes {
     | '/dashboard/clients/'
     | '/dashboard/phone'
     | '/dashboard/project-settings/'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -601,7 +693,6 @@ export interface FileRouteTypes {
     | '/dashboard/history'
     | '/dashboard/settings'
     | '/dashboard'
-    | '/dashboard/agents/$agent_id'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/phone/$id'
@@ -612,6 +703,10 @@ export interface FileRouteTypes {
     | '/dashboard/clients'
     | '/dashboard/phone'
     | '/dashboard/project-settings'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent'
   id:
     | '__root__'
     | '/'
@@ -629,7 +724,7 @@ export interface FileRouteTypes {
     | '/dashboard/history'
     | '/dashboard/settings'
     | '/dashboard/'
-    | '/dashboard/agents/$agent_id'
+    | '/dashboard/agents/$agent'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
     | '/dashboard/phone/$id'
@@ -640,6 +735,10 @@ export interface FileRouteTypes {
     | '/dashboard/clients/'
     | '/dashboard/phone/'
     | '/dashboard/project-settings/'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent/'
   fileRoutesById: FileRoutesById
 }
 
@@ -705,7 +804,7 @@ export const routeTree = rootRoute
       "filePath": "dashboard/agents/route.tsx",
       "parent": "/dashboard",
       "children": [
-        "/dashboard/agents/$agent_id",
+        "/dashboard/agents/$agent",
         "/dashboard/agents/404",
         "/dashboard/agents/505",
         "/dashboard/agents/"
@@ -761,9 +860,15 @@ export const routeTree = rootRoute
       "filePath": "dashboard/index.tsx",
       "parent": "/dashboard"
     },
-    "/dashboard/agents/$agent_id": {
-      "filePath": "dashboard/agents/$agent_id.tsx",
-      "parent": "/dashboard/agents"
+    "/dashboard/agents/$agent": {
+      "filePath": "dashboard/agents/$agent/route.tsx",
+      "parent": "/dashboard/agents",
+      "children": [
+        "/dashboard/agents/$agent/agent",
+        "/dashboard/agents/$agent/preview",
+        "/dashboard/agents/$agent/voice",
+        "/dashboard/agents/$agent/"
+      ]
     },
     "/dashboard/agents/404": {
       "filePath": "dashboard/agents/404.tsx",
@@ -804,6 +909,22 @@ export const routeTree = rootRoute
     "/dashboard/project-settings/": {
       "filePath": "dashboard/project-settings/index.tsx",
       "parent": "/dashboard/project-settings"
+    },
+    "/dashboard/agents/$agent/agent": {
+      "filePath": "dashboard/agents/$agent/agent.tsx",
+      "parent": "/dashboard/agents/$agent"
+    },
+    "/dashboard/agents/$agent/preview": {
+      "filePath": "dashboard/agents/$agent/preview.tsx",
+      "parent": "/dashboard/agents/$agent"
+    },
+    "/dashboard/agents/$agent/voice": {
+      "filePath": "dashboard/agents/$agent/voice.tsx",
+      "parent": "/dashboard/agents/$agent"
+    },
+    "/dashboard/agents/$agent/": {
+      "filePath": "dashboard/agents/$agent/index.tsx",
+      "parent": "/dashboard/agents/$agent"
     }
   }
 }

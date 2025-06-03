@@ -57,7 +57,7 @@ function RouteComponent() {
 						onOpenChange={e => setDialogs('makeCall', e)}
 						id={phone_number.data.phone_number_id}
 					/>
-					<div className='my-10 mx-40 grid space-y-6'>
+					<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 						<div className='flex items-center justify-between mb-6'>
 							<div className='grid gap-1'>
 								<p className='font-semibold ml-2 text-primary/50 cursor-pointer'>
@@ -310,7 +310,7 @@ function MakeCallDialog({
 
 function PhoneSkeleton() {
 	return (
-		<div className='m-10 grid space-y-6'>
+		<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 			<div className='flex items-center justify-between mb-6'>
 				<div className='grid gap-1'>
 					<Skeleton className='h-5 w-24 ml-2' />

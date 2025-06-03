@@ -43,7 +43,7 @@ function RouteComponent() {
 	return (
 		<div className='w-full h-screen'>
 			<div className='m-10 grid gap-4 space-y-4 relative'>
-				<div className='grid gap-4 space-y-4 sticky top-0'>
+				<div className='grid gap-4 space-y-4'>
 					<div className='flex justify-between items-center'>
 						<div className='grid gap-2'>
 							<h1 className='text-4xl font-bold'>Project Settings</h1>
@@ -70,8 +70,8 @@ function RouteComponent() {
 							</p>
 						</div>
 					) : (
-						<header className='w-full border-b border-border'>
-							<nav className='max-w-7xl mx-auto'>
+						<header className='border-b border-border mx-10 md:mx-40'>
+							<nav className='max-w-7xl'>
 								<div className='flex h-12 items-end'>
 									<div className='flex space-x-6'>
 										{links.map((item, index) => (
@@ -92,7 +92,7 @@ function RouteComponent() {
 							</nav>
 						</header>
 					)}
-					<div className='lg:mx-40'>
+					<div className='mx-10 md:mx-40'>
 						<Outlet />
 					</div>
 				</div>

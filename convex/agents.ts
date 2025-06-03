@@ -42,6 +42,22 @@ export const getAgent = query({
 	},
 })
 
+export const getAgentById = query({
+	args: {
+		agentId: v.optional(v.string()),
+	},
+	async handler(ctx, args) {
+		const id = args.agentId
+		if (id) {
+			return await ctx.db
+				.query('agent')
+				.withIndex('by_agentId', q => q.eq('agentId', id))
+				.first()
+		}
+		return null
+	},
+})
+
 export const deleteAgent = mutation({
 	args: {
 		agentId: v.id('agent'),

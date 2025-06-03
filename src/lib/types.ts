@@ -9,6 +9,8 @@ export type ArgsUser = (typeof api.user.registerUser)['_args']
 export type ArgsSignIn = (typeof api.user.signIn)['_args']
 
 export type Agent = (typeof api.agents.getAgent)['_returnType']
+export type GetAgentByIDReturnType =
+	(typeof api.agents.getAgentById)['_returnType']
 
 export enum Models {
 	// OpenAI GPT models
