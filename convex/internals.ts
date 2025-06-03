@@ -22,7 +22,7 @@ export const deduct = internalMutation({
 						if (agent.agentId === args.agent_id) {
 							await ctx.db.patch(client._id, {
 								...client,
-								credits: client.credits - totalCost(args.cost, 20),
+								credits: Math.round(client.credits - totalCost(args.cost, 20)),
 							})
 						}
 					}
