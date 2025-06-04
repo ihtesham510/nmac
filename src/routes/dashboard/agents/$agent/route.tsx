@@ -11,11 +11,10 @@ import {
 	Link,
 } from '@tanstack/react-router'
 import { api } from 'convex/_generated/api'
-import { ArrowLeft, Tag } from 'lucide-react'
+import { Tag } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/dashboard/agents/$agent')({
 	component: RouteComponent,
@@ -57,11 +56,10 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
-			{/* Agent Info Section */}
+		<div className='m-10 md:mx-40 grid space-y-6'>
 			{isLoading ? (
 				<div className='flex items-center justify-between mb-6'>
-					<div className='grid gap-1'>
+					<div className='grid gap-2'>
 						<Skeleton className='h-10 w-24 py-4 mb-4' />
 						<Skeleton className='h-10 w-64 mb-1' />
 						<Skeleton className='h-7 w-80 mb-2' />
@@ -74,19 +72,9 @@ function RouteComponent() {
 				</div>
 			) : (
 				<div className='flex items-center justify-between mb-6'>
-					<div className='grid gap-1'>
-						<Link to='/dashboard/agents'>
-							<Button
-								className='flex gap-1 items-center w-max py-4 mb-4'
-								variant='outline'
-								size='sm'
-							>
-								<ArrowLeft className='size-4 font-bold' />
-								<p className='text-md'>Go Back</p>
-							</Button>
-						</Link>
+					<div className='grid gap-2'>
 						<h1 className='text-4xl font-bold'>{agentData?.name}</h1>
-						<p className='text-lg font-bold text-primary/50 max-w-[500px]'>
+						<p className='font-semibold text-primary/50 max-w-[500px]'>
 							{agentData?.description}
 						</p>
 						<span>
@@ -101,11 +89,10 @@ function RouteComponent() {
 				</div>
 			)}
 
-			{/* Navigation Header */}
 			{isLoading ? (
 				<header className='border-b border-border'>
 					<nav className='max-w-7xl'>
-						<div className='flex h-12 items-end'>
+						<div className='flex h-12 items-end justify-between'>
 							<div className='flex space-x-6'>
 								<Skeleton className='h-6 w-12 mb-2' />
 								<Skeleton className='h-6 w-16 mb-2' />
@@ -117,7 +104,7 @@ function RouteComponent() {
 			) : (
 				<header className='border-b border-border'>
 					<nav className='max-w-7xl'>
-						<div className='flex h-12 items-end'>
+						<div className='flex h-12 items-end justify-between'>
 							<div className='flex space-x-6'>
 								{links.map((item, index) => (
 									<Link

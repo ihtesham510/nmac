@@ -26,13 +26,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDialog } from '@/hooks/use-dialogs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
-import {
-	LoaderCircle,
-	PhoneOutgoingIcon,
-	TriangleAlert,
-	ArrowLeft,
-} from 'lucide-react'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { LoaderCircle, PhoneOutgoingIcon, TriangleAlert } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -44,7 +39,6 @@ export const Route = createFileRoute('/dashboard/phone/$id')({
 
 function RouteComponent() {
 	const { id } = Route.useParams()
-	const navigate = useNavigate()
 	const client = useElevenLabsClient()
 	const [dialogs, setDialogs] = useDialog({
 		makeCall: false,
@@ -66,15 +60,6 @@ function RouteComponent() {
 					<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 						<div className='flex items-center justify-between mb-6'>
 							<div className='grid gap-1'>
-								<Button
-									variant='ghost'
-									size='sm'
-									onClick={() => navigate({ to: '/dashboard/phone' })}
-									className='w-fit flex items-center justify-between gap-2 p-2 h-8 mb-6'
-								>
-									<ArrowLeft className='size-4' />
-									Go Back
-								</Button>
 								<h1
 									className='text-4xl font-bold cursor-pointer select-none'
 									onClick={async () => {

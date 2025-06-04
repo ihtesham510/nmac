@@ -93,10 +93,10 @@ function RouteComponent() {
 	}, [clients, filter])
 
 	return (
-		<div className='m-10 rounded-md gap-6 grid'>
-			<div className='grid gap-2 my-4'>
+		<div className='m-10 space-y-6 grid'>
+			<div className='grid gap-2'>
 				<h1 className='text-4xl font-bold'>Clients</h1>
-				<h1 className='text-lg font-bold text-primary/30'>
+				<h1 className='font-semibold text-primary/50'>
 					Create and manage your clients.
 				</h1>
 			</div>
