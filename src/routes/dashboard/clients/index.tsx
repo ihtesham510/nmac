@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import {
 	Table,
 	TableBody,
-	TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -40,8 +39,8 @@ import {
 	CheckIcon,
 	DeleteIcon,
 	Edit3Icon,
-	EllipsisIcon,
 	LoaderCircle,
+	MoreHorizontal,
 	PlusIcon,
 	Search,
 	Tag,
@@ -65,7 +64,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { Id } from 'convex/_generated/dataModel'
-import { LoaderComponent } from '@/components/loader'
+import { Skeleton } from '@/components/ui/skeleton'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -73,7 +78,6 @@ export const Route = createFileRoute('/dashboard/clients/')({
 
 function RouteComponent() {
 	const auth = useAuth()
-
 	const [filter, setFilter] = useState<string>()
 	const { createClientDialog } = useClientState()
 
@@ -89,15 +93,88 @@ function RouteComponent() {
 	}, [clients, filter])
 
 	return (
-		<div className='h-screen w-full'>
-			<div className='grid grid-cols-1 m-20 gap-6 space-y-6'>
-				<div className='grid gap-4'>
-					<h1 className='text-4xl font-bold'>Clients</h1>
-					<p className='font-semibold text-primary/50'>
-						Create and manage clients.
+		<div className='m-10 rounded-md gap-6 grid'>
+			<div className='grid gap-2 my-4'>
+				<h1 className='text-4xl font-bold'>Clients</h1>
+				<h1 className='text-lg font-bold text-primary/30'>
+					Create and manage your clients.
+				</h1>
+			</div>
+
+			{!clients && (
+				<>
+					<div className='flex justify-between items-center'>
+						<div className='relative'>
+							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+							<Input
+								placeholder='Search Clients...'
+								disabled
+								className='pl-8 w-[400px]'
+							/>
+						</div>
+						<Button disabled className='flex gap-2'>
+							<PlusIcon />
+							<p className='hidden lg:inline'>Create Client</p>
+						</Button>
+					</div>
+
+					<div className='border rounded-lg'>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead className='px-4'>Name</TableHead>
+									<TableHead className='hidden md:flex items-center'>
+										Username
+									</TableHead>
+									<TableHead>Credits</TableHead>
+									<TableHead>Created</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{Array.from({ length: 5 }).map((_, index) => (
+									<TableRow key={index}>
+										<TableCell className='px-4'>
+											<Skeleton className='h-4 w-[150px]' />
+										</TableCell>
+										<TableCell className='hidden md:flex items-center'>
+											<Skeleton className='h-4 w-[100px]' />
+										</TableCell>
+										<TableCell>
+											<Skeleton className='h-4 w-[60px]' />
+										</TableCell>
+										<TableCell>
+											<Skeleton className='h-4 w-[100px]' />
+										</TableCell>
+										<TableCell>
+											<Skeleton className='h-8 w-8 rounded-md' />
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</div>
+				</>
+			)}
+
+			{clients && clients.length === 0 && (
+				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg'>
+					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+						<UserIcon className='h-10 w-10 text-muted-foreground' />
+					</div>
+					<h2 className='text-xl font-semibold mb-2'>No clients found</h2>
+					<p className='text-muted-foreground text-center max-w-md mb-8'>
+						You haven't created any clients yet. Add a new client to get
+						started.
 					</p>
+					<Button onClick={() => createClientDialog.setState(true)}>
+						<PlusIcon className='size-4' />
+						Add Client
+					</Button>
 				</div>
-				{clients && clients.length !== 0 && (
+			)}
+
+			{clients && clients.length > 0 && (
+				<>
 					<div className='flex justify-between items-center'>
 						<div className='relative'>
 							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
@@ -107,84 +184,75 @@ function RouteComponent() {
 								className='pl-8 w-[400px]'
 							/>
 						</div>
-						<Button
-							className='flex gap-2'
-							variant='outline'
-							size='sm'
-							onClick={() => createClientDialog.setState(true)}
-						>
-							<PlusIcon /> <p className='hidden md:block'>Create Client</p>
-						</Button>
-					</div>
-				)}
-				{typeof clients === 'undefined' && (
-					<LoaderComponent className='h-[60vh]' />
-				)}
-				{clients && clients.length === 0 && (
-					<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
-						<div className='bg-muted/50 p-4 rounded-full mb-4'>
-							<UserIcon className='h-10 w-10 text-muted-foreground' />
-						</div>
-						<h2 className='text-xl font-semibold mb-2'>No Clients found</h2>
-						<p className='text-muted-foreground text-center max-w-md mb-8'>
-							You haven't added any clients yet.
-						</p>
-						<Button
-							className='flex gap-2'
-							size='sm'
-							onClick={() => createClientDialog.setState(true)}
-						>
-							<PlusIcon /> <p className='hidden md:block'>Create Client</p>
-						</Button>
-					</div>
-				)}
-				{clients && clients.length !== 0 && (
-					<Table>
-						<TableCaption className='text-primary/30'>
-							A list of your agents.
-						</TableCaption>
-						<TableHeader className='bg-muted/40 h-[50px]'>
-							<TableRow>
-								<TableHead className='pl-6'>Name</TableHead>
-								<TableHead>Username</TableHead>
-								<TableHead>Credits</TableHead>
-								<TableHead>Created At</TableHead>
-								<TableHead className='text-right pr-6'>Action</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							{filteredClients &&
-								filteredClients.map(client => (
-									<TableRow
-										key={client._id}
-										className='h-[50px] cursor-pointer'
+						<TooltipProvider>
+							<Tooltip delayDuration={1000}>
+								<TooltipTrigger>
+									<Button
+										className='flex gap-2'
+										onClick={() => createClientDialog.setState(true)}
 									>
-										<TableCell className='pl-6'>{client.name}</TableCell>
-										<TableCell>{client.username}</TableCell>
-										<TableCell>{client.credits}</TableCell>
+										<PlusIcon />
+										<p className='hidden lg:inline'>Create Client</p>
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>
+									<p>Add Client</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+
+					<div className='border rounded-lg'>
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead className='px-4'>Name</TableHead>
+									<TableHead className='hidden md:flex items-center'>
+										Username
+									</TableHead>
+									<TableHead>Credits</TableHead>
+									<TableHead>Created</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{filteredClients?.map(client => (
+									<TableRow key={client._id} className='cursor-pointer'>
+										<TableCell className='font-medium px-4'>
+											{client.name}
+										</TableCell>
+										<TableCell className='max-w-[300px] hidden md:table-cell items-center truncate'>
+											{client.username}
+										</TableCell>
 										<TableCell>
+											<Badge variant='secondary' className='text-xs'>
+												{client.credits}
+											</Badge>
+										</TableCell>
+										<TableCell className='text-sm text-muted-foreground'>
 											{new Date(client._creationTime).toLocaleDateString(
 												'en-US',
 												{
 													day: 'numeric',
-													month: 'long',
+													month: 'short',
 													year: 'numeric',
 												},
 											)}
 										</TableCell>
-										<TableCell className='text-right pr-6'>
+										<TableCell onClick={e => e.stopPropagation()}>
 											<ClientDropDownMenu client={client}>
-												<Button size='icon' variant='ghost'>
-													<EllipsisIcon className='size-5' />
+												<Button variant='ghost' size='icon' className='h-8 w-8'>
+													<MoreHorizontal className='h-4 w-4' />
+													<span className='sr-only'>Open menu</span>
 												</Button>
 											</ClientDropDownMenu>
 										</TableCell>
 									</TableRow>
 								))}
-						</TableBody>
-					</Table>
-				)}
-			</div>
+							</TableBody>
+						</Table>
+					</div>
+				</>
+			)}
 		</div>
 	)
 }
@@ -304,75 +372,36 @@ function ClientDropDownMenu({
 						<DialogTitle>Are you absolutely sure?</DialogTitle>
 						<DialogDescription>
 							This action cannot be undone. This will permanently delete your
-							account and remove your data from our servers.
+							client and remove your data from our servers.
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>
-						<div className='flex gap-4'>
-							<Button
-								type='submit'
-								size='sm'
-								variant='ghost'
-								className='cursor-pointer'
-								onClick={() => setDialogs('warnDelete', false)}
-							>
-								Cancel
-							</Button>
-							<Button
-								type='submit'
-								size='sm'
-								className='cursor-pointer'
-								onClick={async () => {
-									await deleteClient({ clientId: client._id })
-									toast.success('Client Deleted Successfully.')
-									setDialogs('warnDelete', false)
-								}}
-							>
-								Confirm
-							</Button>
-						</div>
+						<Button
+							type='button'
+							variant='ghost'
+							size='sm'
+							onClick={() => setDialogs('warnDelete', false)}
+							className='cursor-pointer'
+						>
+							Cancel
+						</Button>
+						<Button
+							type='button'
+							size='sm'
+							variant='destructive'
+							className='cursor-pointer'
+							onClick={async () => {
+								await deleteClient({ clientId: client._id })
+								toast.success('Client Deleted Successfully.')
+								setDialogs('warnDelete', false)
+							}}
+						>
+							Delete
+						</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
-			<Dialog
-				open={dialogs.warnDelete}
-				onOpenChange={e => setDialogs('warnDelete', e)}
-			>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Are you absolutely sure?</DialogTitle>
-						<DialogDescription>
-							This action cannot be undone. This will permanently delete your
-							account and remove your data from our servers.
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter>
-						<div className='flex gap-4'>
-							<Button
-								type='submit'
-								size='sm'
-								variant='ghost'
-								className='cursor-pointer'
-								onClick={() => setDialogs('warnDelete', false)}
-							>
-								Cancel
-							</Button>
-							<Button
-								type='submit'
-								size='sm'
-								className='cursor-pointer'
-								onClick={async () => {
-									await deleteClient({ clientId: client._id })
-									toast.success('Client Deleted Successfully.')
-									setDialogs('warnDelete', false)
-								}}
-							>
-								Confirm
-							</Button>
-						</div>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+
 			<Dialog
 				open={dialogs.editClient}
 				onOpenChange={e => setDialogs('editClient', e)}
