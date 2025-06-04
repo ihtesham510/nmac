@@ -26,8 +26,13 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDialog } from '@/hooks/use-dialogs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { LoaderCircle, PhoneOutgoingIcon, TriangleAlert } from 'lucide-react'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
+import {
+	LoaderCircle,
+	PhoneOutgoingIcon,
+	TriangleAlert,
+	ArrowLeft,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -39,6 +44,7 @@ export const Route = createFileRoute('/dashboard/phone/$id')({
 
 function RouteComponent() {
 	const { id } = Route.useParams()
+	const navigate = useNavigate()
 	const client = useElevenLabsClient()
 	const [dialogs, setDialogs] = useDialog({
 		makeCall: false,
@@ -60,11 +66,17 @@ function RouteComponent() {
 					<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 						<div className='flex items-center justify-between mb-6'>
 							<div className='grid gap-1'>
-								<p className='font-semibold ml-2 text-primary/50 cursor-pointer'>
-									{phone_number.data.label}
-								</p>
+								<Button
+									variant='ghost'
+									size='sm'
+									onClick={() => navigate({ to: '/dashboard/phone' })}
+									className='w-fit flex items-center justify-between gap-2 p-2 h-8 mb-6'
+								>
+									<ArrowLeft className='size-4' />
+									Go Back
+								</Button>
 								<h1
-									className='text-4xl font-bold cursor-pointer'
+									className='text-4xl font-bold cursor-pointer select-none'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
 											phone_number.data.phone_number,
@@ -74,9 +86,11 @@ function RouteComponent() {
 								>
 									{phone_number.data.phone_number}
 								</h1>
-
+								<p className='font-semibold ml-2 text-primary/50'>
+									{phone_number.data.label}
+								</p>
 								<p
-									className='font-semibold text-primary/50 cursor-pointer ml-2'
+									className='font-semibold text-primary/50 cursor-pointer ml-2 select-none'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
 											phone_number.data.phone_number_id,
@@ -313,11 +327,20 @@ function PhoneSkeleton() {
 		<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 			<div className='flex items-center justify-between mb-6'>
 				<div className='grid gap-1'>
-					<Skeleton className='h-5 w-24 ml-2' />
-					<Skeleton className='h-10 w-48' />
-					<Skeleton className='h-5 w-32 ml-2' />
+					<Skeleton className='h-8 w-8 mb-2' /> {/* Back button */}
+					<Skeleton className='h-5 w-32 ml-2' /> {/* Phone number ID */}
+					<Skeleton className='h-5 w-24 ml-2' /> {/* Label */}
+					<Skeleton className='h-10 w-48' /> {/* Phone number */}
 				</div>
-				<Skeleton className='h-10 w-28' />
+				<Skeleton className='h-10 w-28' /> {/* Make Call button */}
+			</div>
+			{/* Inbound call agent select section skeleton */}
+			<div className='space-y-4'>
+				<div className='grid gap-2'>
+					<Skeleton className='h-6 w-32' /> {/* "Inbound calls" title */}
+					<Skeleton className='h-4 w-64' /> {/* Description */}
+					<Skeleton className='h-10 w-full' /> {/* Agent select */}
+				</div>
 			</div>
 		</div>
 	)
