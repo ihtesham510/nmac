@@ -7,6 +7,6 @@ export function ProtectedClientRoute(props: PropsWithChildren) {
 	if (!auth.isAuthenticated) return <Navigate to='/sign-in' />
 	const isUser =
 		auth.user && auth.isAuthenticated && auth.type === 'user' && !auth.isLoading
-	if (isUser) return <Navigate to='/dashboard/505' />
+	if (isUser) return <Navigate to='/401' />
 	return props.children
 }

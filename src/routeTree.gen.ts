@@ -12,6 +12,8 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as R505Import } from './routes/505'
+import { Route as R422Import } from './routes/422'
+import { Route as R401Import } from './routes/401'
 import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as DashboardIndexImport } from './routes/dashboard/index'
@@ -47,6 +49,18 @@ import { Route as DashboardAgentsAgentAgentImport } from './routes/dashboard/age
 const R505Route = R505Import.update({
   id: '/505',
   path: '/505',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R422Route = R422Import.update({
+  id: '/422',
+  path: '/422',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const R401Route = R401Import.update({
+  id: '/401',
+  path: '/401',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -246,6 +260,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/401': {
+      id: '/401'
+      path: '/401'
+      fullPath: '/401'
+      preLoaderRoute: typeof R401Import
+      parentRoute: typeof rootRoute
+    }
+    '/422': {
+      id: '/422'
+      path: '/422'
+      fullPath: '/422'
+      preLoaderRoute: typeof R422Import
       parentRoute: typeof rootRoute
     }
     '/505': {
@@ -555,6 +583,8 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/401': typeof R401Route
+  '/422': typeof R422Route
   '/505': typeof R505Route
   '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
   '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
@@ -587,6 +617,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/401': typeof R401Route
+  '/422': typeof R422Route
   '/505': typeof R505Route
   '/register': typeof authRegisterRoute
   '/sign-in': typeof authSignInRoute
@@ -617,6 +649,8 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/401': typeof R401Route
+  '/422': typeof R422Route
   '/505': typeof R505Route
   '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
   '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
@@ -652,6 +686,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/401'
+    | '/422'
     | '/505'
     | '/dashboard/agents'
     | '/dashboard/clients'
@@ -683,6 +719,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/401'
+    | '/422'
     | '/505'
     | '/register'
     | '/sign-in'
@@ -711,6 +749,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/401'
+    | '/422'
     | '/505'
     | '/dashboard/agents'
     | '/dashboard/clients'
@@ -745,6 +785,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  R401Route: typeof R401Route
+  R422Route: typeof R422Route
   R505Route: typeof R505Route
   authRegisterRoute: typeof authRegisterRoute
   authSignInRoute: typeof authSignInRoute
@@ -754,6 +796,8 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  R401Route: R401Route,
+  R422Route: R422Route,
   R505Route: R505Route,
   authRegisterRoute: authRegisterRoute,
   authSignInRoute: authSignInRoute,
@@ -772,6 +816,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/dashboard",
+        "/401",
+        "/422",
         "/505",
         "/(auth)/register",
         "/(auth)/sign-in",
@@ -796,6 +842,12 @@ export const routeTree = rootRoute
         "/dashboard/phone/$id",
         "/dashboard/phone/"
       ]
+    },
+    "/401": {
+      "filePath": "401.tsx"
+    },
+    "/422": {
+      "filePath": "422.tsx"
     },
     "/505": {
       "filePath": "505.tsx"

@@ -7,5 +7,11 @@ export function ProtectedRoute({ children }: PropsWithChildren) {
 	const auth = useAuth()
 	if (auth.isLoading) return <LoaderComponent />
 	if (!auth.isAuthenticated) return <Navigate to='/sign-in' />
+	if (
+		auth.isAuthenticated &&
+		auth.type === 'client' &&
+		auth.client?.low_credits
+	)
+		return <Navigate to='/422' />
 	return children
 }

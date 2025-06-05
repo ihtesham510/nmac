@@ -16,7 +16,7 @@ type UserType = 'client' | 'user' | null
 
 export const authContext = createContext<{
 	user: User | undefined
-	client: Client | undefined
+	client: (Client & { low_credits: boolean }) | undefined
 	logOut: () => void
 	signUp: (params: ArgsUser) => void
 	type: UserType
@@ -82,12 +82,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
 	const isUnauthenticated = user === null && client === null
 	const isAuthenticated = !!user || !!client
 	const api_key = user?.elevenLabs_api_key ?? client?.api_key
+	const low_credits = !!(client && client.credits && client.credits < 100)
 
 	return (
 		<authContext.Provider
 			value={{
 				user,
-				client,
+				client: client ? { ...client, low_credits } : undefined,
 				type,
 				isAuthenticated,
 				isUnauthenticated,
