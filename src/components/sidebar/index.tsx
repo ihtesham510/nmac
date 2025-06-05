@@ -37,7 +37,7 @@ export function AppSidebar() {
 			href: { to: '/dashboard/history' },
 			icon: History,
 			isActive: !!route({ to: '/dashboard/history', fuzzy: true }),
-			hidden: auth.type === 'user',
+			hidden: false,
 		},
 
 		{
