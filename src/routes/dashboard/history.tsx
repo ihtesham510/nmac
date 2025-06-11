@@ -40,7 +40,6 @@ import { LoaderComponent } from '@/components/loader'
 import {
 	Sheet,
 	SheetContent,
-	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
@@ -49,6 +48,7 @@ import { Avatar } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useElevenLabsClient } from '@/api/client'
+import { toast } from 'sonner'
 const badgeVariants = {
 	success:
 		'bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400',
@@ -205,7 +205,7 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[180px]'>
+									<TableHead className='hidden md:table-cell w-[180px]'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('start_time_unix_secs')}
@@ -218,7 +218,7 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[120px] text-center'>
+									<TableHead className='hidden sm:table-cell w-[120px] text-center'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('call_duration_secs')}
@@ -231,7 +231,7 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[120px] text-center'>
+									<TableHead className='w-[120px] hidden sm:table-cell text-center'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('message_count')}
@@ -244,7 +244,9 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[120px]'>Status</TableHead>
+									<TableHead className='w-[120px] hidden sm:table-cell'>
+										Status
+									</TableHead>
 									<TableHead className='w-[120px]'>Result</TableHead>
 								</TableRow>
 							</TableHeader>
@@ -265,19 +267,19 @@ function Conversations({
 													<TableCell className='font-medium'>
 														{call.agent_name || 'Unknown Agent'}
 													</TableCell>
-													<TableCell>
+													<TableCell className='hidden md:table-cell'>
 														{format(
 															fromUnixTime(call.start_time_unix_secs),
 															'MMM d, yyyy h:mm a',
 														)}
 													</TableCell>
-													<TableCell className='text-center'>
+													<TableCell className='text-center hidden sm:table-cell'>
 														{formatDuration(call.call_duration_secs)}
 													</TableCell>
-													<TableCell className='text-center'>
+													<TableCell className='text-center hidden sm:table-cell'>
 														{call.message_count}
 													</TableCell>
-													<TableCell>
+													<TableCell className='hidden sm:table-cell'>
 														<Badge
 															variant={statusBadge.variant}
 															className='flex w-fit items-center'
@@ -348,104 +350,171 @@ function ConversationSideSheet({
 			})
 		}
 	}, [conversationId, open])
+
+	const successBadge = getSuccessBadge(
+		conversation.data?.analysis?.call_successful,
+	)
+	const isPhoneCall = !!conversation.data?.metadata.phone_call
+
 	return (
 		<Sheet open={open} onOpenChange={e => setIsOpen(e)}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			{conversation.data && (
-				<SheetContent className='w-full sm:max-w-md md:max-w-xl'>
+				<SheetContent className='w-full md:max-w-[880px]'>
 					<SheetHeader className='space-y-1'>
 						<SheetTitle>Conversation Details</SheetTitle>
-
-						<SheetDescription>
-							<div className='flex flex-col space-y-1'>
-								<div className='flex items-center justify-between'>
-									<span className='text-sm text-muted-foreground'>
-										{conversation.data.conversation_id}
-									</span>
-								</div>
-								<div className='flex items-center justify-between'>
-									<span className='text-sm text-muted-foreground'>
-										Started:{' '}
-										{format(
-											fromUnixTime(
-												conversation.data.metadata.start_time_unix_secs,
-											),
-											'MMM d, yyyy h:mm a',
-										)}
-									</span>
-									<span className='text-sm text-muted-foreground'>
-										Duration:{' '}
-										{formatDuration(
-											conversation.data.metadata.call_duration_secs,
-										)}
-									</span>
-								</div>
-							</div>
-						</SheetDescription>
 					</SheetHeader>
 
-					<Separator className='my-4' />
+					<Separator className='my-2' />
 
-					<div className='space-y-4 m-4'>
-						<h3 className='text-sm font-medium'>Transcript</h3>
-						<ScrollArea className='h-[calc(100vh-250px)] pr-4'>
-							<div className='space-y-4'>
-								{conversation.data.transcript.length > 0 ? (
-									conversation.data &&
-									conversation.data.transcript.map((message, index) => (
-										<div
-											key={index}
-											className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} items-start gap-2`}
-										>
-											{message.role !== 'user' && (
-												<Avatar className='size-10 flex justify-center items-center bg-muted'>
-													<BotIcon className='size-4' />
-												</Avatar>
-											)}
+					<div className='flex mx-8 gap-8'>
+						<div className='space-y-4 w-[65%]'>
+							<h3 className='font-semibold mb-6'>Transcript</h3>
+							<ScrollArea className='h-[calc(100vh-180px)] pr-4'>
+								<div className='space-y-4'>
+									{conversation.data.transcript.length > 0 ? (
+										conversation.data &&
+										conversation.data.transcript.map((message, index) => (
 											<div
-												className={`flex flex-col space-y-1 max-w-[80%] ${
-													message.role === 'user' ? 'items-end' : 'items-start'
-												}`}
+												key={index}
+												className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} items-start gap-2`}
 											>
+												{message.role !== 'user' && (
+													<Avatar className='size-10 flex justify-center items-center bg-muted'>
+														<BotIcon className='size-4' />
+													</Avatar>
+												)}
 												<div
-													className={`rounded-lg px-3 py-2 text-sm ${
+													className={`flex flex-col space-y-1 max-w-[80%] ${
 														message.role === 'user'
-															? 'bg-primary text-primary-foreground'
-															: 'bg-muted'
+															? 'items-end'
+															: 'items-start'
 													}`}
 												>
-													{typeof message.message === 'undefined' ||
-													message.message === ''
-														? '...'
-														: (message.message ?? '...')}
+													<div
+														className={`rounded-lg px-3 py-2 text-sm ${
+															message.role === 'user'
+																? 'bg-primary text-primary-foreground'
+																: 'bg-muted'
+														}`}
+													>
+														{typeof message.message === 'undefined' ||
+														message.message === ''
+															? '...'
+															: (message.message ?? '...')}
+													</div>
+													<div className='flex items-center gap-2 text-xs text-muted-foreground'>
+														<span>
+															{formatDuration(message.time_in_call_secs)}
+														</span>
+													</div>
 												</div>
-												<div className='flex items-center gap-2 text-xs text-muted-foreground'>
-													<span>
-														{formatDuration(message.time_in_call_secs)}
-													</span>
-												</div>
+												{message.role === 'user' && (
+													<Avatar className='size-10 flex justify-center items-center bg-primary-foreground'>
+														<User className='size-4' />
+													</Avatar>
+												)}
 											</div>
-											{message.role === 'user' && (
-												<Avatar className='size-10 flex justify-center items-center bg-primary-foreground'>
-													<User className='size-4' />
-												</Avatar>
-											)}
+										))
+									) : (
+										<div className='text-center text-muted-foreground py-8'>
+											No transcript available
 										</div>
-									))
-								) : (
-									<div className='text-center text-muted-foreground py-8'>
-										No transcript available
-									</div>
-								)}
+									)}
+								</div>
+							</ScrollArea>
+						</div>
+						<div className='space-y-4 h-fit w-[35%] font-medium'>
+							<h1 className='text-foreground font-semibold mb-6'>Metadata</h1>
+							<div className='flex justify-between items-center'>
+								<h1>Status :</h1>
+								<h1>
+									<Badge
+										variant={
+											successBadge.variant === 'success' ||
+											successBadge.variant === 'destructive'
+												? 'outline'
+												: successBadge.variant
+										}
+										className={`flex w-fit items-center ${
+											successBadge.variant === 'success'
+												? badgeVariants.success
+												: successBadge.variant === 'destructive'
+													? badgeVariants.destructive
+													: ''
+										}`}
+									>
+										{successBadge.icon}
+										{conversation.data &&
+											conversation.data.analysis &&
+											conversation.data?.analysis?.call_successful
+												.charAt(0)
+												.toUpperCase() +
+												conversation.data?.analysis?.call_successful.slice(1)}
+									</Badge>
+								</h1>
 							</div>
-						</ScrollArea>
+							<div className='flex justify-between items-center'>
+								<h1>Call Cost :</h1>
+								<h1>{totalCost(conversation.data.metadata.cost ?? 0, 20)}</h1>
+							</div>
+							<div className='flex justify-between items-center'>
+								<h1>Call Duration :</h1>
+								<h1>{conversation.data.metadata.call_duration_secs} sec</h1>
+							</div>
+							{isPhoneCall && (
+								<>
+									<Separator className='my-2' />
+									<h1 className='font-semibold mb-6 mt-4'>Phone Info</h1>
+									<div className='flex justify-between items-center'>
+										<h1>External No :</h1>
+										<h1
+											className='cursor-pointer hover:underline-offset-4 hover:underline'
+											onClick={async () => {
+												await navigator.clipboard.writeText(
+													conversation.data.metadata.phone_call!
+														.external_number,
+												)
+												toast.success('Phone Number Copied')
+											}}
+										>
+											{conversation.data.metadata.phone_call?.external_number}
+										</h1>
+									</div>
+									<div className='flex justify-between items-center'>
+										<h1>Agent No :</h1>
+										<h1
+											className='cursor-pointer hover:underline-offset-4 hover:underline'
+											onClick={async () => {
+												await navigator.clipboard.writeText(
+													conversation.data.metadata.phone_call!.agent_number,
+												)
+												toast.success('Phone Number Copied')
+											}}
+										>
+											{conversation.data.metadata.phone_call?.agent_number}
+										</h1>
+									</div>
+									<div className='flex justify-between items-center'>
+										<h1>Direction :</h1>
+										<h1>
+											<Badge>
+												{conversation.data.metadata.phone_call?.direction}
+											</Badge>
+										</h1>
+									</div>
+								</>
+							)}
+						</div>
 					</div>
 				</SheetContent>
 			)}
 		</Sheet>
 	)
 }
-
+function totalCost(cost: number, percentage: number) {
+	return Math.round(cost + cost * (percentage / 100))
+}
 function formatDuration(seconds: number): string {
 	if (seconds === 0) return '00:00'
 	const mins = Math.floor(seconds / 60)
@@ -453,7 +522,7 @@ function formatDuration(seconds: number): string {
 	return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
 
-function getStatusBadge(status: string) {
+function getStatusBadge(status?: string) {
 	switch (status) {
 		case 'in-progress':
 			return {
@@ -470,7 +539,7 @@ function getStatusBadge(status: string) {
 	}
 }
 
-function getSuccessBadge(success: string) {
+function getSuccessBadge(success?: string) {
 	switch (success) {
 		case 'success':
 			return {
