@@ -8,6 +8,17 @@ export const queries = {
 			queryKey: ['list_agents'],
 			queryFn: async () => await client.conversationalAi.getAgents(),
 		}),
+	get_conversation_audio: (api_key: string, conversationId: string) =>
+		queryOptions({
+			queryKey: ['get_conversation_audio', conversationId],
+			queryFn: async () => {
+				const res = await fetch(
+					`https://api.elevenlabs.io/v1/convai/conversations/${conversationId}/audio`,
+					{ method: 'GET', headers: { 'xi-api-key': api_key } },
+				)
+				return await res.blob()
+			},
+		}),
 	list_conversations: (
 		client: ElevenLabsClient,
 		{

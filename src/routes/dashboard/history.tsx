@@ -40,6 +40,7 @@ import { LoaderComponent } from '@/components/loader'
 import {
 	Sheet,
 	SheetContent,
+	SheetDescription,
 	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
@@ -49,6 +50,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { useElevenLabsClient } from '@/api/client'
 import { toast } from 'sonner'
+import { useAuth } from '@/context/auth-context'
+import { AudioPlayer } from '@/components/audio-wave-visuliser'
+
 const badgeVariants = {
 	success:
 		'bg-green-100 text-green-800 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400',
@@ -342,6 +346,10 @@ function ConversationSideSheet({
 			enabled: !!(conversationId && open),
 		}),
 	)
+	const auth = useAuth()
+	const audioBuf = useQuery(
+		queries.get_conversation_audio(auth.api_key!, conversationId),
+	)
 	const queryClient = useQueryClient()
 	useEffect(() => {
 		if (open) {
@@ -363,9 +371,14 @@ function ConversationSideSheet({
 				<SheetContent className='w-full md:max-w-[880px]'>
 					<SheetHeader className='space-y-1'>
 						<SheetTitle>Conversation Details</SheetTitle>
+						<SheetDescription>
+							{!audioBuf.isLoading && audioBuf.data && (
+								<AudioPlayer audioBlob={audioBuf.data} open={open} />
+							)}
+						</SheetDescription>
 					</SheetHeader>
 
-					<Separator className='my-2' />
+					<Separator className='mb-2' />
 
 					<div className='flex mx-8 gap-8'>
 						<div className='space-y-4 w-[65%]'>
@@ -512,9 +525,11 @@ function ConversationSideSheet({
 		</Sheet>
 	)
 }
+
 function totalCost(cost: number, percentage: number) {
 	return Math.round(cost + cost * (percentage / 100))
 }
+
 function formatDuration(seconds: number): string {
 	if (seconds === 0) return '00:00'
 	const mins = Math.floor(seconds / 60)
