@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Skeleton } from './ui/skeleton'
 import { useWavesurfer } from '@wavesurfer/react'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, SkipBack, SkipForward, Download } from 'lucide-react'
@@ -6,6 +7,7 @@ import { Play, Pause, SkipBack, SkipForward, Download } from 'lucide-react'
 interface AudioPlayerProps {
 	audioBlob: Blob
 	open?: boolean
+	isLoading?: boolean
 }
 
 const formatTime = (seconds: number): string => {
@@ -18,12 +20,13 @@ const formatTime = (seconds: number): string => {
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 	audioBlob,
 	open = true,
+	isLoading,
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [audioUrl, setAudioUrl] = useState<string>('')
 	const mergedTheme = {
-		waveColor: 'white',
-		progressColor: 'gray',
+		waveColor: 'gray',
+		progressColor: 'white',
 		backgroundColor: 'transparent',
 		height: 70,
 		cursorColor: '#ffffff',
@@ -125,12 +128,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 		return null
 	}
 
+	if (isLoading) return <AudioPlayerSkeleton />
+
 	return (
 		<div
 			className='mx-1 flex flex-col gap-2'
 			style={{ backgroundColor: mergedTheme.backgroundColor }}
 		>
-			<div className='mb-4'>
+			<div className='mb-4 hidden lg:block'>
 				<div ref={containerRef} />
 			</div>
 
@@ -169,6 +174,36 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 					>
 						<Download className='size-4' />
 					</Button>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+export const AudioPlayerSkeleton = () => {
+	return (
+		<div className='mx-1 flex flex-col gap-2'>
+			{/* Waveform Skeleton - Hidden on small screens */}
+			<div className='mb-4 hidden lg:block'>
+				<Skeleton className='h-[70px] w-full rounded-md' />
+			</div>
+
+			{/* Controls */}
+			<div className='flex items-center justify-between'>
+				{/* Left Controls */}
+				<div className='flex items-center space-x-2'>
+					<Skeleton className='h-9 w-9 rounded-md' />
+					<Skeleton className='h-9 w-9 rounded-md' />
+					<Skeleton className='h-9 w-9 rounded-md' />
+				</div>
+
+				{/* Right Controls */}
+				<div className='flex items-center space-x-3'>
+					{/* Time Display Skeleton */}
+					<div className='min-w-[80px] text-center'>
+						<Skeleton className='h-4 w-16 mx-auto' />
+					</div>
+					<Skeleton className='h-9 w-9 rounded-md' />
 				</div>
 			</div>
 		</div>

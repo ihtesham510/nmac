@@ -40,8 +40,6 @@ import { LoaderComponent } from '@/components/loader'
 import {
 	Sheet,
 	SheetContent,
-	SheetDescription,
-	SheetHeader,
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet'
@@ -368,156 +366,199 @@ function ConversationSideSheet({
 		<Sheet open={open} onOpenChange={e => setIsOpen(e)}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			{conversation.data && (
-				<SheetContent className='w-full md:max-w-[880px]'>
-					<SheetHeader className='space-y-1'>
-						<SheetTitle>Conversation Details</SheetTitle>
-						<SheetDescription>
-							{!audioBuf.isLoading && audioBuf.data && (
-								<AudioPlayer audioBlob={audioBuf.data} open={open} />
-							)}
-						</SheetDescription>
-					</SheetHeader>
+				<SheetContent className='w-full max-w-[1000px] lg:max-w-[1000px] p-6'>
+					<div className='flex h-full gap-6'>
+						{/* Left Side - Audio Player and Transcript */}
+						<div className='flex-1 flex flex-col min-w-0'>
+							<div className='flex-shrink-0 pb-4'>
+								<SheetTitle className='mb-4'>Conversation Details</SheetTitle>
+								{!audioBuf.isLoading && audioBuf.data && (
+									<div className='mb-4'>
+										<AudioPlayer audioBlob={audioBuf.data} open={open} />
+									</div>
+								)}
+								<Separator />
+							</div>
 
-					<Separator className='mb-2' />
-
-					<div className='flex mx-8 gap-8'>
-						<div className='space-y-4 w-[65%]'>
-							<h3 className='font-semibold mb-6'>Transcript</h3>
-							<ScrollArea className='h-[calc(100vh-180px)] pr-4'>
-								<div className='space-y-4'>
-									{conversation.data.transcript.length > 0 ? (
-										conversation.data &&
-										conversation.data.transcript.map((message, index) => (
-											<div
-												key={index}
-												className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} items-start gap-2`}
-											>
-												{message.role !== 'user' && (
-													<Avatar className='size-10 flex justify-center items-center bg-muted'>
-														<BotIcon className='size-4' />
-													</Avatar>
-												)}
+							<div className='flex-1 flex flex-col min-h-0 pt-4'>
+								<h3 className='font-semibold mb-4 flex-shrink-0'>Transcript</h3>
+								<ScrollArea className='h-[48vh] pr-4 pb-4'>
+									<div className='space-y-4 pb-4 mb-6'>
+										{conversation.data.transcript.length > 0 ? (
+											conversation.data &&
+											conversation.data.transcript.map((message, index) => (
 												<div
-													className={`flex flex-col space-y-1 max-w-[80%] ${
+													key={index}
+													className={`flex ${
 														message.role === 'user'
-															? 'items-end'
-															: 'items-start'
-													}`}
+															? 'justify-end'
+															: 'justify-start'
+													} items-start gap-3`}
 												>
+													{message.role !== 'user' && (
+														<Avatar className='size-8 flex justify-center items-center bg-muted flex-shrink-0'>
+															<BotIcon className='size-4' />
+														</Avatar>
+													)}
 													<div
-														className={`rounded-lg px-3 py-2 text-sm ${
+														className={`flex flex-col space-y-1 max-w-[85%] ${
 															message.role === 'user'
-																? 'bg-primary text-primary-foreground'
-																: 'bg-muted'
+																? 'items-end'
+																: 'items-start'
 														}`}
 													>
-														{typeof message.message === 'undefined' ||
-														message.message === ''
-															? '...'
-															: (message.message ?? '...')}
+														<div
+															className={`rounded-lg px-3 py-2 text-sm leading-relaxed ${
+																message.role === 'user'
+																	? 'bg-primary text-primary-foreground'
+																	: 'bg-muted'
+															}`}
+														>
+															{typeof message.message === 'undefined' ||
+															message.message === ''
+																? '...'
+																: (message.message ?? '...')}
+														</div>
+														<div className='flex items-center gap-2 text-xs text-muted-foreground'>
+															<span>
+																{formatDuration(message.time_in_call_secs)}
+															</span>
+														</div>
 													</div>
-													<div className='flex items-center gap-2 text-xs text-muted-foreground'>
-														<span>
-															{formatDuration(message.time_in_call_secs)}
-														</span>
-													</div>
+													{message.role === 'user' && (
+														<Avatar className='size-8 flex justify-center items-center bg-primary-foreground flex-shrink-0'>
+															<User className='size-4' />
+														</Avatar>
+													)}
 												</div>
-												{message.role === 'user' && (
-													<Avatar className='size-10 flex justify-center items-center bg-primary-foreground'>
-														<User className='size-4' />
-													</Avatar>
-												)}
+											))
+										) : (
+											<div className='text-center text-muted-foreground py-8'>
+												No transcript available
 											</div>
-										))
-									) : (
-										<div className='text-center text-muted-foreground py-8'>
-											No transcript available
-										</div>
+										)}
+									</div>
+								</ScrollArea>
+							</div>
+						</div>
+
+						{/* Right Side - Metadata */}
+						<div className='w-80  flex-shrink-0 flex flex-col border-l pl-6'>
+							<div className='flex-shrink-0 pb-4'>
+								<h3 className='font-semibold mb-4'>Call Information</h3>
+								<Separator />
+							</div>
+
+							<div className='flex-1 pt-4'>
+								<div className='space-y-4'>
+									<div className='flex justify-between items-center'>
+										<span className='text-sm font-medium'>Status:</span>
+										<Badge
+											variant={
+												successBadge.variant === 'success' ||
+												successBadge.variant === 'destructive'
+													? 'outline'
+													: successBadge.variant
+											}
+											className={`flex w-fit items-center ${
+												successBadge.variant === 'success'
+													? badgeVariants.success
+													: successBadge.variant === 'destructive'
+														? badgeVariants.destructive
+														: ''
+											}`}
+										>
+											{successBadge.icon}
+											{conversation.data &&
+												conversation.data.analysis &&
+												conversation.data?.analysis?.call_successful
+													.charAt(0)
+													.toUpperCase() +
+													conversation.data?.analysis?.call_successful.slice(1)}
+										</Badge>
+									</div>
+
+									<div className='flex justify-between items-center'>
+										<span className='text-sm font-medium'>Call Cost:</span>
+										<span className='text-sm font-mono'>
+											{totalCost(conversation.data.metadata.cost ?? 0, 20)}
+										</span>
+									</div>
+
+									<div className='flex justify-between items-center'>
+										<span className='text-sm font-medium'>Call Duration:</span>
+										<span className='text-sm font-mono'>
+											{conversation.data.metadata.call_duration_secs} sec
+										</span>
+									</div>
+
+									{isPhoneCall && (
+										<>
+											<Separator className='my-4' />
+											<h4 className='font-semibold mb-4'>Phone Info</h4>
+
+											<div className='space-y-3'>
+												<div className='flex justify-between items-center'>
+													<span className='text-sm font-medium'>
+														External No:
+													</span>
+													<button
+														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
+														onClick={async () => {
+															await navigator.clipboard.writeText(
+																conversation.data.metadata.phone_call!
+																	.external_number,
+															)
+															toast.success('Phone Number Copied')
+														}}
+														title={
+															conversation.data.metadata.phone_call
+																?.external_number
+														}
+													>
+														{
+															conversation.data.metadata.phone_call
+																?.external_number
+														}
+													</button>
+												</div>
+
+												<div className='flex justify-between items-center'>
+													<span className='text-sm font-medium'>Agent No:</span>
+													<button
+														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
+														onClick={async () => {
+															await navigator.clipboard.writeText(
+																conversation.data.metadata.phone_call!
+																	.agent_number,
+															)
+															toast.success('Phone Number Copied')
+														}}
+														title={
+															conversation.data.metadata.phone_call
+																?.agent_number
+														}
+													>
+														{
+															conversation.data.metadata.phone_call
+																?.agent_number
+														}
+													</button>
+												</div>
+
+												<div className='flex justify-between items-center'>
+													<span className='text-sm font-medium'>
+														Direction:
+													</span>
+													<Badge variant='secondary'>
+														{conversation.data.metadata.phone_call?.direction}
+													</Badge>
+												</div>
+											</div>
+										</>
 									)}
 								</div>
-							</ScrollArea>
-						</div>
-						<div className='space-y-4 h-fit w-[35%] font-medium'>
-							<h1 className='text-foreground font-semibold mb-6'>Metadata</h1>
-							<div className='flex justify-between items-center'>
-								<h1>Status :</h1>
-								<h1>
-									<Badge
-										variant={
-											successBadge.variant === 'success' ||
-											successBadge.variant === 'destructive'
-												? 'outline'
-												: successBadge.variant
-										}
-										className={`flex w-fit items-center ${
-											successBadge.variant === 'success'
-												? badgeVariants.success
-												: successBadge.variant === 'destructive'
-													? badgeVariants.destructive
-													: ''
-										}`}
-									>
-										{successBadge.icon}
-										{conversation.data &&
-											conversation.data.analysis &&
-											conversation.data?.analysis?.call_successful
-												.charAt(0)
-												.toUpperCase() +
-												conversation.data?.analysis?.call_successful.slice(1)}
-									</Badge>
-								</h1>
 							</div>
-							<div className='flex justify-between items-center'>
-								<h1>Call Cost :</h1>
-								<h1>{totalCost(conversation.data.metadata.cost ?? 0, 20)}</h1>
-							</div>
-							<div className='flex justify-between items-center'>
-								<h1>Call Duration :</h1>
-								<h1>{conversation.data.metadata.call_duration_secs} sec</h1>
-							</div>
-							{isPhoneCall && (
-								<>
-									<Separator className='my-2' />
-									<h1 className='font-semibold mb-6 mt-4'>Phone Info</h1>
-									<div className='flex justify-between items-center'>
-										<h1>External No :</h1>
-										<h1
-											className='cursor-pointer hover:underline-offset-4 hover:underline'
-											onClick={async () => {
-												await navigator.clipboard.writeText(
-													conversation.data.metadata.phone_call!
-														.external_number,
-												)
-												toast.success('Phone Number Copied')
-											}}
-										>
-											{conversation.data.metadata.phone_call?.external_number}
-										</h1>
-									</div>
-									<div className='flex justify-between items-center'>
-										<h1>Agent No :</h1>
-										<h1
-											className='cursor-pointer hover:underline-offset-4 hover:underline'
-											onClick={async () => {
-												await navigator.clipboard.writeText(
-													conversation.data.metadata.phone_call!.agent_number,
-												)
-												toast.success('Phone Number Copied')
-											}}
-										>
-											{conversation.data.metadata.phone_call?.agent_number}
-										</h1>
-									</div>
-									<div className='flex justify-between items-center'>
-										<h1>Direction :</h1>
-										<h1>
-											<Badge>
-												{conversation.data.metadata.phone_call?.direction}
-											</Badge>
-										</h1>
-									</div>
-								</>
-							)}
 						</div>
 					</div>
 				</SheetContent>
