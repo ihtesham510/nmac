@@ -21,7 +21,7 @@ import {
 } from '../ui/form'
 import { Input } from '../ui/input'
 import { useElevenLabsClient } from '@/api/client'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { Textarea } from '../ui/textarea'
 
 export function AddTextForm({

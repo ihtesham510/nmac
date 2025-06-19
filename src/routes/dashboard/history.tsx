@@ -32,7 +32,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import type { ConversationSummaryResponseModel } from 'elevenlabs/api'
+import type { ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
 import { useAgents } from '@/hooks/use-agents'
@@ -93,18 +93,18 @@ function Conversations({
 		key: keyof ConversationSummaryResponseModel
 		direction: 'asc' | 'desc'
 	}>({
-		key: 'start_time_unix_secs',
+		key: 'startTimeUnixSecs',
 		direction: 'desc',
 	})
 
 	const filteredCalls = calls.filter(call => {
 		const matchesSearch =
-			call.agent_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			call.conversation_id.toLowerCase().includes(searchTerm.toLowerCase())
+			call.agentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			call.conversationId.toLowerCase().includes(searchTerm.toLowerCase())
 
 		const matchesStatus = statusFilter === 'all' || call.status === statusFilter
 		const matchesSuccess =
-			successFilter === 'all' || call.call_successful === successFilter
+			successFilter === 'all' || call.callSuccessful === successFilter
 
 		return matchesSearch && matchesStatus && matchesSuccess
 	})
@@ -197,12 +197,12 @@ function Conversations({
 									<TableHead className='w-[200px]'>
 										<Button
 											variant='ghost'
-											onClick={() => handleSort('agent_name')}
+											onClick={() => handleSort('agentName')}
 											className='flex items-center gap-2 h-auto font-medium justify-start'
 										>
 											<User className='h-4 w-4' />
 											Agent
-											{sortConfig.key === 'agent_name' && (
+											{sortConfig.key === 'agentName' && (
 												<ArrowUpDown className='h-3 w-3' />
 											)}
 										</Button>
@@ -210,12 +210,12 @@ function Conversations({
 									<TableHead className='hidden md:table-cell w-[180px]'>
 										<Button
 											variant='ghost'
-											onClick={() => handleSort('start_time_unix_secs')}
+											onClick={() => handleSort('startTimeUnixSecs')}
 											className='flex items-center gap-2 h-auto font-medium justify-start'
 										>
 											<Calendar className='h-4 w-4' />
 											Start Time
-											{sortConfig.key === 'start_time_unix_secs' && (
+											{sortConfig.key === 'startTimeUnixSecs' && (
 												<ArrowUpDown className='h-3 w-3' />
 											)}
 										</Button>
@@ -223,12 +223,12 @@ function Conversations({
 									<TableHead className='hidden sm:table-cell w-[120px] text-center'>
 										<Button
 											variant='ghost'
-											onClick={() => handleSort('call_duration_secs')}
+											onClick={() => handleSort('callDurationSecs')}
 											className='flex items-center justify-center gap-2 h-auto font-medium w-full'
 										>
 											<Clock className='h-4 w-4' />
 											Duration
-											{sortConfig.key === 'call_duration_secs' && (
+											{sortConfig.key === 'callDurationSecs' && (
 												<ArrowUpDown className='h-3 w-3' />
 											)}
 										</Button>
@@ -236,12 +236,12 @@ function Conversations({
 									<TableHead className='w-[120px] hidden sm:table-cell text-center'>
 										<Button
 											variant='ghost'
-											onClick={() => handleSort('message_count')}
+											onClick={() => handleSort('messageCount')}
 											className='flex items-center gap-2  h-auto font-medium w-full justify-center'
 										>
 											<MessageSquare className='h-4 w-4' />
 											Messages
-											{sortConfig.key === 'message_count' && (
+											{sortConfig.key === 'messageCount' && (
 												<ArrowUpDown className='h-3 w-3' />
 											)}
 										</Button>
@@ -256,30 +256,30 @@ function Conversations({
 								{sortedCalls.length > 0 ? (
 									sortedCalls.map(call => {
 										const statusBadge = getStatusBadge(call.status)
-										const successBadge = getSuccessBadge(call.call_successful)
+										const successBadge = getSuccessBadge(call.callSuccessful)
 
 										return (
 											<ConversationSideSheet
-												conversationId={call.conversation_id}
+												conversationId={call.conversationId}
 											>
 												<TableRow
-													key={call.conversation_id}
+													key={call.conversationId}
 													className='cursor-pointer'
 												>
 													<TableCell className='font-medium'>
-														{call.agent_name || 'Unknown Agent'}
+														{call.agentName || 'Unknown Agent'}
 													</TableCell>
 													<TableCell className='hidden md:table-cell'>
 														{format(
-															fromUnixTime(call.start_time_unix_secs),
+															fromUnixTime(call.startTimeUnixSecs),
 															'MMM d, yyyy h:mm a',
 														)}
 													</TableCell>
 													<TableCell className='text-center hidden sm:table-cell'>
-														{formatDuration(call.call_duration_secs)}
+														{formatDuration(call.callDurationSecs)}
 													</TableCell>
 													<TableCell className='text-center hidden sm:table-cell'>
-														{call.message_count}
+														{call.messageCount}
 													</TableCell>
 													<TableCell className='hidden sm:table-cell'>
 														<Badge
@@ -308,8 +308,8 @@ function Conversations({
 															}`}
 														>
 															{successBadge.icon}
-															{call.call_successful.charAt(0).toUpperCase() +
-																call.call_successful.slice(1)}
+															{call.callSuccessful.charAt(0).toUpperCase() +
+																call.callSuccessful.slice(1)}
 														</Badge>
 													</TableCell>
 												</TableRow>
@@ -358,9 +358,9 @@ function ConversationSideSheet({
 	}, [conversationId, open])
 
 	const successBadge = getSuccessBadge(
-		conversation.data?.analysis?.call_successful,
+		conversation.data?.analysis?.callSuccessful,
 	)
-	const isPhoneCall = !!conversation.data?.metadata.phone_call
+	const isPhoneCall = !!conversation.data?.metadata.phoneCall
 
 	return (
 		<Sheet open={open} onOpenChange={e => setIsOpen(e)}>
@@ -421,7 +421,7 @@ function ConversationSideSheet({
 														</div>
 														<div className='flex items-center gap-2 text-xs text-muted-foreground'>
 															<span>
-																{formatDuration(message.time_in_call_secs)}
+																{formatDuration(message.timeInCallSecs)}
 															</span>
 														</div>
 													</div>
@@ -471,10 +471,10 @@ function ConversationSideSheet({
 											{successBadge.icon}
 											{conversation.data &&
 												conversation.data.analysis &&
-												conversation.data?.analysis?.call_successful
+												conversation.data?.analysis?.callSuccessful
 													.charAt(0)
 													.toUpperCase() +
-													conversation.data?.analysis?.call_successful.slice(1)}
+													conversation.data?.analysis?.callSuccessful.slice(1)}
 										</Badge>
 									</div>
 
@@ -488,7 +488,7 @@ function ConversationSideSheet({
 									<div className='flex justify-between items-center'>
 										<span className='text-sm font-medium'>Call Duration:</span>
 										<span className='text-sm font-mono'>
-											{conversation.data.metadata.call_duration_secs} sec
+											{conversation.data.metadata.callDurationSecs} sec
 										</span>
 									</div>
 
@@ -506,19 +506,19 @@ function ConversationSideSheet({
 														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
 														onClick={async () => {
 															await navigator.clipboard.writeText(
-																conversation.data.metadata.phone_call!
-																	.external_number,
+																conversation.data.metadata.phoneCall!
+																	.externalNumber,
 															)
 															toast.success('Phone Number Copied')
 														}}
 														title={
-															conversation.data.metadata.phone_call
-																?.external_number
+															conversation.data.metadata.phoneCall
+																?.externalNumber
 														}
 													>
 														{
-															conversation.data.metadata.phone_call
-																?.external_number
+															conversation.data.metadata.phoneCall
+																?.externalNumber
 														}
 													</button>
 												</div>
@@ -529,20 +529,16 @@ function ConversationSideSheet({
 														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
 														onClick={async () => {
 															await navigator.clipboard.writeText(
-																conversation.data.metadata.phone_call!
-																	.agent_number,
+																conversation.data.metadata.phoneCall!
+																	.agentNumber,
 															)
 															toast.success('Phone Number Copied')
 														}}
 														title={
-															conversation.data.metadata.phone_call
-																?.agent_number
+															conversation.data.metadata.phoneCall?.agentNumber
 														}
 													>
-														{
-															conversation.data.metadata.phone_call
-																?.agent_number
-														}
+														{conversation.data.metadata.phoneCall?.agentNumber}
 													</button>
 												</div>
 
@@ -551,7 +547,7 @@ function ConversationSideSheet({
 														Direction:
 													</span>
 													<Badge variant='secondary'>
-														{conversation.data.metadata.phone_call?.direction}
+														{conversation.data.metadata.phoneCall?.direction}
 													</Badge>
 												</div>
 											</div>

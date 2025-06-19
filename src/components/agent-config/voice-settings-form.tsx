@@ -2,9 +2,9 @@ import { SelectVoice } from '@/components/project-settings/select-voice'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
-import { TtsOutputFormat as AudioFormat } from 'elevenlabs/api'
+import { TtsOutputFormat as AudioFormat } from '@elevenlabs/elevenlabs-js/api'
 import { z } from 'zod'
-import type { ConversationalConfigApiModelInput } from 'elevenlabs/api'
+import type { ConversationalConfig } from '@elevenlabs/elevenlabs-js/api'
 import { SliderSetting } from '@/components/project-settings/slider-setting'
 import { Button } from '@/components/ui/button'
 import { TriangleAlert, LoaderCircle } from 'lucide-react'
@@ -32,7 +32,7 @@ export function VoiceForm({
 	conversation_config,
 	agent_id,
 }: {
-	conversation_config: ConversationalConfigApiModelInput
+	conversation_config: ConversationalConfig
 	agent_id: string
 }) {
 	const updateAgent = useUpdateAgent(agent_id)
@@ -40,12 +40,12 @@ export function VoiceForm({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			similarity: conversation_config.tts?.similarity_boost,
+			similarity: conversation_config.tts?.similarityBoost,
 			stability: conversation_config.tts?.stability,
 			speed: conversation_config.tts?.speed,
-			voice_id: conversation_config.tts?.voice_id,
+			voice_id: conversation_config.tts?.voiceId,
 			audio_format: conversation_config.tts
-				?.agent_output_audio_format as AudioFormat,
+				?.agentOutputAudioFormat as AudioFormat,
 		},
 	})
 	async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -53,11 +53,11 @@ export function VoiceForm({
 			await updateAgent.mutateAsync(
 				{
 					tts: {
-						voice_id: values.voice_id,
+						voiceId: values.voice_id,
 						speed: values.speed,
 						stability: values.stability,
-						similarity_boost: values.similarity,
-						agent_output_audio_format: values.audio_format as AudioFormat,
+						similarityBoost: values.similarity,
+						agentOutputAudioFormat: values.audio_format as AudioFormat,
 					},
 				},
 				{
@@ -65,12 +65,12 @@ export function VoiceForm({
 						queryClient.invalidateQueries({ queryKey: [agent_id] })
 						form.reset(
 							{
-								similarity: data.conversation_config.tts?.similarity_boost,
-								stability: data.conversation_config.tts?.stability,
-								speed: data.conversation_config.tts?.speed,
-								voice_id: data.conversation_config.tts?.voice_id,
-								audio_format: data.conversation_config.tts
-									?.agent_output_audio_format as AudioFormat,
+								similarity: data.conversationConfig.tts?.similarityBoost,
+								stability: data.conversationConfig.tts?.stability,
+								speed: data.conversationConfig.tts?.speed,
+								voice_id: data.conversationConfig.tts?.voiceId,
+								audio_format: data.conversationConfig.tts
+									?.agentOutputAudioFormat as AudioFormat,
 							},
 							{ keepValues: true },
 						)

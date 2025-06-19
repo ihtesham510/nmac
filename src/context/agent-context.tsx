@@ -1,6 +1,6 @@
 import type { GetAgentByIDReturnType } from '@/lib/types'
 import type { UseQueryResult } from '@tanstack/react-query'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { createContext, useContext, type PropsWithChildren } from 'react'
 
 type AgentResponse = UseQueryResult<GetAgentResponseModel | null, Error>

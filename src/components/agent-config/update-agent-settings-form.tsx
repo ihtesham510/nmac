@@ -1,4 +1,4 @@
-import { Llm as Models } from 'elevenlabs/api'
+import { Llm as Models } from '@elevenlabs/elevenlabs-js/api'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import {
@@ -26,7 +26,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { useQueryClient } from '@tanstack/react-query'
-import { type GetAgentResponseModel } from 'elevenlabs/api'
+import { type GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,11 +57,11 @@ export function UpdateAgentSettingsForm({
 }: {
 	data: GetAgentResponseModel
 }) {
-	const updateAgent = useUpdateAgent(data.agent_id)
+	const updateAgent = useUpdateAgent(data.agentId)
 	const client = useElevenLabsClient()
 	const { deleteKnowledgeBase } = useKnowledgeBase(client, data)
-	const knowledge_base = data.conversation_config.agent?.prompt?.knowledge_base
-	const tools = data.conversation_config.agent?.prompt?.tools
+	const knowledge_base = data.conversationConfig.agent?.prompt?.knowledgeBase
+	const tools = data.conversationConfig.agent?.prompt?.tools
 
 	const [dialogs, setDialogs] = useDialog({
 		dropdownMenu: false,
@@ -84,12 +84,12 @@ export function UpdateAgentSettingsForm({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			first_message: data.conversation_config.agent?.first_message,
-			prompt: data.conversation_config.agent?.prompt?.prompt,
-			temperature: data.conversation_config.agent?.prompt?.temperature,
-			llm: data.conversation_config.agent?.prompt?.llm,
-			max_duration: data.conversation_config.conversation?.max_duration_seconds,
-			rag: data.conversation_config.agent?.prompt?.rag?.enabled,
+			first_message: data.conversationConfig.agent?.firstMessage,
+			prompt: data.conversationConfig.agent?.prompt?.prompt,
+			temperature: data.conversationConfig.agent?.prompt?.temperature,
+			llm: data.conversationConfig.agent?.prompt?.llm,
+			max_duration: data.conversationConfig.conversation?.maxDurationSeconds,
+			rag: data.conversationConfig.agent?.prompt?.rag?.enabled,
 		},
 	})
 
@@ -97,7 +97,7 @@ export function UpdateAgentSettingsForm({
 		await updateAgent.mutateAsync(
 			{
 				agent: {
-					first_message: values.first_message,
+					firstMessage: values.first_message,
 					prompt: {
 						prompt: values.prompt,
 						temperature: values.temperature,
@@ -108,23 +108,23 @@ export function UpdateAgentSettingsForm({
 					},
 				},
 				conversation: {
-					max_duration_seconds: values.max_duration,
+					maxDurationSeconds: values.max_duration,
 				},
 				...data,
 			},
 			{
 				onSuccess(data) {
 					toast.success('Agent Updated')
-					queryClient.invalidateQueries({ queryKey: [data.agent_id] })
+					queryClient.invalidateQueries({ queryKey: [data.agentId] })
 					form.reset(
 						{
-							first_message: data.conversation_config.agent?.first_message,
-							prompt: data.conversation_config.agent?.prompt?.prompt,
-							temperature: data.conversation_config.agent?.prompt?.temperature,
-							llm: data.conversation_config.agent?.prompt?.llm,
+							first_message: data.conversationConfig.agent?.firstMessage,
+							prompt: data.conversationConfig.agent?.prompt?.prompt,
+							temperature: data.conversationConfig.agent?.prompt?.temperature,
+							llm: data.conversationConfig.agent?.prompt?.llm,
 							max_duration:
-								data.conversation_config.conversation?.max_duration_seconds,
-							rag: data.conversation_config.agent?.prompt?.rag?.enabled,
+								data.conversationConfig.conversation?.maxDurationSeconds,
+							rag: data.conversationConfig.agent?.prompt?.rag?.enabled,
 						},
 						{ keepValues: true },
 					)
@@ -509,7 +509,7 @@ function DeleteToolButton({
 	data: GetAgentResponseModel
 	toolId: string
 }) {
-	const updateAgent = useUpdateAgent(data.agent_id)
+	const updateAgent = useUpdateAgent(data.agentId)
 	const queryClient = useQueryClient()
 	return (
 		<Button
@@ -522,7 +522,7 @@ function DeleteToolButton({
 						agent: {
 							prompt: {
 								tools: [
-									...(data.conversation_config.agent?.prompt?.tools?.filter(
+									...(data.conversationConfig.agent?.prompt?.tools?.filter(
 										(t: any) => t.id !== toolId,
 									) ?? []),
 								],
@@ -532,7 +532,7 @@ function DeleteToolButton({
 					{
 						async onSuccess() {
 							await queryClient.invalidateQueries({
-								queryKey: ['get_agent', data.agent_id],
+								queryKey: ['get_agent', data.agentId],
 							})
 							toast.success('Tool Removed Successfully')
 						},

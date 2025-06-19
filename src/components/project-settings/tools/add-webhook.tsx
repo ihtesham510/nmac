@@ -29,13 +29,13 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import NumberFlow from '@number-flow/react'
 import { Slider } from '@/components/ui/slider'
 import {
 	WebhookToolApiSchemaConfigInputMethod,
 	LiteralJsonSchemaPropertyType,
-} from 'elevenlabs/api'
+} from '@elevenlabs/elevenlabs-js/api'
 import { toast } from 'sonner'
 import { useAddWebhook } from '@/hooks/use-add-webhook'
 
@@ -238,16 +238,16 @@ export function AddWebhook({
 				{
 					name: values.name,
 					description: values.description,
-					api_schema: {
+					apiSchema: {
 						url: values.url,
 						method: values.method,
 						...(queryParamsSchema && {
-							query_params_schema: queryParamsSchema,
+							queryParamsSchema: queryParamsSchema,
 						}),
 						...(requestBodySchema && {
-							request_body_schema: requestBodySchema,
+							requestBodySchema: requestBodySchema,
 						}),
-						request_headers: Object.fromEntries(
+						requestHeaders: Object.fromEntries(
 							values.headers.map(header => [header.name, header.value]),
 						),
 					},

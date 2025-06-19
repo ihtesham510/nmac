@@ -1,12 +1,12 @@
 import { queryOptions } from '@tanstack/react-query'
-import { type ConversationSummaryResponseModel } from 'elevenlabs/api'
-import type { ElevenLabsClient } from 'elevenlabs'
+import { type ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import type { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 
 export const queries = {
 	list_agents: (client: ElevenLabsClient) =>
 		queryOptions({
 			queryKey: ['list_agents'],
-			queryFn: async () => await client.conversationalAi.getAgents(),
+			queryFn: async () => await client.conversationalAi.agents.list(),
 		}),
 	get_conversation_audio: (api_key: string, conversationId: string) =>
 		queryOptions({
@@ -35,16 +35,16 @@ export const queries = {
 				let conversations: ConversationSummaryResponseModel[] = []
 				let cursor: string | undefined = undefined
 				do {
-					const conv = await client.conversationalAi.getConversations({
-						agent_id: agent_id,
-						page_size: 100,
+					const conv = await client.conversationalAi.conversations.list({
+						agentId: agent_id,
+						pageSize: 100,
 						cursor: cursor,
 					})
-					cursor = conv.next_cursor
+					cursor = conv.nextCursor
 					conversations = [...conversations, ...conv.conversations]
 				} while (cursor)
 				conversations = conversations.filter(conv =>
-					filter.includes(conv.agent_id),
+					filter.includes(conv.agentId),
 				)
 				return { conversations }
 			},
@@ -56,7 +56,7 @@ export const queries = {
 		queryOptions({
 			queryKey: ['get_agent', id],
 			queryFn: async () =>
-				id ? await client.conversationalAi.getAgent(id) : null,
+				id ? await client.conversationalAi.agents.get(id) : null,
 			enabled,
 			refetchOnWindowFocus: false,
 		}),
@@ -73,7 +73,7 @@ export const queries = {
 		queryOptions({
 			queryKey: ['get_conversation', conversationId],
 			queryFn: async () =>
-				await client.conversationalAi.getConversation(conversationId),
+				await client.conversationalAi.conversations.get(conversationId),
 			enabled,
 		}),
 	list_phone_no: (
@@ -83,12 +83,12 @@ export const queries = {
 		queryOptions({
 			queryKey: ['list_phone_no'],
 			queryFn: async () => {
-				const phone_nos = await client.conversationalAi.getPhoneNumbers()
+				const phone_nos = await client.conversationalAi.phoneNumbers.list()
 				if (filter) {
 					return phone_nos.filter(
 						phone =>
-							phone.assigned_agent &&
-							filter.includes(phone.assigned_agent.agent_id),
+							phone.assignedAgent &&
+							filter.includes(phone.assignedAgent.agentId),
 					)
 				}
 				return phone_nos
@@ -101,10 +101,10 @@ export const queries = {
 		queryOptions({
 			queryKey: ['list_knoledge_base'],
 			queryFn: async () => {
-				const docs = await client.conversationalAi.getKnowledgeBaseList()
+				const docs = await client.conversationalAi.knowledgeBase.list()
 				const filteredDocs = filter
 					? docs.documents.filter(doc =>
-							doc.dependent_agents.some((agent: any) =>
+							doc.dependentAgents.some((agent: any) =>
 								filter.includes(agent.id),
 							),
 						)
@@ -122,6 +122,6 @@ export const queries = {
 	get_phone_no: (client: ElevenLabsClient, id: string) =>
 		queryOptions({
 			queryKey: ['get_phone_no'],
-			queryFn: async () => await client.conversationalAi.getPhoneNumber(id),
+			queryFn: async () => await client.conversationalAi.phoneNumbers.get(id),
 		}),
 }

@@ -55,7 +55,7 @@ function RouteComponent() {
 					<MakeCallDialog
 						open={dialogs.makeCall}
 						onOpenChange={e => setDialogs('makeCall', e)}
-						id={phone_number.data.phone_number_id}
+						id={phone_number.data.phoneNumberId}
 					/>
 					<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
 						<div className='flex items-center justify-between mb-6'>
@@ -64,12 +64,12 @@ function RouteComponent() {
 									className='text-4xl font-bold cursor-pointer select-none'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
-											phone_number.data.phone_number,
+											phone_number.data.phoneNumber,
 										)
 										toast.success('Phone Number Copied')
 									}}
 								>
-									{phone_number.data.phone_number}
+									{phone_number.data.phoneNumber}
 								</h1>
 								<p className='font-semibold ml-2 text-primary/50'>
 									{phone_number.data.label}
@@ -78,13 +78,13 @@ function RouteComponent() {
 									className='font-semibold text-primary/50 cursor-pointer ml-2 select-none'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
-											phone_number.data.phone_number_id,
+											phone_number.data.phoneNumberId,
 										)
 
 										toast.success('ID Copied')
 									}}
 								>
-									{phone_number.data.phone_number_id}
+									{phone_number.data.phoneNumberId}
 								</p>
 							</div>
 							<Button onClick={() => setDialogs('makeCall', true)}>
@@ -93,8 +93,8 @@ function RouteComponent() {
 							</Button>
 						</div>
 						<SelectInbountCallAgent
-							id={phone_number.data.assigned_agent?.agent_id}
-							phone_id={phone_number.data.phone_number_id}
+							id={phone_number.data.assignedAgent?.agentId}
+							phone_id={phone_number.data.phoneNumberId}
 						/>
 					</div>
 				</React.Fragment>
@@ -138,8 +138,8 @@ function SelectInbountCallAgent({
 
 	async function onSubmit({ agent_id }: z.infer<typeof formSchema>) {
 		try {
-			await client.conversationalAi.updatePhoneNumber(phone_id, {
-				agent_id,
+			await client.conversationalAi.phoneNumbers.update(phone_id, {
+				agentId: agent_id,
 			})
 			await queryClient.invalidateQueries({
 				queryKey: ['get_phone_no', phone_id],
@@ -228,10 +228,10 @@ function MakeCallDialog({
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			await client.conversationalAi.twilioOutboundCall({
-				agent_id: values.agent_id,
-				agent_phone_number_id: id,
-				to_number: values.phone_number,
+			await client.conversationalAi.twilio.outboundCall({
+				agentId: values.agent_id,
+				agentPhoneNumberId: id,
+				toNumber: values.phone_number,
 			})
 			toast.success('Call Initialized Successfully')
 		} catch (err) {

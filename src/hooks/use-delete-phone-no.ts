@@ -7,7 +7,7 @@ export function useDeletePhoneNo() {
 	return useMutation({
 		mutationKey: ['delete_phone_no'],
 		mutationFn: async (id: string) =>
-			await client.conversationalAi.deletePhoneNumber(id),
+			await client.conversationalAi.phoneNumbers.delete(id),
 		async onSuccess() {
 			await queryClient.invalidateQueries({
 				queryKey: ['list_phone_no'],

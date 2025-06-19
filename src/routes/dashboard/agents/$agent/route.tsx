@@ -45,7 +45,7 @@ function RouteComponent() {
 		}),
 	)
 	const agentData = useQuery(api.agents.getAgentById, {
-		agentId: agentRes.data?.agent_id,
+		agentId: agentRes.data?.agentId,
 	})
 	const isLoading =
 		agentRes.isLoading ||

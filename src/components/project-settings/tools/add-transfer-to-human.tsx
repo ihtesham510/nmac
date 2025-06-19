@@ -20,7 +20,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useUpdateAgent } from '@/hooks/use-update-agent'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { LoaderCircle, Wrench } from 'lucide-react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { isValidPhoneNumber } from 'react-phone-number-input'
@@ -50,7 +50,7 @@ export function AddTransferToHumanTool({
 	open?: boolean
 	onOpenChange?: (e: boolean) => void
 }) {
-	const updateAgent = useUpdateAgent(data.agent_id)
+	const updateAgent = useUpdateAgent(data.agentId)
 	const queryClient = useQueryClient()
 	const form = useForm({
 		resolver: zodResolver(formSchema),
@@ -75,7 +75,7 @@ export function AddTransferToHumanTool({
 									transfers: values.transfers,
 								},
 							} as any,
-							...(data.conversation_config.agent?.prompt?.tools ?? []),
+							...(data.conversationConfig.agent?.prompt?.tools ?? []),
 						],
 					},
 				},
@@ -83,7 +83,7 @@ export function AddTransferToHumanTool({
 			{
 				async onSuccess() {
 					await queryClient.invalidateQueries({
-						queryKey: ['get_agent', data.agent_id],
+						queryKey: ['get_agent', data.agentId],
 					})
 					toast.success('Tool Added Successfully')
 					onOpenChange?.(false)

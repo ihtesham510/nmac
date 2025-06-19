@@ -13,7 +13,7 @@ import {
 import { queries } from '@/api/query-options'
 import { useElevenLabsClient } from '@/api/client'
 import { useAgents } from '@/hooks/use-agents'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import React from 'react'
 
 interface ProjectSettingsContext {

@@ -40,7 +40,6 @@ import {
 	TableBody,
 	TableCell,
 } from '@/components/ui/table'
-import type { GetPhoneNumberResponseModel } from 'elevenlabs/api'
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
 import { useAgents } from '@/hooks/use-agents'
@@ -60,6 +59,7 @@ import { AgentSelect } from '@/components/select-agent'
 import type { Agent } from '@/lib/types'
 import React, { useEffect } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import type { PhoneNumbersListResponseItem } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
 
 export const Route = createFileRoute('/dashboard/phone/')({
 	component: RouteComponent,
@@ -109,7 +109,7 @@ function PhoneNumbersTable({
 	phoneNos,
 	onAddPhoneClick,
 }: {
-	phoneNos: GetPhoneNumberResponseModel[]
+	phoneNos: PhoneNumbersListResponseItem[]
 	onAddPhoneClick: () => void
 }) {
 	const navigate = useNavigate()
@@ -133,17 +133,17 @@ function PhoneNumbersTable({
 								onClick={() =>
 									navigate({
 										to: '/dashboard/phone/$id',
-										params: { id: phoneNo.phone_number_id },
+										params: { id: phoneNo.phoneNumberId },
 									})
 								}
 							>
 								<TableCell>{phoneNo.label}</TableCell>
 								<TableCell className='font-medium'>
-									{phoneNo.phone_number}
+									{phoneNo.phoneNumber}
 								</TableCell>
 								<TableCell>
-									{phoneNo.assigned_agent ? (
-										phoneNo.assigned_agent.agent_name
+									{phoneNo.assignedAgent ? (
+										phoneNo.assignedAgent.agentName
 									) : (
 										<Badge variant='outline'>No Assigned Agent</Badge>
 									)}
@@ -169,7 +169,7 @@ function PhoneNumbersTable({
 												onClick={async e => {
 													e.stopPropagation()
 													await window.navigator.clipboard.writeText(
-														phoneNo.phone_number,
+														phoneNo.phoneNumber,
 													)
 													toast.success('Nubmer Copied To Clipboard')
 												}}

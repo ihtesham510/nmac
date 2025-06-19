@@ -22,7 +22,7 @@ import {
 import { Input } from '@/components/ui/input'
 
 import { useElevenLabsClient } from '@/api/client'
-import type { GetAgentResponseModel } from 'elevenlabs/api'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { Globe, LoaderCircle } from 'lucide-react'
 
 export function AddUrlForm({

@@ -1,7 +1,7 @@
 import { useElevenLabsClient } from '@/api/client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { UnprocessableEntityError } from 'elevenlabs/api'
+import { UnprocessableEntityError } from '@elevenlabs/elevenlabs-js/api'
 
 export function useAddPhoneNo() {
 	const client = useElevenLabsClient()
@@ -33,16 +33,16 @@ export function useAddPhoneNo() {
 			token: string
 			agentId?: string
 		}) => {
-			const res = await client.conversationalAi.createPhoneNumber({
-				phone_number,
+			const res = await client.conversationalAi.phoneNumbers.create({
+				phoneNumber: phone_number,
 				label,
 				sid,
 				token,
 				provider: 'twilio',
 			})
 			if (agentId) {
-				await client.conversationalAi.updatePhoneNumber(res.phone_number_id, {
-					agent_id: agentId,
+				await client.conversationalAi.phoneNumbers.update(res.phoneNumberId, {
+					agentId,
 				})
 			} else {
 				return res

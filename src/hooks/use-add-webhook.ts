@@ -3,8 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type {
 	GetAgentResponseModel,
 	WebhookToolConfigInput,
-	ConversationalConfigApiModelInput,
-} from 'elevenlabs/api'
+	ConversationalConfig,
+} from '@elevenlabs/elevenlabs-js/api'
 
 export function useAddWebhook(agent: GetAgentResponseModel) {
 	const client = useElevenLabsClient()
@@ -15,9 +15,9 @@ export function useAddWebhook(agent: GetAgentResponseModel) {
 		mutationFn: async (config: WebhookToolConfigInput) => {
 			const updatedTools = [
 				{ ...config, type: 'webhook' } as any,
-				...(agent.conversation_config.agent?.prompt?.tools ?? []),
+				...(agent.conversationConfig.agent?.prompt?.tools ?? []),
 			]
-			const conversational_config: ConversationalConfigApiModelInput = {
+			const conversational_config: ConversationalConfig = {
 				agent: {
 					prompt: {
 						tools: updatedTools,
@@ -25,13 +25,13 @@ export function useAddWebhook(agent: GetAgentResponseModel) {
 				},
 			}
 
-			await client.conversationalAi.updateAgent(agent.agent_id, {
-				conversation_config: conversational_config as Record<string, string>,
+			await client.conversationalAi.agents.update(agent.agentId, {
+				conversationConfig: conversational_config,
 			})
 		},
 		async onSuccess() {
 			await queryClient.invalidateQueries({
-				queryKey: ['get_agent', agent.agent_id],
+				queryKey: ['get_agent', agent.agentId],
 			})
 		},
 	})

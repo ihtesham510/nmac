@@ -17,7 +17,7 @@ import { useQuery as useTanstackQuery } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
 import { useElevenLabsClient } from '@/api/client'
 import { Check, ChevronsUpDownIcon, PauseIcon, PlayIcon } from 'lucide-react'
-import { type Voice } from 'elevenlabs/api'
+import { type Voice } from '@elevenlabs/elevenlabs-js/api'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -79,7 +79,7 @@ export function SelectVoice(props: {
 				setTestAudioPlaying(false)
 				return
 			}
-			const audio = new Audio(selectedVoiceData.preview_url)
+			const audio = new Audio(selectedVoiceData.previewUrl)
 			testAudioRef.current = audio
 			testAudioRef.current.play()
 			setTestAudioPlaying(true)
@@ -122,7 +122,7 @@ export function SelectVoice(props: {
 	const currentVoiceData = useMemo(() => {
 		if (voices.data) {
 			return (
-				voices.data.voices.find(voice => voice.voice_id === selectedVoice) ??
+				voices.data.voices.find(voice => voice.voiceId === selectedVoice) ??
 				undefined
 			)
 		}
@@ -189,7 +189,7 @@ export function SelectVoice(props: {
 									{voices.data &&
 										voices.data.voices.map(voice => (
 											<CommandItem
-												key={voice.voice_id}
+												key={voice.voiceId}
 												value={voice.name}
 												keywords={[
 													voice.name ?? '',
@@ -199,7 +199,7 @@ export function SelectVoice(props: {
 													),
 												]}
 												onSelect={() => {
-													setSelectedVoice(voice.voice_id)
+													setSelectedVoice(voice.voiceId)
 													setDialogs('popover', false)
 												}}
 												className='flex justify-between'
@@ -209,12 +209,12 @@ export function SelectVoice(props: {
 														className='p-1 group cursor-pointer text-primary-foreground bg-primary rounded-full'
 														onClick={e => {
 															e.stopPropagation()
-															voice.preview_url &&
-																playAudio(voice.preview_url, voice.voice_id)
+															voice.previewUrl &&
+																playAudio(voice.previewUrl, voice.voiceId)
 														}}
 													>
 														{audio &&
-														audio.voice_id === voice.voice_id &&
+														audio.voice_id === voice.voiceId &&
 														audio.playing ? (
 															<PauseIcon className='size-3 group-hover:text-muted-foreground' />
 														) : (
@@ -232,7 +232,7 @@ export function SelectVoice(props: {
 												<Check
 													className={cn(
 														'mr-2 h-4 w-4',
-														selectedVoice === voice.voice_id
+														selectedVoice === voice.voiceId
 															? 'opacity-100'
 															: 'opacity-0',
 													)}

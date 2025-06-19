@@ -51,7 +51,7 @@ function RouteComponent() {
 			return {
 				...conversationsList.data,
 				conversations: conversationsList.data!.conversations.filter(conv =>
-					agents.map(agent => agent.agentId).includes(conv.agent_id),
+					agents.map(agent => agent.agentId).includes(conv.agentId),
 				),
 			}
 		}
@@ -59,7 +59,7 @@ function RouteComponent() {
 			return {
 				...conversationsList.data,
 				conversations: conversationsList.data!.conversations.filter(
-					conv => conv.agent_id === selectedAgent.agentId,
+					conv => conv.agentId === selectedAgent.agentId,
 				),
 			}
 		}
@@ -74,7 +74,7 @@ function RouteComponent() {
 
 		const dateCount: Record<string, number> = {}
 		for (const conv of filteredConversations.conversations) {
-			const date = new Date(conv.start_time_unix_secs * 1000)
+			const date = new Date(conv.startTimeUnixSecs * 1000)
 				.toISOString()
 				.split('T')[0]
 			dateCount[date] = (dateCount[date] || 0) + 1
@@ -110,11 +110,11 @@ function RouteComponent() {
 
 		const dateDurationMap: Record<string, number> = {}
 		for (const conv of filteredConversations.conversations) {
-			const date = new Date(conv.start_time_unix_secs * 1000)
+			const date = new Date(conv.startTimeUnixSecs * 1000)
 				.toISOString()
 				.split('T')[0]
 			dateDurationMap[date] =
-				(dateDurationMap[date] || 0) + Math.floor(conv.call_duration_secs / 60)
+				(dateDurationMap[date] || 0) + Math.floor(conv.callDurationSecs / 60)
 		}
 
 		const endDate = new Date()

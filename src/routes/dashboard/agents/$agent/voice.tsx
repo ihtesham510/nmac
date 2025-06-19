@@ -15,8 +15,8 @@ function RouteComponent() {
 				<VoiceFormSkeleton />
 			) : (
 				<VoiceForm
-					conversation_config={agent.data!.conversation_config}
-					agent_id={agent.data!.agent_id}
+					conversation_config={agent.data!.conversationConfig}
+					agent_id={agent.data!.agentId}
 				/>
 			)}
 		</div>

@@ -12,7 +12,7 @@ function RouteComponent() {
 	return (
 		<div className='h-[50vh] w-full flex justify-center items-center'>
 			{agent.isLoading && <LoaderComponent className='h-[50vh]' />}
-			{agent.data && <ConversationButton agentId={agent.data.agent_id} />}
+			{agent.data && <ConversationButton agentId={agent.data.agentId} />}
 		</div>
 	)
 }

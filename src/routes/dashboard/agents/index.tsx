@@ -193,7 +193,7 @@ function RouteComponent() {
 										</FormControl>
 										<SelectContent>
 											{conv_agents.data?.agents.map(agent => (
-												<SelectItem value={agent.agent_id}>
+												<SelectItem value={agent.agentId}>
 													{agent.name}
 												</SelectItem>
 											))}
