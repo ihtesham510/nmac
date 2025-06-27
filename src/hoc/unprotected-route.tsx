@@ -6,8 +6,13 @@ import type { PropsWithChildren } from 'react'
 export function UnProtectedRoute({ children }: PropsWithChildren) {
 	const auth = useAuth()
 	if (auth.isLoading) return <LoaderComponent />
-	if (auth.isAuthenticated) {
+	if (
+		auth.isAuthenticated &&
+		auth.type === 'client' &&
+		auth.client?.low_credits
+	) {
+		return children
+	} else {
 		return <Navigate to='/dashboard' />
 	}
-	return children
 }
