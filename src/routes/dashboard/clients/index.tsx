@@ -35,7 +35,6 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { rabinKarpSearch } from '@/lib/utils'
-import { useClientState } from '@/context/client-state-context'
 import type { Clients } from '@/lib/types'
 import { useDialog } from '@/hooks/use-dialogs'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -48,6 +47,7 @@ import {
 import { AssignAgentForm } from '@/components/forms/assign-agent-form'
 import { EditClientForm } from '@/components/forms/edit-client-form'
 import { WarnDialog } from '@/components/utils/warn-dialog'
+import { CreateClientForm } from '@/components/create-client-form'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -56,7 +56,9 @@ export const Route = createFileRoute('/dashboard/clients/')({
 function RouteComponent() {
 	const auth = useAuth()
 	const [filter, setFilter] = useState<string>()
-	const { createClientDialog } = useClientState()
+	const [dialogs, setDialogs] = useDialog({
+		createClient: false,
+	})
 
 	const clients = useQuery(api.client.listClients, { id: auth.user!._id })
 
@@ -81,18 +83,15 @@ function RouteComponent() {
 			{!clients && (
 				<>
 					<div className='flex justify-between items-center'>
-						<div className='relative'>
-							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-							<Input
-								placeholder='Search Clients...'
-								disabled
-								className='pl-8 w-[400px]'
-							/>
+						<div className='relative flex items-center'>
+							<div className='relative'>
+								<Skeleton className='h-10 w-[400px] rounded-md' />
+								<Skeleton className='absolute left-2 top-2.5 h-4 w-4 rounded-sm' />
+							</div>
 						</div>
-						<Button disabled className='flex gap-2'>
-							<PlusIcon />
-							<p className='hidden lg:inline'>Create Client</p>
-						</Button>
+						<div className='flex items-center'>
+							<Skeleton className='h-10 w-10 lg:w-[140px] rounded-md' />
+						</div>
 					</div>
 
 					<div className='border rounded-lg'>
@@ -143,7 +142,7 @@ function RouteComponent() {
 						You haven't created any clients yet. Add a new client to get
 						started.
 					</p>
-					<Button onClick={() => createClientDialog.setState(true)}>
+					<Button onClick={() => setDialogs('createClient', true)}>
 						<PlusIcon className='size-4' />
 						Add Client
 					</Button>
@@ -152,6 +151,10 @@ function RouteComponent() {
 
 			{clients && clients.length > 0 && (
 				<>
+					<CreateClientForm
+						open={dialogs.createClient}
+						onOpenChange={e => setDialogs('createClient', e)}
+					/>
 					<div className='flex justify-between items-center'>
 						<div className='relative'>
 							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
@@ -166,7 +169,7 @@ function RouteComponent() {
 								<TooltipTrigger>
 									<Button
 										className='flex gap-2'
-										onClick={() => createClientDialog.setState(true)}
+										onClick={() => setDialogs('createClient', true)}
 									>
 										<PlusIcon />
 										<p className='hidden lg:inline'>Create Client</p>

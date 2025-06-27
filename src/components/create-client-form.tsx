@@ -3,6 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
+	Dialog,
+	DialogHeader,
+	DialogContent,
+	DialogTitle,
+	DialogDescription,
+} from '@/components/ui/dialog'
+import {
 	Form,
 	FormControl,
 	FormField,
@@ -16,10 +23,14 @@ import { useConvex, useMutation } from 'convex/react'
 import { api } from 'convex/_generated/api'
 import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
-import { useClientState } from '@/context/client-state-context'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-export function CreateClientForm() {
+interface Props {
+	open: boolean
+	onOpenChange: (e: boolean) => void
+}
+
+export function CreateClientForm({ open, onOpenChange }: Props) {
 	const convex = useConvex()
 	const formSchema = z
 		.object({
@@ -73,7 +84,6 @@ export function CreateClientForm() {
 			credits: 10000,
 		},
 	})
-	const { createClientDialog } = useClientState()
 	const auth = useAuth()
 	const createClient = useMutation(api.client.createClient)
 
@@ -87,105 +97,123 @@ export function CreateClientForm() {
 				password: values.password,
 			})
 			toast.success('Client Created Successfully.')
-			createClientDialog.setState(false)
+			onOpenChange(false)
 		} catch (error) {
 			toast.error('Error While Creating Client.')
 		}
 	}
 
 	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className='flex flex-col gap-8'
-			>
-				<ScrollArea className='w-full h-[60vh]' scrollBar='hidden'>
-					<div className='space-y-8 w-full'>
-						<FormField
-							control={form.control}
-							name='name'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input placeholder='Client Name' type='text' {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='email'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Client's Email (Optional)</FormLabel>
-									<FormControl>
-										<Input placeholder='Clients' type='text' {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Create New Client</DialogTitle>
+					<DialogDescription>
+						Create a new client and attach you're agent.
+					</DialogDescription>
+				</DialogHeader>
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className='flex flex-col gap-8'
+					>
+						<ScrollArea className='w-full h-[60vh]' scrollBar='hidden'>
+							<div className='space-y-8 w-full'>
+								<FormField
+									control={form.control}
+									name='name'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Name</FormLabel>
+											<FormControl>
+												<Input
+													placeholder='Client Name'
+													type='text'
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name='email'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Client's Email (Optional)</FormLabel>
+											<FormControl>
+												<Input placeholder='Clients' type='text' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-						<FormField
-							control={form.control}
-							name='username'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Username</FormLabel>
-									<FormControl>
-										<Input placeholder='client_123' type='text' {...field} />
-									</FormControl>
+								<FormField
+									control={form.control}
+									name='username'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Username</FormLabel>
+											<FormControl>
+												<Input
+													placeholder='client_123'
+													type='text'
+													{...field}
+												/>
+											</FormControl>
 
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-						<FormField
-							control={form.control}
-							name='password'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Password</FormLabel>
-									<FormControl>
-										<PasswordInput
-											placeholder='Enter Your Password'
-											type='password'
-											{...field}
-										/>
-									</FormControl>
+								<FormField
+									control={form.control}
+									name='password'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<PasswordInput
+													placeholder='Enter Your Password'
+													type='password'
+													{...field}
+												/>
+											</FormControl>
 
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 
-						<FormField
-							control={form.control}
-							name='confirm_password'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Confirm Password</FormLabel>
-									<FormControl>
-										<PasswordInput
-											placeholder='Re-Enter Your Password'
-											type='password'
-											{...field}
-										/>
-									</FormControl>
+								<FormField
+									control={form.control}
+									name='confirm_password'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Confirm Password</FormLabel>
+											<FormControl>
+												<PasswordInput
+													placeholder='Re-Enter Your Password'
+													type='password'
+													{...field}
+												/>
+											</FormControl>
 
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-				</ScrollArea>
-				<Button type='submit' className='w-full'>
-					Submit
-				</Button>
-			</form>
-		</Form>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</ScrollArea>
+						<Button type='submit' className='w-full'>
+							Submit
+						</Button>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
 	)
 }
