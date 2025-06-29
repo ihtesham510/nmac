@@ -8,6 +8,10 @@ export type Clients = (typeof api.client.listClients)['_returnType']
 export type ArgsUser = (typeof api.user.registerUser)['_args']
 export type ArgsSignIn = (typeof api.user.signIn)['_args']
 
+export type NoUndefinedField<T> = {
+	[P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>
+}
+
 export type Agent = (typeof api.agents.getAgent)['_returnType']
 export type GetAgentByIDReturnType =
 	(typeof api.agents.getAgentById)['_returnType']

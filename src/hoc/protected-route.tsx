@@ -4,14 +4,15 @@ import { Navigate } from '@tanstack/react-router'
 import type { PropsWithChildren } from 'react'
 
 export function ProtectedRoute({ children }: PropsWithChildren) {
-	const auth = useAuth()
-	if (auth.isLoading) return <LoaderComponent />
-	if (!auth.isAuthenticated) return <Navigate to='/sign-in' />
-	if (
-		auth.isAuthenticated &&
-		auth.type === 'client' &&
-		auth.client?.low_credits
-	)
-		return <Navigate to='/422' />
+	const { isLoading, isUnauthenticated, client } = useAuth()
+
+	if (isLoading) return <LoaderComponent />
+	if (isUnauthenticated) return <Navigate to='/sign-in' />
+
+	if (client) {
+		if (client.low_credits) return <Navigate to='/422' />
+		if (!client.has_subscription) return <Navigate to='/403' />
+	}
+
 	return children
 }

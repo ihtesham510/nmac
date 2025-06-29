@@ -111,7 +111,7 @@ export function EditClientForm({ client, open, onOpenChange }: Props) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent>
+			<DialogContent className='max-h-[90vh] overflow-auto'>
 				<DialogHeader>
 					<DialogTitle>Edit Client</DialogTitle>
 				</DialogHeader>

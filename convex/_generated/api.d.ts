@@ -15,9 +15,11 @@ import type {
 } from "convex/server";
 import type * as agents from "../agents.js";
 import type * as client from "../client.js";
+import type * as crons from "../crons.js";
 import type * as http from "../http.js";
 import type * as image from "../image.js";
 import type * as internals from "../internals.js";
+import type * as subscriptions from "../subscriptions.js";
 import type * as user from "../user.js";
 import type * as utils from "../utils.js";
 
@@ -32,9 +34,11 @@ import type * as utils from "../utils.js";
 declare const fullApi: ApiFromModules<{
   agents: typeof agents;
   client: typeof client;
+  crons: typeof crons;
   http: typeof http;
   image: typeof image;
   internals: typeof internals;
+  subscriptions: typeof subscriptions;
   user: typeof user;
   utils: typeof utils;
 }>;

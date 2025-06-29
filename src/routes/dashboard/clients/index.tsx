@@ -26,15 +26,17 @@ import {
 import { useMemo, useState, type PropsWithChildren } from 'react'
 import {
 	BotIcon,
+	CreditCard,
 	DeleteIcon,
 	Edit3Icon,
 	MoreHorizontal,
 	PlusIcon,
 	Search,
 	UserIcon,
+	Calendar,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { rabinKarpSearch } from '@/lib/utils'
+import { getSubscriptionBadgeClasses, rabinKarpSearch } from '@/lib/utils'
 import type { Clients } from '@/lib/types'
 import { useDialog } from '@/hooks/use-dialogs'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -48,6 +50,8 @@ import { AssignAgentForm } from '@/components/forms/assign-agent-form'
 import { EditClientForm } from '@/components/forms/edit-client-form'
 import { WarnDialog } from '@/components/utils/warn-dialog'
 import { CreateClientForm } from '@/components/create-client-form'
+import { ManageSubscriptionForm } from '@/components/forms/manage-subscription-form'
+import { SubscriptionHoverCard } from '@/components/utils/subscription-hover-card'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -99,11 +103,16 @@ function RouteComponent() {
 							<TableHeader>
 								<TableRow>
 									<TableHead className='px-4'>Name</TableHead>
-									<TableHead className='hidden md:flex items-center'>
+									<TableHead className='hidden md:table-cell'>
 										Username
 									</TableHead>
-									<TableHead>Credits</TableHead>
-									<TableHead>Created</TableHead>
+									<TableHead className='hidden lg:table-cell'>
+										Subscription
+									</TableHead>
+									<TableHead className='hidden sm:table-cell'>
+										Created
+									</TableHead>
+									<TableHead className='w-10'></TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -112,13 +121,16 @@ function RouteComponent() {
 										<TableCell className='px-4'>
 											<Skeleton className='h-4 w-[150px]' />
 										</TableCell>
-										<TableCell className='hidden md:flex items-center'>
+										<TableCell className='hidden md:table-cell'>
 											<Skeleton className='h-4 w-[100px]' />
 										</TableCell>
-										<TableCell>
-											<Skeleton className='h-4 w-[60px]' />
+										<TableCell className='hidden lg:table-cell'>
+											<Skeleton className='h-5 w-[80px] rounded-full' />
 										</TableCell>
 										<TableCell>
+											<Skeleton className='h-5 w-[60px] rounded-full' />
+										</TableCell>
+										<TableCell className='hidden sm:table-cell'>
 											<Skeleton className='h-4 w-[100px]' />
 										</TableCell>
 										<TableCell>
@@ -149,12 +161,13 @@ function RouteComponent() {
 				</div>
 			)}
 
+			<CreateClientForm
+				open={dialogs.createClient}
+				onOpenChange={e => setDialogs('createClient', e)}
+			/>
+
 			{clients && clients.length > 0 && (
 				<>
-					<CreateClientForm
-						open={dialogs.createClient}
-						onOpenChange={e => setDialogs('createClient', e)}
-					/>
 					<div className='flex justify-between items-center'>
 						<div className='relative'>
 							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
@@ -187,11 +200,16 @@ function RouteComponent() {
 							<TableHeader>
 								<TableRow>
 									<TableHead className='px-4'>Name</TableHead>
-									<TableHead className='hidden md:flex items-center'>
+									<TableHead className='hidden md:table-cell'>
 										Username
 									</TableHead>
-									<TableHead>Credits</TableHead>
-									<TableHead>Created</TableHead>
+									<TableHead className='hidden lg:table-cell'>
+										Subscription
+									</TableHead>
+									<TableHead className='hidden sm:table-cell'>
+										Created
+									</TableHead>
+									<TableHead className='w-10'></TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -200,23 +218,42 @@ function RouteComponent() {
 										<TableCell className='font-medium px-4'>
 											{client.name}
 										</TableCell>
-										<TableCell className='max-w-[300px] hidden md:table-cell items-center truncate'>
+										<TableCell className='max-w-[300px] hidden md:table-cell truncate'>
 											{client.username}
 										</TableCell>
-										<TableCell>
-											<Badge variant='secondary' className='text-xs'>
-												{client.credits}
-											</Badge>
-										</TableCell>
-										<TableCell className='text-sm text-muted-foreground'>
-											{new Date(client._creationTime).toLocaleDateString(
-												'en-US',
-												{
-													day: 'numeric',
-													month: 'short',
-													year: 'numeric',
-												},
-											)}
+										{client.subscription ? (
+											<TableCell className='hidden lg:table-cell'>
+												<SubscriptionHoverCard
+													subscription={client.subscription}
+													align='center'
+													side='right'
+												>
+													<Badge
+														className={`text-xs w-fit capitalize ${getSubscriptionBadgeClasses(client.subscription.type)}`}
+													>
+														{client.subscription.type}
+													</Badge>
+												</SubscriptionHoverCard>
+											</TableCell>
+										) : (
+											<TableCell>
+												<Badge variant='outline' className='text-xs'>
+													No subscription
+												</Badge>
+											</TableCell>
+										)}
+										<TableCell className='text-sm text-muted-foreground hidden sm:table-cell'>
+											<div className='flex items-center gap-1'>
+												<Calendar className='h-3 w-3' />
+												{new Date(client._creationTime).toLocaleDateString(
+													'en-US',
+													{
+														day: 'numeric',
+														month: 'short',
+														year: 'numeric',
+													},
+												)}
+											</div>
 										</TableCell>
 										<TableCell onClick={e => e.stopPropagation()}>
 											<ClientDropDownMenu client={client}>
@@ -245,6 +282,7 @@ function ClientDropDownMenu({
 		warnDelete: false,
 		assignAgent: false,
 		editClient: false,
+		manageSubscription: false,
 	})
 	const deleteClient = useMutation(api.client.deleteClient)
 
@@ -259,6 +297,12 @@ function ClientDropDownMenu({
 					await deleteClient({ clientId: client._id })
 				}}
 				itemName='client'
+			/>
+
+			<ManageSubscriptionForm
+				open={dialogs.manageSubscription}
+				onOpenChange={e => setDialogs('manageSubscription', e)}
+				client={client}
 			/>
 
 			<EditClientForm
@@ -287,6 +331,14 @@ function ClientDropDownMenu({
 							Assign Agent
 							<DropdownMenuShortcut>
 								<BotIcon />
+							</DropdownMenuShortcut>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => setDialogs('manageSubscription', true)}
+						>
+							Manage Subscription
+							<DropdownMenuShortcut>
+								<CreditCard />
 							</DropdownMenuShortcut>
 						</DropdownMenuItem>
 					</DropdownMenuGroup>

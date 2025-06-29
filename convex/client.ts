@@ -9,14 +9,12 @@ export const createClient = mutation({
 		email: v.optional(v.string()),
 		username: v.string(),
 		password: v.string(),
-		credits: v.number(),
 	},
-	async handler(ctx, { userId, username, name, password, email, credits }) {
+	async handler(ctx, { userId, username, name, password, email }) {
 		const secretKey = process.env.SECRET_KEY
 		const encryptedPassword = encrypt(password, secretKey!)
 		return await ctx.db.insert('client', {
 			userId,
-			credits,
 			email,
 			name,
 			assigned_Agents: [],
@@ -52,23 +50,14 @@ export const updateClient = mutation({
 				? encrypt(args.password, secretKey!)
 				: client?.password
 
-			console.log({
-				userId: client.userId,
-				credits: client.credits,
-				password: encryptedPassword,
-				email: args.email ?? client.email,
-				username: args.username ?? client.username,
-				assigned_Agents: client.assigned_Agents,
-				name: args.name ?? client.name,
-			})
 			return await ctx.db.patch(args.clientId, {
 				userId: client.userId,
-				credits: client.credits,
 				password: encryptedPassword,
 				email: args.email ?? client.email,
 				username: args.username ?? client.username,
 				assigned_Agents: client.assigned_Agents,
 				name: args.name ?? client.name,
+				...client.subscription,
 			})
 		}
 	},

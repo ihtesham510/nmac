@@ -94,8 +94,8 @@ export function AppSidebar() {
 							avatar: auth.user?.image?.url,
 						}}
 						credits={{
-							remaining: auth.client!.credits!,
-							total: 10000,
+							remaining: auth.client!.subscription!.remaining_credits,
+							total: auth.client!.subscription!.total_credits,
 						}}
 						onLogOut={() => auth.logOut()}
 					/>

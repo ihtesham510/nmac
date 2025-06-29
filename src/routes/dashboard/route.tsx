@@ -20,8 +20,8 @@ function RouteComponent() {
 		<SidebarProvider>
 			<AppSidebar />
 			<SidebarInset className='relative'>
-				<header className=' mx-10 flex justify-between items-center h-16 sticky top-0 z-10 bg-background'>
-					<SidebarTrigger />
+				<header className=' mx-10 flex justify-between items-center h-16 sticky top-0 z-11 bg-background'>
+					<SidebarTrigger className='size-4' />
 				</header>
 				<Outlet />
 			</SidebarInset>

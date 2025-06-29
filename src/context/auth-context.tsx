@@ -11,12 +11,15 @@ import {
 } from 'react'
 import type { Id } from 'convex/_generated/dataModel'
 import { toast } from 'sonner'
+import { getPercentageOfCredits } from '@/lib/utils'
 
 type UserType = 'client' | 'user' | null
 
 export const authContext = createContext<{
 	user: User | undefined
-	client: (Client & { low_credits: boolean }) | undefined
+	client:
+		| (Client & { low_credits: boolean; has_subscription: boolean })
+		| undefined
 	logOut: () => void
 	signUp: (params: ArgsUser) => void
 	type: UserType
@@ -82,13 +85,23 @@ export function AuthProvider({ children }: PropsWithChildren) {
 	const isUnauthenticated = user === null && client === null
 	const isAuthenticated = !!user || !!client
 	const api_key = user?.elevenLabs_api_key ?? client?.api_key
-	const low_credits = !!(client && client.credits && client.credits < 100)
+	const has_subscription = !!(client && client?.subscription)
+	const low_credits = !!(
+		client &&
+		client.subscription &&
+		getPercentageOfCredits(
+			client.subscription.total_credits,
+			client.subscription.remaining_credits,
+		) < 5
+	)
 
 	return (
 		<authContext.Provider
 			value={{
 				user,
-				client: client ? { ...client, low_credits } : undefined,
+				client: client
+					? { ...client, low_credits, has_subscription }
+					: undefined,
 				type,
 				isAuthenticated,
 				isUnauthenticated,

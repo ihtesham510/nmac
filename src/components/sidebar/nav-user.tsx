@@ -2,6 +2,7 @@ import { CreditCardIcon, LogOutIcon } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Link } from '@tanstack/react-router'
 import React from 'react'
 import {
 	SidebarMenu,
@@ -9,6 +10,7 @@ import {
 	SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import NumberFlow from '@number-flow/react'
+import { Badge } from '../ui/badge'
 
 export interface NavUserProps {
 	user: {
@@ -48,9 +50,14 @@ export function NavUser({ user, credits, ...props }: NavUserProps) {
 				<React.Fragment>
 					<Separator className='my-1' />
 					<SidebarMenuItem className='flex flex-col space-y-2 my-1 mx-1'>
-						<div className='flex gap-2 items-center'>
-							<CreditCardIcon className='size-4' />
-							<p className='font-medium text-sm'>Credits</p>
+						<div className='flex justify-between'>
+							<div className='flex gap-2 items-center'>
+								<CreditCardIcon className='size-4' />
+								<p className='font-medium text-sm'>Credits</p>
+							</div>
+							<Link to='/pricing'>
+								<Badge className='cursor-pointer select-none'>Upgrade</Badge>
+							</Link>
 						</div>
 						<div className='flex flex-col gap-2'>
 							<div className='flex flex-col py-2 gap-2'>

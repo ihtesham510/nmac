@@ -18,7 +18,20 @@ export default defineSchema({
 	client: defineTable({
 		userId: v.id('user'),
 		name: v.string(),
-		credits: v.number(),
+		subscription: v.optional(
+			v.object({
+				type: v.union(
+					v.literal('base'),
+					v.literal('pro'),
+					v.literal('business'),
+				),
+				subscribedAt: v.number(),
+				updatedAt: v.number(),
+				interval: v.number(),
+				total_credits: v.number(),
+				remaining_credits: v.number(),
+			}),
+		),
 		username: v.string(),
 		password: v.string(),
 		email: v.optional(v.string()),

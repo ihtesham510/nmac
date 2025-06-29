@@ -60,3 +60,23 @@ export const decrypt = (cipherText: string, secret_key: string) => {
 		return null
 	}
 }
+
+export function getPercentageOfCredits(
+	total: number,
+	remaining: number,
+): number {
+	return (remaining / total) * 100
+}
+
+export const getSubscriptionBadgeClasses = (type: string) => {
+	switch (type) {
+		case 'base':
+			return 'bg-gray-300 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+		case 'pro':
+			return 'bg-blue-300 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-300'
+		case 'business':
+			return 'bg-purple-300 text-purple-800 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-300'
+		default:
+			return ''
+	}
+}

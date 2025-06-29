@@ -23,7 +23,6 @@ import { useConvex, useMutation } from 'convex/react'
 import { api } from 'convex/_generated/api'
 import { useAuth } from '@/context/auth-context'
 import { toast } from 'sonner'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface Props {
 	open: boolean
@@ -37,7 +36,6 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 			name: z.string().min(1).min(2),
 			email: z.string().optional(),
 			username: z.string().min(1).min(2),
-			credits: z.number(),
 			password: z
 				.string()
 				.min(1)
@@ -80,9 +78,7 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			credits: 10000,
-		},
+		defaultValues: {},
 	})
 	const auth = useAuth()
 	const createClient = useMutation(api.client.createClient)
@@ -91,7 +87,6 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 		try {
 			await createClient({
 				name: values.name,
-				credits: values.credits,
 				userId: auth.user!._id,
 				username: values.username,
 				password: values.password,
@@ -105,7 +100,7 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent>
+			<DialogContent className='max-h-[90vh] overflow-auto'>
 				<DialogHeader>
 					<DialogTitle>Create New Client</DialogTitle>
 					<DialogDescription>
@@ -117,97 +112,88 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className='flex flex-col gap-8'
 					>
-						<ScrollArea className='w-full h-[60vh]' scrollBar='hidden'>
-							<div className='space-y-8 w-full'>
-								<FormField
-									control={form.control}
-									name='name'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Name</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='Client Name'
-													type='text'
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name='email'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Client's Email (Optional)</FormLabel>
-											<FormControl>
-												<Input placeholder='Clients' type='text' {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+						<div className='space-y-8 w-full'>
+							<FormField
+								control={form.control}
+								name='name'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Name</FormLabel>
+										<FormControl>
+											<Input placeholder='Client Name' type='text' {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name='email'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Client's Email (Optional)</FormLabel>
+										<FormControl>
+											<Input placeholder='Clients' type='text' {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-								<FormField
-									control={form.control}
-									name='username'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Username</FormLabel>
-											<FormControl>
-												<Input
-													placeholder='client_123'
-													type='text'
-													{...field}
-												/>
-											</FormControl>
+							<FormField
+								control={form.control}
+								name='username'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Username</FormLabel>
+										<FormControl>
+											<Input placeholder='client_123' type='text' {...field} />
+										</FormControl>
 
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-								<FormField
-									control={form.control}
-									name='password'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Password</FormLabel>
-											<FormControl>
-												<PasswordInput
-													placeholder='Enter Your Password'
-													type='password'
-													{...field}
-												/>
-											</FormControl>
+							<FormField
+								control={form.control}
+								name='password'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Password</FormLabel>
+										<FormControl>
+											<PasswordInput
+												placeholder='Enter Your Password'
+												type='password'
+												{...field}
+											/>
+										</FormControl>
 
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-								<FormField
-									control={form.control}
-									name='confirm_password'
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Confirm Password</FormLabel>
-											<FormControl>
-												<PasswordInput
-													placeholder='Re-Enter Your Password'
-													type='password'
-													{...field}
-												/>
-											</FormControl>
+							<FormField
+								control={form.control}
+								name='confirm_password'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Confirm Password</FormLabel>
+										<FormControl>
+											<PasswordInput
+												placeholder='Re-Enter Your Password'
+												type='password'
+												{...field}
+											/>
+										</FormControl>
 
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-						</ScrollArea>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+
 						<Button type='submit' className='w-full'>
 							Submit
 						</Button>
