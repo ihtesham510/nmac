@@ -57,8 +57,10 @@ export const updateSubscription = mutation({
 			throw new ConvexError('Client has no subscription')
 		}
 
-		const deductedCredits =
+		let deductedCredits: number =
 			client.subscription.total_credits - client.subscription.remaining_credits
+
+		deductedCredits = deductedCredits <= 0 ? 0 : deductedCredits
 
 		const functions = (
 			await ctx.db.system.query('_scheduled_functions').collect()
@@ -121,7 +123,8 @@ export const updateSubscription = mutation({
 				type,
 				interval: newInterval,
 				total_credits: credits,
-				remaining_credits: credits - deductedCredits,
+				remaining_credits:
+					credits - deductedCredits <= 0 ? 0 : credits - deductedCredits,
 				updatedAt: new Date(Date.now()).valueOf(),
 			},
 		})
