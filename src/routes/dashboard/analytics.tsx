@@ -17,6 +17,7 @@ import { AgentSelect } from '@/components/select-agent'
 import { useAgents } from '@/hooks/use-agents'
 import { useElevenLabsClient } from '@/api/client'
 import { BotIcon } from 'lucide-react'
+import { useAuth } from '@/context/auth-context'
 
 export enum TimeRange {
 	Week = '7d',
@@ -31,6 +32,7 @@ export const Route = createFileRoute('/dashboard/analytics')({
 })
 
 function RouteComponent() {
+	const auth = useAuth()
 	const agents = useAgents()
 	const client = useElevenLabsClient()
 	const [timeRange, setTimeRange] = React.useState<TimeRange>(
@@ -158,7 +160,9 @@ function RouteComponent() {
 					</div>
 					<h2 className='text-xl font-semibold mb-2'>No Agents found</h2>
 					<p className='text-muted-foreground text-center max-w-md mb-8'>
-						You haven't added any agents yet. Add agent to see analytics.
+						{auth.type === 'user'
+							? "You haven't added any agents yet. Add agent to see analytics."
+							: "You haven't been assigned any agents yet."}
 					</p>
 				</div>
 			)}
