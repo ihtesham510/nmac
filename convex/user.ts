@@ -1,5 +1,5 @@
 import { mutation, query } from './_generated/server'
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import { decrypt, encrypt } from './utils'
 
 export const registerUser = mutation({
@@ -25,6 +25,26 @@ export const registerUser = mutation({
 		})
 	},
 })
+
+export const updateUser = mutation({
+	args: {
+		first_name: v.optional(v.string()),
+		last_name: v.optional(v.string()),
+		email: v.optional(v.string()),
+		userId: v.id('user'),
+	},
+	async handler(ctx, { userId, first_name, last_name, email }) {
+		const user = await ctx.db.get(userId)
+		if (!user) throw new ConvexError('user not found')
+		return await ctx.db.patch(user._id, {
+			...user,
+			first_name,
+			last_name,
+			email,
+		})
+	},
+})
+
 export const signIn = mutation({
 	args: {
 		username: v.string(),

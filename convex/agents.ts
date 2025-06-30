@@ -1,4 +1,4 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 
 export const createAgent = mutation({
@@ -11,6 +11,25 @@ export const createAgent = mutation({
 	},
 	async handler(ctx, args) {
 		return await ctx.db.insert('agent', args)
+	},
+})
+
+export const updateAgent = mutation({
+	args: {
+		name: v.optional(v.string()),
+		description: v.optional(v.string()),
+		tags: v.optional(v.array(v.string())),
+		agentId: v.id('agent'),
+	},
+	async handler(ctx, args) {
+		const agent = await ctx.db.get(args.agentId)
+		if (!agent) throw new ConvexError('agent not found')
+		return await ctx.db.patch(agent._id, {
+			...agent,
+			name: args.name ?? agent?.name,
+			description: args.description ?? agent?.description,
+			tags: args.tags ?? agent.tags,
+		})
 	},
 })
 

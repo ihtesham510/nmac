@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '../ui/input'
 import { useAuth } from '@/context/auth-context'
-import { Separator } from '../ui/separator'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -38,6 +37,22 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { PasswordInput } from '../ui/password-input'
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '../ui/card'
+import {
+	Camera,
+	User,
+	Mail,
+	Lock,
+	Trash2,
+	Upload,
+	LoaderCircle,
+} from 'lucide-react'
 
 export function Profile() {
 	const auth = useAuth()
@@ -45,9 +60,9 @@ export function Profile() {
 	const convex = useConvex()
 	const [selectedFile, setFile] = useState<File | null>(null)
 	const formSchema = z.object({
-		first_name: z.string().min(1),
-		last_name: z.string().min(1),
-		email: z.string().email(),
+		first_name: z.string().min(1, 'First name is required'),
+		last_name: z.string().min(1, 'Last name is required'),
+		email: z.string().email('Please enter a valid email address'),
 	})
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -87,110 +102,148 @@ export function Profile() {
 					})
 					toast.dismiss(t1)
 					setFile(null)
-					return toast.success('Updated Successfully')
+					return toast.success('Profile picture updated successfully')
 				}
 			}
 		})()
 	}, [selectedFile, convex, auth])
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	const updateUser = useMutation(api.user.updateUser)
+
+	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
-			console.log(values)
-			toast(
-				<pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-					<code className='text-white'>{JSON.stringify(values, null, 2)}</code>
-				</pre>,
-			)
+			if (auth.user) {
+				await updateUser({
+					userId: auth.user._id,
+					...values,
+				})
+				form.reset({
+					email: auth.user.email,
+					first_name: auth.user.first_name,
+					last_name: auth.user.last_name,
+				})
+			}
+			toast.success('Profile updated successfully!')
 		} catch (error) {
 			console.error('Form submission error', error)
-			toast.error('Failed to submit the form. Please try again.')
+			toast.error('Failed to update profile. Please try again.')
 		}
 	}
+
 	return (
-		<div className='space-y-6'>
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className='w-full mt-5 flex flex-col space-y-6'
-				>
-					<div className='flex justify-between pr-20 px-4 items-center'>
-						<h1 className='text-lg font-bold'>Profile Picture</h1>
+		<div className='max-w-full mx-auto space-y-8'>
+			{/* Profile Picture Section */}
+			<Card>
+				<CardHeader>
+					<CardTitle className='flex items-center gap-2'>
+						<Camera className='h-5 w-5' />
+						Profile Picture
+					</CardTitle>
+					<CardDescription>
+						Update your profile picture. Recommended size is 400x400px.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className='flex items-center gap-6'>
+						<div className='relative'>
+							<Avatar className='h-20 w-20'>
+								<AvatarImage
+									src={auth.user?.image?.url}
+									alt='Profile picture'
+								/>
+								<AvatarFallback className='text-lg'>
+									{auth.user?.first_name?.[0]}
+									{auth.user?.last_name?.[0]}
+								</AvatarFallback>
+							</Avatar>
+							<button
+								type='button'
+								onClick={() => ref.current?.click()}
+								className='absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors'
+							>
+								<Upload className='h-4 w-4' />
+							</button>
+						</div>
+						<div className='space-y-2'>
+							<Button
+								type='button'
+								variant='outline'
+								onClick={() => ref.current?.click()}
+								className='flex items-center gap-2'
+							>
+								<Upload className='h-4 w-4' />
+								Upload New Picture
+							</Button>
+							<p className='text-sm text-muted-foreground'>
+								JPG, PNG or GIF. Max size 5MB.
+							</p>
+						</div>
 						<input
 							type='file'
 							ref={ref}
 							onChange={handleChange}
+							accept='image/*'
 							className='hidden'
 						/>
-						<span className='flex gap-6 items-center w-[350px]'>
-							<Avatar className='size-12'>
-								<AvatarImage src={auth.user?.image?.url} alt='profile_image' />
-								<AvatarFallback>CN</AvatarFallback>
-							</Avatar>
-							<Button
-								type='button'
-								onClick={() => {
-									if (ref.current) {
-										ref.current.click()
-									}
-								}}
-							>
-								Upload Image
-							</Button>
-						</span>
 					</div>
+				</CardContent>
+			</Card>
 
-					<Separator className='px-20 w-full' />
-					<div className='flex justify-between pr-20 px-4 items-center'>
-						<h1 className='text-lg font-bold'>First Name</h1>
-						<div className='w-[350px]'>
-							<FormField
-								control={form.control}
-								name='first_name'
-								render={({ field }) => (
-									<FormItem>
-										<FormControl>
-											<Input
-												placeholder='First Name'
-												className='w-full'
-												type='text'
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-					</div>
-					<div className='flex justify-between pr-20 px-4 items-center'>
-						<h1 className='text-lg font-bold'>Last Name</h1>
-						<div className='w-[350px]'>
-							<FormField
-								control={form.control}
-								name='last_name'
-								render={({ field }) => (
-									<FormItem>
-										<FormControl>
-											<Input placeholder='Last Name' type='text' {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-					</div>
-					<div className='flex justify-between pr-20 px-4 items-center'>
-						<h1 className='text-lg font-bold'>Email</h1>
-						<div className='w-[350px]'>
+			{/* Personal Information Section */}
+			<Card>
+				<CardHeader>
+					<CardTitle className='flex items-center gap-2'>
+						<User className='h-5 w-5' />
+						Personal Information
+					</CardTitle>
+					<CardDescription>
+						Update your personal details and contact information.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+								<FormField
+									control={form.control}
+									name='first_name'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>First Name</FormLabel>
+											<FormControl>
+												<Input placeholder='Enter your first name' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name='last_name'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Last Name</FormLabel>
+											<FormControl>
+												<Input placeholder='Enter your last name' {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
 							<FormField
 								control={form.control}
 								name='email'
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel className='flex items-center gap-2'>
+											<Mail className='h-4 w-4' />
+											Email Address
+										</FormLabel>
 										<FormControl>
 											<Input
-												placeholder='user@example.com'
-												type='text'
+												placeholder='Enter your email address'
+												type='email'
 												{...field}
 											/>
 										</FormControl>
@@ -198,78 +251,142 @@ export function Profile() {
 									</FormItem>
 								)}
 							/>
-						</div>
-					</div>
-					{form.formState.isDirty && (
-						<div className='fixed bottom-10 w-[800px] right-1/2 translate-x-1/2 flex justify-between items-center gap-4 bg-muted/20 p-4 rounded-2xl shadow'>
-							<h1 className='text-sm font-semibold'>Changes Detected</h1>
 
-							<div className='flex justify-center items-center gap-4'>
-								<Button
-									variant='outline'
-									className='text-sm'
-									size='sm'
-									onClick={() =>
-										form.reset({
-											first_name: auth.user?.first_name,
-											last_name: auth.user?.last_name,
-										})
-									}
-								>
-									Clear
-								</Button>
-								<Button size='sm' className='text-sm' type='submit'>
-									Save
-								</Button>
+							{form.formState.isDirty && (
+								<div className='flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-dashed'>
+									<div className='flex items-center gap-2'>
+										<div className='h-2 w-2 bg-orange-500 rounded-full animate-pulse' />
+										<span className='text-sm font-medium'>Unsaved changes</span>
+									</div>
+									<div className='flex gap-2'>
+										<Button
+											type='button'
+											variant='outline'
+											size='sm'
+											onClick={() =>
+												form.reset({
+													first_name: auth.user?.first_name,
+													last_name: auth.user?.last_name,
+													email: auth.user?.email,
+												})
+											}
+										>
+											Discard
+										</Button>
+										<Button
+											type='submit'
+											disabled={form.formState.isSubmitting}
+											size='sm'
+										>
+											{form.formState.isSubmitting ? (
+												<LoaderCircle className='size-4 animate-spin' />
+											) : (
+												'Save Changes'
+											)}
+										</Button>
+									</div>
+								</div>
+							)}
+						</form>
+					</Form>
+				</CardContent>
+			</Card>
+
+			{/* Security Section */}
+			<Card>
+				<CardHeader>
+					<CardTitle className='flex items-center gap-2'>
+						<Lock className='h-5 w-5' />
+						Security
+					</CardTitle>
+					<CardDescription>
+						Manage your password and account security settings.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<div className='flex items-center justify-between'>
+						<div className='space-y-1'>
+							<p className='font-medium'>Password</p>
+							<p className='text-sm text-muted-foreground'>
+								Last changed 30 days ago
+							</p>
+						</div>
+						<ChangePassword />
+					</div>
+				</CardContent>
+			</Card>
+
+			{/* Danger Zone */}
+			<Card className='border-destructive/20'>
+				<CardHeader>
+					<CardTitle className='flex items-center gap-2 text-destructive'>
+						<Trash2 className='h-5 w-5' />
+						Danger Zone
+					</CardTitle>
+					<CardDescription>
+						Permanently delete your account and all associated data.
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<AlertDialog>
+						<div className='flex items-center justify-between'>
+							<div className='space-y-1'>
+								<p className='font-medium'>Delete Account</p>
+								<p className='text-sm text-muted-foreground'>
+									This action cannot be undone. All your data will be
+									permanently removed.
+								</p>
 							</div>
+							<AlertDialogTrigger asChild>
+								<Button
+									variant='destructive'
+									className='flex items-center gap-2'
+								>
+									<Trash2 className='h-4 w-4' />
+									Delete Account
+								</Button>
+							</AlertDialogTrigger>
 						</div>
-					)}
-				</form>
-			</Form>
-			<ChangePassword />
-
-			<AlertDialog>
-				<div className='flex justify-between pr-20 px-4 items-center'>
-					<h1 className='text-lg font-bold'>Account</h1>
-					<div className='w-[350px]'>
-						<AlertDialogTrigger>
-							<Button variant='destructive' className='cursor-pointer'>
-								Delete Account
-							</Button>
-						</AlertDialogTrigger>
-					</div>
-				</div>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							This action cannot be undone. This will permanently delete your
-							account and remove your data from our servers.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction
-							onClick={async () =>
-								await deleteAccount({ userId: auth.user!._id })
-							}
-						>
-							Continue
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+								<AlertDialogDescription>
+									This action cannot be undone. This will permanently delete
+									your account and remove your data from our servers.
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>Cancel</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={async () =>
+										await deleteAccount({ userId: auth.user!._id })
+									}
+									className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+								>
+									Delete Account
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
+				</CardContent>
+			</Card>
 		</div>
 	)
 }
 
 function ChangePassword() {
 	const auth = useAuth()
-	const formSchema = z.object({
-		current_password: z.string().min(1),
-		new_password: z.string().min(1),
-		confirm_password: z.string().min(1),
-	})
+	const formSchema = z
+		.object({
+			current_password: z.string().min(1, 'Current password is required'),
+			new_password: z.string().min(8, 'Password must be at least 8 characters'),
+			confirm_password: z.string().min(1, 'Please confirm your password'),
+		})
+		.refine(data => data.new_password === data.confirm_password, {
+			message: "Passwords don't match",
+			path: ['confirm_password'],
+		})
+
 	const changePassword = useMutation(api.user.changePassword)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -284,36 +401,31 @@ function ChangePassword() {
 				new_password: values.new_password,
 			})
 			if (res === 'wrong_password') {
-				return toast.error('wrong Password')
+				form.setError('current_password', {
+					message: 'Current password is incorrect',
+				})
+				return
 			}
 
-			toast.success('Password Changed Successfully.')
-			return setIsOpen(false)
+			toast.success('Password changed successfully!')
+			form.reset()
+			setIsOpen(false)
 		} catch (error) {
-			toast.error('Error While Changing Password.')
+			toast.error('Failed to change password. Please try again.')
 		}
 	}
+
 	return (
-		<Dialog open={open} onOpenChange={e => setIsOpen(e)}>
-			<div className='flex justify-between pr-20 px-4 items-center'>
-				<h1 className='text-lg font-bold'>Password</h1>
-				<div className='w-[350px] flex justify-start'>
-					<DialogTrigger>
-						<Button size='sm' className='w-max cursor-pointer'>
-							Change Password
-						</Button>
-					</DialogTrigger>
-				</div>
-			</div>
-			<DialogContent>
+		<Dialog open={open} onOpenChange={setIsOpen}>
+			<DialogTrigger asChild>
+				<Button variant='outline'>Change Password</Button>
+			</DialogTrigger>
+			<DialogContent className='sm:max-w-md'>
 				<DialogHeader>
-					<DialogTitle>Change Your Password</DialogTitle>
+					<DialogTitle>Change Password</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className='space-y-8 py-2 mt-5'
-					>
+					<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
 						<FormField
 							control={form.control}
 							name='current_password'
@@ -322,11 +434,10 @@ function ChangePassword() {
 									<FormLabel>Current Password</FormLabel>
 									<FormControl>
 										<PasswordInput
-											placeholder='Your Current Password'
+											placeholder='Enter your current password'
 											{...field}
 										/>
 									</FormControl>
-
 									<FormMessage />
 								</FormItem>
 							)}
@@ -339,9 +450,11 @@ function ChangePassword() {
 								<FormItem>
 									<FormLabel>New Password</FormLabel>
 									<FormControl>
-										<PasswordInput placeholder='Your New Password' {...field} />
+										<PasswordInput
+											placeholder='Enter your new password'
+											{...field}
+										/>
 									</FormControl>
-
 									<FormMessage />
 								</FormItem>
 							)}
@@ -352,30 +465,27 @@ function ChangePassword() {
 							name='confirm_password'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Confirm Password</FormLabel>
+									<FormLabel>Confirm New Password</FormLabel>
 									<FormControl>
 										<PasswordInput
-											placeholder='Re-Enter Your Password'
+											placeholder='Confirm your new password'
 											{...field}
 										/>
 									</FormControl>
-
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-						<div className='flex justify-end gap-4'>
+
+						<div className='flex justify-end gap-3 pt-4'>
 							<Button
-								type='reset'
-								variant='ghost'
-								className='cursor-pointer'
+								type='button'
+								variant='outline'
 								onClick={() => setIsOpen(false)}
 							>
 								Cancel
 							</Button>
-							<Button type='submit' className='cursor-pointer'>
-								Change Password
-							</Button>
+							<Button type='submit'>Update Password</Button>
 						</div>
 					</form>
 				</Form>

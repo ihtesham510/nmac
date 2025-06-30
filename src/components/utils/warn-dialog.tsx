@@ -15,7 +15,7 @@ interface ConfirmDeleteDialogProps {
 	onOpenChange: (open: boolean) => void
 	title?: string
 	description?: string
-	onConfirm: () => Promise<void> | void
+	onConfirm: () => Promise<any> | any
 	itemName?: string
 	isLoading?: boolean
 }
@@ -38,7 +38,6 @@ export function WarnDialog({
 			await onConfirm()
 			onOpenChange(false)
 		} catch (error) {
-			// Error handling should be done by the parent component
 			console.error('Delete operation failed:', error)
 		} finally {
 			setInternalLoading(false)
