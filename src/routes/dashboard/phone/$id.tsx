@@ -27,7 +27,12 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useDialog } from '@/hooks/use-dialogs'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { LoaderCircle, PhoneOutgoingIcon, TriangleAlert } from 'lucide-react'
+import {
+	LoaderCircle,
+	PhoneOutgoingIcon,
+	TrashIcon,
+	TriangleAlert,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -92,10 +97,27 @@ function RouteComponent() {
 								Make Call
 							</Button>
 						</div>
-						<SelectInbountCallAgent
-							id={phone_number.data.assignedAgent?.agentId}
-							phone_id={phone_number.data.phoneNumberId}
-						/>
+						<div className='flex justify-center items-center gap-2'>
+							<Button
+								size='icon'
+								onClick={async e => {
+									e.stopPropagation()
+									await client.conversationalAi.phoneNumbers.update(
+										phone_number.data.phoneNumberId,
+										{
+											agentId: undefined,
+										},
+									)
+									await phone_number.refetch()
+								}}
+							>
+								<TrashIcon className='size-4' />
+							</Button>
+							<SelectInbountCallAgent
+								id={phone_number.data.assignedAgent?.agentId}
+								phone_id={phone_number.data.phoneNumberId}
+							/>
+						</div>
 					</div>
 				</React.Fragment>
 			)}
