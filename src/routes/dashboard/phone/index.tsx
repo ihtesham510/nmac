@@ -40,7 +40,7 @@ import {
 	TableBody,
 	TableCell,
 } from '@/components/ui/table'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { queries } from '@/api/query-options'
 import { useAgents } from '@/hooks/use-agents'
 import {
@@ -59,7 +59,7 @@ import { AgentSelect } from '@/components/select-agent'
 import type { Agent } from '@/lib/types'
 import React, { useEffect } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import type { PhoneNumbersListResponseItem } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
+import { type PhoneNumbersListResponseItem } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
 
 export const Route = createFileRoute('/dashboard/phone/')({
 	component: RouteComponent,
@@ -112,6 +112,8 @@ function PhoneNumbersTable({
 	phoneNos: PhoneNumbersListResponseItem[]
 	onAddPhoneClick: () => void
 }) {
+	const client = useElevenLabsClient()
+	const queryClient = useQueryClient()
 	const navigate = useNavigate()
 	return (
 		<>
@@ -177,7 +179,18 @@ function PhoneNumbersTable({
 												<CopyIcon className='size-4' />{' '}
 												<p>Copy Phone Number</p>{' '}
 											</DropdownMenuItem>
-											<DropdownMenuItem className='flex gap-2'>
+											<DropdownMenuItem
+												className='flex gap-2'
+												onClick={async e => {
+													e.stopPropagation()
+													await client.conversationalAi.phoneNumbers.delete(
+														phoneNo.phoneNumberId,
+													)
+													await queryClient.invalidateQueries({
+														queryKey: ['list_phone_no'],
+													})
+												}}
+											>
 												<TrashIcon className='size-4' />{' '}
 												<p>Delete Nubmer</p>{' '}
 											</DropdownMenuItem>
