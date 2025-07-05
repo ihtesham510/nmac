@@ -26,4 +26,30 @@ http.route({
 	}),
 })
 
+http.route({
+	path: '/forward',
+	method: 'POST',
+	handler: httpAction(async ctx => {
+		try {
+			await ctx.runAction(internal.actions.forwardAction)
+			return new Response(null, { status: 200 })
+		} catch (err) {
+			return new Response(null, { status: 500 })
+		}
+	}),
+})
+
+http.route({
+	path: '/fallback-forward',
+	method: 'POST',
+	handler: httpAction(async ctx => {
+		try {
+			await ctx.runAction(internal.actions.fallbackForwardAction)
+			return new Response(null, { status: 200 })
+		} catch (err) {
+			return new Response(null, { status: 500 })
+		}
+	}),
+})
+
 export default http
