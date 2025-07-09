@@ -74,22 +74,24 @@ export function AgentSelect({
 					<CommandInput placeholder='Search agents...' />
 					<CommandEmpty>No agent found.</CommandEmpty>
 					<CommandList>
-						<CommandGroup>
-							{removeAble && (
-								<CommandItem
-									onSelect={() => {
-										onSelect(null)
-										setOpen(false)
-									}}
-								>
-									None
-									<CommandShortcut>
-										<TrashIcon className='size-4' />
-									</CommandShortcut>
-								</CommandItem>
-							)}
-						</CommandGroup>
-						<CommandSeparator />
+						{removeAble && (
+							<React.Fragment>
+								<CommandGroup>
+									<CommandItem
+										onSelect={() => {
+											onSelect(null)
+											setOpen(false)
+										}}
+									>
+										None
+										<CommandShortcut>
+											<TrashIcon className='size-4' />
+										</CommandShortcut>
+									</CommandItem>
+								</CommandGroup>
+								<CommandSeparator />
+							</React.Fragment>
+						)}
 						<CommandGroup>
 							{agents.map(agent => {
 								if (agent)
