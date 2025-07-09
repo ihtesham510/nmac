@@ -8,6 +8,7 @@ http.route({
 	path: '/webhook',
 	method: 'POST',
 	handler: httpAction(async (ctx, req) => {
+		console.log('webhook body', req.json())
 		const header = req.headers.get('ElevenLabs-Signature')
 		const timestamp = header?.split(',').find(e => e.startsWith('t='))
 		const signature = header?.split(',').find(e => e.startsWith('v0='))
