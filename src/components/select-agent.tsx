@@ -1,5 +1,11 @@
 import * as React from 'react'
-import { Check, ChevronsUpDown, Tag } from 'lucide-react'
+import {
+	Check,
+	ChevronsUpDown,
+	LoaderCircle,
+	Tag,
+	TrashIcon,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,6 +15,8 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
+	CommandSeparator,
+	CommandShortcut,
 } from '@/components/ui/command'
 import {
 	Popover,
@@ -20,8 +28,10 @@ import type { Agent } from '@/lib/types'
 
 export interface AgentSelectProps {
 	agents: Agent[]
-	value: Agent
-	onSelect: (agent: Agent) => void
+	value?: Agent
+	onSelect: (agent: Agent | null) => void
+	isLoading?: boolean
+	removeAble?: boolean
 	placeholder?: string
 	className?: string
 }
@@ -29,7 +39,9 @@ export interface AgentSelectProps {
 export function AgentSelect({
 	agents,
 	value,
+	removeAble,
 	onSelect,
+	isLoading,
 	placeholder = 'Select an agent...',
 	className,
 }: AgentSelectProps) {
@@ -42,10 +54,19 @@ export function AgentSelect({
 					variant='outline'
 					role='combobox'
 					aria-expanded={open}
-					className={cn('min-w-[200px] justify-between max-w-max', className)}
+					className={cn(
+						`min-w-[200px] ${isLoading ? 'justify-center gap-2' : 'justify-between'} max-w-max`,
+						className,
+					)}
 				>
-					{value ? value.name : placeholder}
-					<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					{isLoading ? (
+						<LoaderCircle className='size-4 animate-spin' />
+					) : (
+						<React.Fragment>
+							{value ? value.name : placeholder}
+							<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+						</React.Fragment>
+					)}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className='w-[300px] p-0' align='start'>
@@ -53,6 +74,22 @@ export function AgentSelect({
 					<CommandInput placeholder='Search agents...' />
 					<CommandEmpty>No agent found.</CommandEmpty>
 					<CommandList>
+						<CommandGroup>
+							{removeAble && (
+								<CommandItem
+									onSelect={() => {
+										onSelect(null)
+										setOpen(false)
+									}}
+								>
+									None
+									<CommandShortcut>
+										<TrashIcon className='size-4' />
+									</CommandShortcut>
+								</CommandItem>
+							)}
+						</CommandGroup>
+						<CommandSeparator />
 						<CommandGroup>
 							{agents.map(agent => {
 								if (agent)

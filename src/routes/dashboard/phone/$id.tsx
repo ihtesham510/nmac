@@ -1,13 +1,14 @@
 import { useElevenLabsClient } from '@/api/client'
 import { queries } from '@/api/query-options'
-import React, { useEffect } from 'react'
-import { type Agent } from '@/lib/types'
+import React, { useEffect, useState } from 'react'
+import type { Agent } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { isValidPhoneNumber } from 'react-phone-number-input'
 import { useAgents } from '@/hooks/use-agents'
 import { AgentSelect } from '@/components/select-agent'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type { PhoneNumbersGetResponse } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
 import {
 	Dialog,
 	DialogContent,
@@ -25,14 +26,9 @@ import {
 } from '@/components/ui/form'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDialog } from '@/hooks/use-dialogs'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
-import {
-	LoaderCircle,
-	PhoneOutgoingIcon,
-	TrashIcon,
-	TriangleAlert,
-} from 'lucide-react'
+import { LoaderCircle, PhoneOutgoingIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -48,6 +44,7 @@ function RouteComponent() {
 	const [dialogs, setDialogs] = useDialog({
 		makeCall: false,
 	})
+	const agents = useAgents()
 	const phone_number = useQuery(queries.get_phone_no(client, id))
 	if (phone_number.isError) {
 		return <Navigate to='/dashboard/404' replace />
@@ -97,27 +94,20 @@ function RouteComponent() {
 								Make Call
 							</Button>
 						</div>
-						<div className='flex justify-center items-center gap-2'>
-							<Button
-								size='icon'
-								onClick={async e => {
-									e.stopPropagation()
-									await client.conversationalAi.phoneNumbers.update(
-										phone_number.data.phoneNumberId,
-										{
-											agentId: undefined,
-										},
-									)
-									await phone_number.refetch()
-								}}
-							>
-								<TrashIcon className='size-4' />
-							</Button>
-							<SelectInbountCallAgent
-								id={phone_number.data.assignedAgent?.agentId}
-								phone_id={phone_number.data.phoneNumberId}
-							/>
-						</div>
+
+						<SelectInbountCallAgent
+							phone={phone_number.data}
+							agents={agents}
+							onSelect={async agent => {
+								await client.conversationalAi.phoneNumbers.update(
+									phone_number.data.phoneNumberId,
+									{
+										agentId: agent?.agentId,
+									},
+								)
+								await phone_number.refetch()
+							}}
+						/>
 					</div>
 				</React.Fragment>
 			)}
@@ -126,97 +116,38 @@ function RouteComponent() {
 }
 
 function SelectInbountCallAgent({
-	id,
-	phone_id,
+	phone,
+	agents,
+	onSelect,
 }: {
-	id?: string
-	phone_id: string
+	phone: PhoneNumbersGetResponse
+	agents: Agent[]
+	onSelect?: (agent: Agent) => void | Promise<void>
 }) {
-	const queryClient = useQueryClient()
-	const client = useElevenLabsClient()
-	const formSchema = z.object({
-		agent_id: z.string().optional(),
-	})
-	const form = useForm({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			agent_id: id,
-		},
-	})
-
-	const agents = useAgents()
-	const getDefaultAgent = (): Agent | undefined => {
-		let index = agents.findIndex(agent => agent.agentId === id)
-		return agents[index]
-	}
-	const [selectedAgent, setSelectedAgent] = React.useState<Agent | undefined>(
-		getDefaultAgent(),
-	)
-
-	useEffect(() => {
-		if (selectedAgent)
-			form.setValue('agent_id', selectedAgent.agentId, { shouldDirty: true })
-	}, [selectedAgent])
-
-	async function onSubmit({ agent_id }: z.infer<typeof formSchema>) {
-		try {
-			await client.conversationalAi.phoneNumbers.update(phone_id, {
-				agentId: agent_id,
-			})
-			await queryClient.invalidateQueries({
-				queryKey: ['get_phone_no', phone_id],
-			})
-			form.reset({ agent_id })
-			toast.success('Phone Number Updated')
-		} catch (err) {
-			console.error(err)
-			toast.success('Error While updating phone number')
-		}
-	}
-
+	const [loading, setIsLoading] = useState(false)
 	return (
 		<div>
-			<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-				<SelectSetting
-					title='Inbound calls'
-					description='Assign an agent to handle calls to this phone number.'
-					className='w-full'
-				>
-					<AgentSelect
-						agents={agents}
-						value={selectedAgent ?? null}
-						className='min-w-full'
-						placeholder='Select Agent'
-						onSelect={agent => setSelectedAgent(agent!)}
-					/>
-				</SelectSetting>
-				{form.formState.isDirty && (
-					<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
-						<div className='flex gap-2'>
-							<TriangleAlert className='size-4' />
-							<p className='font-semibold text-sm'>Changes Detected</p>
-						</div>
-						<div className='flex gap-2'>
-							<Button
-								className='text-sm font-semibold'
-								variant='ghost'
-								type='reset'
-								size='sm'
-								onClick={() => form.reset()}
-							>
-								clear
-							</Button>
-							<Button type='submit' className='text-sm font-semibold' size='sm'>
-								{form.formState.isSubmitting ? (
-									<LoaderCircle className='size-4 m-1 animate-spin' />
-								) : (
-									'save'
-								)}
-							</Button>
-						</div>
-					</div>
-				)}
-			</form>
+			<SelectSetting
+				title='Inbound calls'
+				description='Assign an agent to handle calls to this phone number.'
+				className='w-full'
+			>
+				<AgentSelect
+					agents={agents}
+					value={agents.find(
+						agent => agent?.agentId === phone.assignedAgent?.agentId,
+					)}
+					isLoading={loading}
+					removeAble
+					className='min-w-full'
+					placeholder='Select Agent'
+					onSelect={async agent => {
+						setIsLoading(true)
+						await onSelect?.(agent)
+						setIsLoading(false)
+					}}
+				/>
+			</SelectSetting>
 		</div>
 	)
 }
