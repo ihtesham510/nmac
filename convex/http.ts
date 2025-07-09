@@ -8,23 +8,21 @@ http.route({
 	path: '/webhook',
 	method: 'POST',
 	handler: httpAction(async (ctx, req) => {
-		const body = await req.json()
-		console.log(body)
-		const agent_id = body.data.agent_id
-		const cost = body.data.metadata.cost
-		await ctx.runMutation(internal.internals.deduct, {
-			cost,
-			agent_id,
-		})
-		return new Response(null, { status: 200 })
-	}),
-})
+		const header = req.headers.get('ElevenLabs-Signature')
+		const timestamp = header?.split(',').find(e => e.startsWith('t='))
+		const signature = header?.split(',').find(e => e.startsWith('v0='))
+		if (timestamp && signature) {
+			const body = await req.json()
+			const agent_id = body.data.agent_id
+			const cost = body.data.metadata.cost
+			await ctx.runMutation(internal.internals.deduct, {
+				cost,
+				agent_id,
+			})
+			return new Response(null, { status: 200 })
+		}
 
-http.route({
-	path: '/webhook',
-	method: 'GET',
-	handler: httpAction(async _ => {
-		return new Response('hello wowlrd', { status: 200 })
+		return new Response(null, { status: 401 })
 	}),
 })
 
