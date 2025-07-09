@@ -8,8 +8,8 @@ http.route({
 	path: '/webhook',
 	method: 'POST',
 	handler: httpAction(async (ctx, req) => {
-		console.log('webhook body', await req.json())
 		const body = await req.json()
+		console.log(body)
 		const agent_id = body.data.agent_id
 		const cost = body.data.metadata.cost
 		await ctx.runMutation(internal.internals.deduct, {
