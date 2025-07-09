@@ -220,7 +220,7 @@ export function EditClientForm({ client, open, onOpenChange }: Props) {
 								className='cursor-pointer'
 							>
 								{form.formState.isSubmitting ? (
-									<LoaderCircle className='size-4' />
+									<LoaderCircle className='size-4 animate-spin' />
 								) : (
 									'save'
 								)}
