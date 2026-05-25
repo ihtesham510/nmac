@@ -17,7 +17,6 @@
 
 - [Overview](#overview)
 - [Features](#features)
-- [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
