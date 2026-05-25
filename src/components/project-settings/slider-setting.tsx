@@ -1,13 +1,13 @@
-import { cn } from '@/lib/utils'
 import NumberFlow from '@number-flow/react'
+import { InfoIcon } from 'lucide-react'
 import { Slider } from '@/components/ui/slider'
 import {
+	Tooltip,
+	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
-	TooltipContent,
-	Tooltip,
 } from '@/components/ui/tooltip'
-import { InfoIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface SliderSettingProps {
 	title: string
@@ -34,11 +34,11 @@ export function SliderSetting({
 }: SliderSettingProps) {
 	return (
 		<div
-			className={cn('rounded-lg bg-card border-border border p-4', className)}
+			className={cn('rounded-lg border border-border bg-card p-4', className)}
 		>
-			<div className='mb-2 flex justify-between items-center'>
+			<div className='mb-2 flex items-center justify-between'>
 				<div className='flex items-center gap-1.5'>
-					<h3 className='text-base font-medium text-white'>{title}</h3>
+					<h3 className='font-medium text-base text-white'>{title}</h3>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
@@ -54,7 +54,7 @@ export function SliderSetting({
 					<NumberFlow value={value} />
 				</p>
 			</div>
-			<p className='mb-4 text-sm text-primary/50'>{description}</p>
+			<p className='mb-4 text-primary/50 text-sm'>{description}</p>
 			<Slider
 				value={[value]}
 				defaultValue={[defaultValue]}

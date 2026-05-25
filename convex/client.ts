@@ -1,18 +1,19 @@
+import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
-import { v } from 'convex/values'
 import { encrypt } from './utils'
 
 export const createClient = mutation({
 	args: {
 		userId: v.id('user'),
 		name: v.string(),
-		email: v.optional(v.string()),
+		email: v.string(),
 		username: v.string(),
 		password: v.string(),
 	},
 	async handler(ctx, { userId, username, name, password, email }) {
 		const secretKey = process.env.SECRET_KEY
-		const encryptedPassword = encrypt(password, secretKey!)
+		if (!secretKey) throw new ConvexError('secret key is not set')
+		const encryptedPassword = encrypt(password, secretKey)
 		return await ctx.db.insert('client', {
 			userId,
 			email,
@@ -96,10 +97,11 @@ export const authenticate = query({
 				const id = ctx.db.normalizeId('client', args.id)
 				if (id) {
 					const client = await ctx.db.get(id)
-					const user = await ctx.db.get(client!.userId)
-					return { ...client, api_key: user!.elevenLabs_api_key }
+					if (!client) throw new ConvexError('client not found')
+					const user = await ctx.db.get(client?.userId)
+					return { ...client, api_key: user?.elevenLabs_api_key }
 				}
-			} catch (err) {
+			} catch (_err) {
 				return null
 			}
 		}

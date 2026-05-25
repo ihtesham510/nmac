@@ -1,9 +1,9 @@
-import { defineConfig, loadEnv } from 'vite'
-import viteReact from '@vitejs/plugin-react'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import tailwindcss from '@tailwindcss/vite'
-import tsconfigpaths from 'vite-tsconfig-paths'
 import vitePluginProxy from '@open-xchange/vite-plugin-proxy'
+import tailwindcss from '@tailwindcss/vite'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+import { defineConfig, loadEnv } from 'vite'
+import tsconfigpaths from 'vite-tsconfig-paths'
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), '')

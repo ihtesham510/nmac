@@ -1,16 +1,16 @@
-import { useMutation } from 'convex/react'
-import { useQuery } from '@/cache/useQuery'
-import type { Client, ArgsUser, User, ArgsSignIn } from '@/lib/types'
 import { useLocalStorage } from '@mantine/hooks'
 import { api } from 'convex/_generated/api'
+import type { Id } from 'convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
 import {
 	createContext,
+	type PropsWithChildren,
 	useCallback,
 	useContext,
-	type PropsWithChildren,
 } from 'react'
-import type { Id } from 'convex/_generated/dataModel'
 import { toast } from 'sonner'
+import { useQuery } from '@/cache/useQuery'
+import type { ArgsSignIn, ArgsUser, Client, User } from '@/lib/types'
 import { getPercentageOfCredits } from '@/lib/utils'
 
 type UserType = 'client' | 'user' | null
@@ -47,14 +47,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
 	const logOut = useCallback(() => {
 		setToken(undefined)
-	}, [token])
+	}, [setToken])
 
 	const signUp = useCallback(
 		async (params: ArgsUser) => {
 			const id = await registerUser(params)
 			setToken(id)
 		},
-		[token],
+		[setToken, registerUser],
 	)
 
 	function getType(): UserType {
@@ -74,21 +74,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
 				} else {
 					toast.error('Error While Sigging in.')
 				}
-			} catch (err) {
+			} catch (_err) {
 				toast.error('Error While Sigging in.')
 			}
 		},
-		[token],
+		[sign_in, setToken],
 	)
 
 	const isLoading = user === undefined || client === undefined
 	const isUnauthenticated = user === null && client === null
 	const isAuthenticated = !!user || !!client
 	const api_key = user?.elevenLabs_api_key ?? client?.api_key
-	const has_subscription = !!(client && client?.subscription)
+	const has_subscription = !!client?.subscription
 	const low_credits = !!(
-		client &&
-		client.subscription &&
+		client?.subscription &&
 		getPercentageOfCredits(
 			client.subscription.total_credits,
 			client.subscription.remaining_credits,

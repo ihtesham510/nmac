@@ -1,10 +1,10 @@
 'use client'
 
+import { X as RemoveIcon } from 'lucide-react'
+import React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { X as RemoveIcon } from 'lucide-react'
-import React from 'react'
 
 /**
  * used for identifying the split char and use will pasting
@@ -27,6 +27,7 @@ interface TagsInputProps extends React.HTMLAttributes<HTMLDivElement> {
 
 interface TagsInputContextProps {
 	value: string[]
+	// biome-ignore lint/suspicious/noExplicitAny: <Value can be of type Any>
 	onValueChange: (value: any) => void
 	inputValue: string
 	setInputValue: React.Dispatch<React.SetStateAction<string>>
@@ -59,7 +60,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 		const [selectedValue, setSelectedValue] = React.useState('')
 
 		const parseMinItems = minItems ?? 0
-		const parseMaxItems = maxItems ?? Infinity
+		const parseMaxItems = maxItems ?? Number.POSITIVE_INFINITY
 
 		const onValueChangeHandler = React.useCallback(
 			(val: string) => {
@@ -67,7 +68,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 					onValueChange([...value, val])
 				}
 			},
-			[value],
+			[value, parseMaxItems, onValueChange],
 		)
 
 		const RemoveValue = React.useCallback(
@@ -76,7 +77,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 					onValueChange(value.filter(item => item !== val))
 				}
 			},
-			[value],
+			[value, onValueChange, parseMinItems],
 		)
 
 		const handlePaste = React.useCallback(
@@ -97,7 +98,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 				onValueChange(newValue)
 				setInputValue('')
 			},
-			[value],
+			[value, onValueChange, parseMaxItems],
 		)
 
 		const handleSelect = React.useCallback(
@@ -131,7 +132,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 				}
 			}
 			VerifyDisable()
-		}, [value])
+		}, [value, parseMaxItems, parseMinItems])
 
 		// ? check: Under build , default option support
 		// * support : for the uncontrolled && controlled ui
@@ -211,10 +212,11 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 						}
 						break
 
-					case 'Escape':
+					case 'Escape': {
 						const newIndex = activeIndex === -1 ? value.length - 1 : -1
 						setActiveIndex(newIndex)
 						break
+					}
 
 					case 'Enter':
 						if (inputValue.trim() !== '') {
@@ -225,7 +227,16 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 						break
 				}
 			},
-			[activeIndex, value, inputValue, RemoveValue],
+			[
+				activeIndex,
+				value,
+				inputValue,
+				RemoveValue,
+				isValueSelected,
+				selectedValue,
+				onValueChangeHandler,
+				dir,
+			],
 		)
 
 		const mousePreventDefault = React.useCallback((e: React.MouseEvent) => {
@@ -256,7 +267,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 					ref={ref}
 					dir={dir}
 					className={cn(
-						'flex items-center flex-wrap gap-1 p-1 rounded-lg bg-background overflow-hidden   ring-1 ring-muted  ',
+						'flex flex-wrap items-center gap-1 overflow-hidden rounded-lg bg-background p-1 ring-1 ring-muted',
 						{
 							'focus-within:ring-ring': activeIndex === -1,
 						},
@@ -270,7 +281,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 							aria-disabled={disableButton}
 							data-active={activeIndex === index}
 							className={cn(
-								"relative px-1 rounded flex items-center gap-1 data-[active='true']:ring-2 data-[active='true']:ring-muted-foreground truncate aria-disabled:opacity-50 aria-disabled:cursor-not-allowed",
+								"relative flex items-center gap-1 truncate rounded px-1 aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-[active='true']:ring-2 data-[active='true']:ring-muted-foreground",
 							)}
 							variant={'secondary'}
 						>
@@ -301,7 +312,7 @@ export const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
 						placeholder={placeholder}
 						onClick={() => setActiveIndex(-1)}
 						className={cn(
-							'outline-0 border-none h-7 min-w-fit flex-1 focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 placeholder:text-muted-foreground px-1',
+							'h-7 min-w-fit flex-1 border-none px-1 outline-0 placeholder:text-muted-foreground focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0',
 							activeIndex !== -1 && 'caret-transparent',
 						)}
 					/>

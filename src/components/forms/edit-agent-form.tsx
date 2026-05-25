@@ -1,3 +1,21 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from 'convex/_generated/api'
+import type { Id } from 'convex/_generated/dataModel'
+import { useMutation } from 'convex/react'
+import { LoaderCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { useQuery } from '@/cache/useQuery'
+import { Button } from '@/components/ui/button'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
 	Sheet,
 	SheetContent,
@@ -5,27 +23,9 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useMutation } from 'convex/react'
-import { api } from 'convex/_generated/api'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import {
-	Form,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	FormMessage,
-} from '@/components/ui/form'
 import { TagsInput } from '@/components/ui/tags-input'
 import { Textarea } from '@/components/ui/textarea'
-import type { Id } from 'convex/_generated/dataModel'
-import { useQuery } from '@/cache/useQuery'
 import type { Agent } from '@/lib/types'
-import { LoaderCircle } from 'lucide-react'
 
 interface Props {
 	open: boolean
@@ -46,7 +46,7 @@ export function EditAgentForm({ open, onOpenChange, agentId }: Props) {
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent className='flex flex-col'>
 				<SheetHeader>
-					<SheetTitle className='text-xl font-semibold'>Edit Agent</SheetTitle>
+					<SheetTitle className='font-semibold text-xl'>Edit Agent</SheetTitle>
 				</SheetHeader>
 				{agent && <EditForm agent={agent} onOpenChange={onOpenChange} />}
 			</SheetContent>
@@ -85,7 +85,7 @@ function EditForm({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className='flex flex-col space-y-6 mx-4 h-full'
+				className='mx-4 flex h-full flex-col space-y-6'
 			>
 				<FormField
 					control={form.control}
@@ -138,7 +138,7 @@ function EditForm({
 				<SheetFooter className='-mx-4'>
 					<Button
 						type='submit'
-						className='w-full flex gap-2'
+						className='flex w-full gap-2'
 						disabled={!form.formState.isDirty || form.formState.isSubmitting}
 					>
 						{form.formState.isSubmitting ? (

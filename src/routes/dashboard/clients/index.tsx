@@ -1,18 +1,25 @@
-import { useAuth } from '@/context/auth-context'
-import { useMutation } from 'convex/react'
-import { useQuery } from '@/cache/useQuery'
-import { api } from 'convex/_generated/api'
 import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { api } from 'convex/_generated/api'
+import { useMutation } from 'convex/react'
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/table'
+	BotIcon,
+	Calendar,
+	CreditCard,
+	DeleteIcon,
+	Edit3Icon,
+	MoreHorizontal,
+	PlusIcon,
+	Search,
+	UserIcon,
+} from 'lucide-react'
+import { type PropsWithChildren, useMemo, useState } from 'react'
+import { useQuery } from '@/cache/useQuery'
+import { CreateClientForm } from '@/components/create-client-form'
+import { AssignAgentForm } from '@/components/forms/assign-agent-form'
+import { EditClientForm } from '@/components/forms/edit-client-form'
+import { ManageSubscriptionForm } from '@/components/forms/manage-subscription-form'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -23,35 +30,28 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useMemo, useState, type PropsWithChildren } from 'react'
-import {
-	BotIcon,
-	CreditCard,
-	DeleteIcon,
-	Edit3Icon,
-	MoreHorizontal,
-	PlusIcon,
-	Search,
-	UserIcon,
-	Calendar,
-} from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { getSubscriptionBadgeClasses, rabinKarpSearch } from '@/lib/utils'
-import type { Clients } from '@/lib/types'
-import { useDialog } from '@/hooks/use-dialogs'
+import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { AssignAgentForm } from '@/components/forms/assign-agent-form'
-import { EditClientForm } from '@/components/forms/edit-client-form'
-import { WarnDialog } from '@/components/utils/warn-dialog'
-import { CreateClientForm } from '@/components/create-client-form'
-import { ManageSubscriptionForm } from '@/components/forms/manage-subscription-form'
 import { SubscriptionHoverCard } from '@/components/utils/subscription-hover-card'
+import { WarnDialog } from '@/components/utils/warn-dialog'
+import { useAuth } from '@/context/auth-context'
+import { useDialog } from '@/hooks/use-dialogs'
+import type { Clients } from '@/lib/types'
+import { getSubscriptionBadgeClasses, rabinKarpSearch } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/clients/')({
 	component: RouteComponent,
@@ -76,9 +76,9 @@ function RouteComponent() {
 	}, [clients, filter])
 
 	return (
-		<div className='m-10 space-y-6 grid'>
+		<div className='m-10 grid space-y-6'>
 			<div className='grid gap-2'>
-				<h1 className='text-4xl font-bold'>Clients</h1>
+				<h1 className='font-bold text-4xl'>Clients</h1>
 				<h1 className='font-semibold text-primary/50'>
 					Create and manage your clients.
 				</h1>
@@ -86,19 +86,19 @@ function RouteComponent() {
 
 			{!clients && (
 				<>
-					<div className='flex justify-between items-center'>
+					<div className='flex items-center justify-between'>
 						<div className='relative flex items-center'>
 							<div className='relative'>
 								<Skeleton className='h-10 w-[400px] rounded-md' />
-								<Skeleton className='absolute left-2 top-2.5 h-4 w-4 rounded-sm' />
+								<Skeleton className='absolute top-2.5 left-2 h-4 w-4 rounded-sm' />
 							</div>
 						</div>
 						<div className='flex items-center'>
-							<Skeleton className='h-10 w-10 lg:w-[140px] rounded-md' />
+							<Skeleton className='h-10 w-10 rounded-md lg:w-[140px]' />
 						</div>
 					</div>
 
-					<div className='border rounded-lg'>
+					<div className='rounded-lg border'>
 						<Table>
 							<TableHeader>
 								<TableRow>
@@ -112,7 +112,7 @@ function RouteComponent() {
 									<TableHead className='hidden sm:table-cell'>
 										Created
 									</TableHead>
-									<TableHead className='w-10'></TableHead>
+									<TableHead className='w-10' />
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -145,12 +145,12 @@ function RouteComponent() {
 			)}
 
 			{clients && clients.length === 0 && (
-				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg'>
-					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+				<div className='flex flex-col items-center justify-center rounded-lg px-4 py-16'>
+					<div className='mb-4 rounded-full bg-muted/50 p-4'>
 						<UserIcon className='h-10 w-10 text-muted-foreground' />
 					</div>
-					<h2 className='text-xl font-semibold mb-2'>No clients found</h2>
-					<p className='text-muted-foreground text-center max-w-md mb-8'>
+					<h2 className='mb-2 font-semibold text-xl'>No clients found</h2>
+					<p className='mb-8 max-w-md text-center text-muted-foreground'>
 						You haven't created any clients yet. Add a new client to get
 						started.
 					</p>
@@ -168,13 +168,13 @@ function RouteComponent() {
 
 			{clients && clients.length > 0 && (
 				<>
-					<div className='flex justify-between items-center'>
+					<div className='flex items-center justify-between'>
 						<div className='relative'>
-							<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+							<Search className='absolute top-2.5 left-2 h-4 w-4 text-muted-foreground' />
 							<Input
 								placeholder='Search Clients...'
 								onChange={e => setFilter(e.target.value)}
-								className='pl-8 w-[400px]'
+								className='w-[400px] pl-8'
 							/>
 						</div>
 						<TooltipProvider>
@@ -195,7 +195,7 @@ function RouteComponent() {
 						</TooltipProvider>
 					</div>
 
-					<div className='border rounded-lg'>
+					<div className='rounded-lg border'>
 						<Table>
 							<TableHeader>
 								<TableRow>
@@ -209,16 +209,16 @@ function RouteComponent() {
 									<TableHead className='hidden sm:table-cell'>
 										Created
 									</TableHead>
-									<TableHead className='w-10'></TableHead>
+									<TableHead className='w-10' />
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{filteredClients?.map(client => (
 									<TableRow key={client._id} className='cursor-pointer'>
-										<TableCell className='font-medium px-4'>
+										<TableCell className='px-4 font-medium'>
 											{client.name}
 										</TableCell>
-										<TableCell className='max-w-[300px] hidden md:table-cell truncate'>
+										<TableCell className='hidden max-w-[300px] truncate md:table-cell'>
 											{client.username}
 										</TableCell>
 										{client.subscription ? (
@@ -229,7 +229,7 @@ function RouteComponent() {
 													side='right'
 												>
 													<Badge
-														className={`text-xs w-fit capitalize ${getSubscriptionBadgeClasses(client.subscription.type)}`}
+														className={`w-fit text-xs capitalize ${getSubscriptionBadgeClasses(client.subscription.type)}`}
 													>
 														{client.subscription.type}
 													</Badge>
@@ -242,7 +242,7 @@ function RouteComponent() {
 												</Badge>
 											</TableCell>
 										)}
-										<TableCell className='text-sm text-muted-foreground hidden sm:table-cell'>
+										<TableCell className='hidden text-muted-foreground text-sm sm:table-cell'>
 											<div className='flex items-center gap-1'>
 												<Calendar className='h-3 w-3' />
 												{new Date(client._creationTime).toLocaleDateString(

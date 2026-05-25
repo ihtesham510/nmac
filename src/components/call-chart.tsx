@@ -1,3 +1,4 @@
+import NumberFlow from '@number-flow/react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 import {
 	Card,
@@ -12,7 +13,6 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart'
-import NumberFlow from '@number-flow/react'
 
 export interface Props {
 	chartConfig: ChartConfig
@@ -20,6 +20,7 @@ export interface Props {
 	chartDescription: string
 	buttonTitle?: string
 	buttonValue?: number
+	// biome-ignore lint/suspicious/noExplicitAny: <data can be of type any>
 	data?: any[]
 	dataKey: string
 }
@@ -43,13 +44,14 @@ export function CallChart({
 				{buttonTitle && (
 					<div className='hidden sm:flex'>
 						<button
+							type='button'
 							data-active={false}
 							className='relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8 sm:py-6'
 						>
-							<span className='text-xs text-muted-foreground'>
+							<span className='text-muted-foreground text-xs'>
 								{buttonTitle}
 							</span>
-							<span className='text-lg font-bold leading-none sm:text-4xl'>
+							<span className='font-bold text-lg leading-none sm:text-4xl'>
 								{buttonValue && buttonValue > 0 ? (
 									<NumberFlow value={buttonValue} />
 								) : (

@@ -1,13 +1,13 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 /*
   ---break---
 */
 @custom-variant dark (&:is(.dark *));
 
-@plugin 'tailwindcss-animate';
+@plugin "tailwindcss-animate";
 
 @theme inline {
-	--font-mono: 'Geist Mono', 'Fira Code', monospace;
+	--font-mono: "Geist Mono", "Fira Code", monospace;
 
 	--color-background: hsl(var(--background));
 	--color-foreground: hsl(var(--foreground));
@@ -78,13 +78,16 @@
 
 	--color-color-2: var(--color-2);
 
-	--color-color-1: var(--color-1)
-;
-  @keyframes rainbow {
-  0% {
-    background-position: 0%;}
-  100% {
-    background-position: 200%;}}}
+	--color-color-1: var(--color-1);
+	@keyframes rainbow {
+		0% {
+			background-position: 0%;
+		}
+		100% {
+			background-position: 200%;
+		}
+	}
+}
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,

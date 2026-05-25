@@ -4,7 +4,7 @@ export function FAQs() {
 			<div className='mx-auto max-w-5xl px-6'>
 				<div className='grid gap-y-12 px-2 lg:[grid-template-columns:1fr_auto]'>
 					<div className='text-center lg:text-left'>
-						<h2 className='mb-4 text-3xl font-semibold md:text-4xl'>
+						<h2 className='mb-4 font-semibold text-3xl md:text-4xl'>
 							Frequently <br className='hidden lg:block' /> Asked{' '}
 							<br className='hidden lg:block' />
 							Questions
@@ -15,7 +15,7 @@ export function FAQs() {
 					<div className='divide-y divide-dashed sm:mx-auto sm:max-w-lg lg:mx-0'>
 						<div className='pb-6'>
 							<h3 className='font-medium'>What is an AI assistant?</h3>
-							<p className='text-muted-foreground mt-4'>
+							<p className='mt-4 text-muted-foreground'>
 								An AI assistant is a software application powered by artificial
 								intelligence that helps manage tasks, provide information, and
 								assist with various functions through natural language
@@ -24,7 +24,7 @@ export function FAQs() {
 						</div>
 						<div className='py-6'>
 							<h3 className='font-medium'>How does an AI assistant work?</h3>
-							<p className='text-muted-foreground mt-4'>
+							<p className='mt-4 text-muted-foreground'>
 								AI assistants use algorithms and machine learning to understand
 								and process user inputs, execute tasks, and provide responses.
 								They interact through voice commands or text and can perform
@@ -35,7 +35,7 @@ export function FAQs() {
 							<h3 className='font-medium'>
 								What tasks can an AI assistant perform?
 							</h3>
-							<p className='text-muted-foreground my-4'>
+							<p className='my-4 text-muted-foreground'>
 								AI assistants can handle a wide range of tasks, including
 								managing calendars, setting reminders, sending messages,
 								answering questions, providing weather updates, and integrating
@@ -46,7 +46,7 @@ export function FAQs() {
 							<h3 className='font-medium'>
 								How secure is my data with an AI assistant?
 							</h3>
-							<p className='text-muted-foreground mt-4'>
+							<p className='mt-4 text-muted-foreground'>
 								Most AI assistants use encryption and other security measures to
 								protect your data. However, it's essential to review the privacy
 								policies of the service and be mindful of the information you
@@ -57,7 +57,7 @@ export function FAQs() {
 							<h3 className='font-medium'>
 								Can AI assistants access personal information?
 							</h3>
-							<p className='text-muted-foreground mt-4'>
+							<p className='mt-4 text-muted-foreground'>
 								AI assistants can access personal information you provide, such
 								as calendar events and contacts, to perform their functions.
 								It’s important to manage permissions and understand how your

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { LoaderCircle } from 'lucide-react'
-import { useProjetSettings } from '@/context/project-setting-context'
 import { UpdateAgentSettingsForm } from '@/components/agent-config/update-agent-settings-form'
+import { useProjetSettings } from '@/context/project-setting-context'
 
 export const Route = createFileRoute('/dashboard/project-settings/agent')({
 	component: RouteComponent,
@@ -12,7 +12,7 @@ function RouteComponent() {
 	return (
 		<div>
 			{agent.isLoading && (
-				<div className='flex w-full h-[40vh] justify-center items-center'>
+				<div className='flex h-[40vh] w-full items-center justify-center'>
 					<LoaderCircle className='size-8 animate-spin' />
 				</div>
 			)}

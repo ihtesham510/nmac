@@ -73,18 +73,17 @@ export const resetCredits = internalMutation({
 				...client,
 				subscription: undefined,
 			})
-		} else {
-			console.log('credits reseted')
-			return await ctx.db.patch(client._id, {
-				...client,
-				subscription: {
-					...subscription,
-					updatedAt: now.valueOf(),
-					total_credits: credits,
-					remaining_credits: credits,
-				},
-			})
 		}
+		console.log('credits reseted')
+		return await ctx.db.patch(client._id, {
+			...client,
+			subscription: {
+				...subscription,
+				updatedAt: now.valueOf(),
+				total_credits: credits,
+				remaining_credits: credits,
+			},
+		})
 	},
 })
 

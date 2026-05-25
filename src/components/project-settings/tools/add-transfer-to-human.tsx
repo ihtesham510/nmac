@@ -1,3 +1,11 @@
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
+import { LoaderCircle, Wrench } from 'lucide-react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { isValidPhoneNumber } from 'react-phone-number-input'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -18,14 +26,6 @@ import {
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
 import { useUpdateAgent } from '@/hooks/use-update-agent'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
-import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import { LoaderCircle, Wrench } from 'lucide-react'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { isValidPhoneNumber } from 'react-phone-number-input'
-import { toast } from 'sonner'
-import { z } from 'zod'
 
 const formSchema = z.object({
 	description: z.string().optional(),
@@ -74,6 +74,7 @@ export function AddTransferToHumanTool({
 									system_tool_type: 'transfer_to_number',
 									transfers: values.transfers,
 								},
+								// biome-ignore lint/suspicious/noExplicitAny: <no type defined for tools>
 							} as any,
 							...(data.conversationConfig.agent?.prompt?.tools ?? []),
 						],
@@ -95,7 +96,7 @@ export function AddTransferToHumanTool({
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent className='w-full sm:max-w-md md:max-w-xl'>
 				<SheetHeader>
-					<SheetTitle className='flex gap-4 items-center'>
+					<SheetTitle className='flex items-center gap-4'>
 						<Button variant='secondary' size='icon' type='button'>
 							<Wrench className='size-4' />
 						</Button>{' '}
@@ -104,20 +105,20 @@ export function AddTransferToHumanTool({
 				</SheetHeader>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<ScrollArea className='h-[68vh] px-2 mx-2'>
-							<div className='flex flex-col gap-4 mb-10'>
+						<ScrollArea className='mx-2 h-[68vh] px-2'>
+							<div className='mb-10 flex flex-col gap-4'>
 								<div className='grid rounded-lg bg-primary-foreground p-4'>
-									<div className='flex justify-between items-center'>
+									<div className='flex items-center justify-between'>
 										<div className='flex flex-col gap-1'>
-											<h1 className='text-lg font-medium text-white'>
+											<h1 className='font-medium text-lg text-white'>
 												Configuration
 											</h1>
-											<p className='mb-4 text-sm text-primary/50'>
+											<p className='mb-4 text-primary/50 text-sm'>
 												Describe to the LLM how and when to use the tool.
 											</p>
 										</div>
 									</div>
-									<div className='flex flex-col gap-4 border border-border bg-background rounded-lg px-4 py-6'>
+									<div className='flex flex-col gap-4 rounded-lg border border-border bg-background px-4 py-6'>
 										<FormField
 											control={form.control}
 											name='description'
@@ -126,7 +127,7 @@ export function AddTransferToHumanTool({
 													<FormLabel>Description (optional)</FormLabel>
 													<FormControl>
 														<Textarea
-															className='resize-none h-[25vh]'
+															className='h-[25vh] resize-none'
 															placeholder='Leave blank to use the default optimized LLM prompt.'
 															value={field.value}
 															onChange={field.onChange}
@@ -139,12 +140,12 @@ export function AddTransferToHumanTool({
 									</div>
 								</div>
 								<div className='grid rounded-lg bg-primary-foreground p-4'>
-									<div className='flex justify-between items-center'>
+									<div className='flex items-center justify-between'>
 										<div className='flex flex-col gap-1'>
-											<h1 className='text-lg font-medium text-white'>
+											<h1 className='font-medium text-lg text-white'>
 												Human Transfer Rules
 											</h1>
-											<p className='mb-4 text-sm text-primary/50'>
+											<p className='mb-4 text-primary/50 text-sm'>
 												Define the conditions for transferring to human
 												operators.
 											</p>
@@ -165,7 +166,7 @@ export function AddTransferToHumanTool({
 									<div className='flex flex-col gap-2'>
 										{fields.map((_, index) => (
 											<div
-												className='flex flex-col gap-4 border-border border bg-background rounded-lg px-4 py-6'
+												className='flex flex-col gap-4 rounded-lg border border-border bg-background px-4 py-6'
 												key={index}
 											>
 												<FormField
@@ -195,7 +196,7 @@ export function AddTransferToHumanTool({
 															<FormLabel>Condition</FormLabel>
 															<FormControl>
 																<Textarea
-																	className='resize-none h-[25vh]'
+																	className='h-[25vh] resize-none'
 																	placeholder='Enter the condition for transferring to this phone number'
 																	value={field.value}
 																	onChange={field.onChange}
@@ -220,7 +221,7 @@ export function AddTransferToHumanTool({
 							</div>
 						</ScrollArea>
 						<SheetFooter>
-							<div className='flex justify-end gap-2 items-center'>
+							<div className='flex items-center justify-end gap-2'>
 								<Button
 									type='button'
 									variant='outline'

@@ -1,6 +1,6 @@
-import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,8 +12,8 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from './ui/password-input'
 import type { Clients } from '@/lib/types'
+import { PasswordInput } from './ui/password-input'
 
 const formSchema = z
 	.object({
@@ -136,7 +136,7 @@ export function UpdateClientForm({ client }: { client: Clients[0] }) {
 						</FormItem>
 					)}
 				/>
-				<div className='flex gap-4 justify-end'>
+				<div className='flex justify-end gap-4'>
 					<Button type='button' variant='ghost' className='cursor-pointer'>
 						cancel
 					</Button>

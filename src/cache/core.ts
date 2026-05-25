@@ -1,4 +1,4 @@
-import { ConvexReactClient } from 'convex/react'
+import type { ConvexReactClient } from 'convex/react'
 import {
 	type FunctionArgs,
 	type FunctionReference,
@@ -8,7 +8,7 @@ import {
 import { convexToJson } from 'convex/values'
 
 const DEFAULT_EXPIRATION_MS = 300_000 // 5 minutes
-const DEFAULT_MAX_ENTRIES = Infinity
+const DEFAULT_MAX_ENTRIES = Number.POSITIVE_INFINITY
 
 export type SubKey = string
 export type QueryKey = string
@@ -150,10 +150,10 @@ export class CacheRegistry {
 			// None left?
 			if (cq?.refs.size === 0) {
 				const remove = () => {
-					cq.unsub!()
+					cq.unsub?.()
 					this.queries.delete(qk)
 				}
-				if (this.idle == this.maxIdleEntries) {
+				if (this.idle === this.maxIdleEntries) {
 					remove()
 				} else {
 					this.idle += 1
@@ -161,7 +161,7 @@ export class CacheRegistry {
 						this.idle -= 1
 						remove()
 					}, this.timeout)
-					//@ts-ignore
+					//@ts-expect-error
 					cq.evictTimer = evictTimer
 				}
 			}

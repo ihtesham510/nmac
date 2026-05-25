@@ -1,5 +1,8 @@
+import { useQuery as useTanstackQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import * as React from 'react'
+import { api } from 'convex/_generated/api'
+import { useMutation } from 'convex/react'
+import { format } from 'date-fns'
 import {
 	Bot,
 	Copy,
@@ -11,6 +14,15 @@ import {
 	Tag,
 	Trash2,
 } from 'lucide-react'
+import * as React from 'react'
+import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { useQuery } from '@/cache/useQuery'
+import { AddAgentForm } from '@/components/forms/add-agent-form'
+import { EditAgentForm } from '@/components/forms/edit-agent-form'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
@@ -18,17 +30,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useMemo, useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { useQuery as useTanstackQuery } from '@tanstack/react-query'
-import { rabinKarpSearch } from '@/lib/utils'
-import { toast } from 'sonner'
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
 	Table,
 	TableBody,
@@ -37,19 +40,16 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
-import { useMutation } from 'convex/react'
-import { useQuery } from '@/cache/useQuery'
-import { api } from 'convex/_generated/api'
-import { useAuth } from '@/context/auth-context'
-import { queries } from '@/api/query-options'
-import { format } from 'date-fns'
-import { useDialog } from '@/hooks/use-dialogs'
-import { useElevenLabsClient } from '@/api/client'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { WarnDialog } from '@/components/utils/warn-dialog'
-import { AddAgentForm } from '@/components/forms/add-agent-form'
-import { EditAgentForm } from '@/components/forms/edit-agent-form'
+import { useAuth } from '@/context/auth-context'
+import { useDialog } from '@/hooks/use-dialogs'
+import { rabinKarpSearch } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/agents/')({
 	component: RouteComponent,
@@ -61,7 +61,7 @@ function RouteComponent() {
 	const client = useElevenLabsClient()
 	const conv_agents = useTanstackQuery(queries.list_agents(client))
 	const deleteAgent = useMutation(api.agents.deleteAgent)
-	const data = useQuery(api.agents.getAgents, { userId: auth.user!._id })
+	const data = useQuery(api.agents.getAgents, { userId: auth.user?._id })
 	const [filter, setFilter] = useState<string>()
 	const [dialogs, setDialogs] = useDialog({
 		warnDelete: false,
@@ -85,9 +85,9 @@ function RouteComponent() {
 				open={dialogs.addAgent}
 				onOpenChange={e => setDialogs('addAgent', e)}
 			/>
-			<div className='m-10 rounded-md gap-6 grid'>
+			<div className='m-10 grid gap-6 rounded-md'>
 				<div className='grid gap-2'>
-					<h1 className='text-4xl font-bold'>Agents</h1>
+					<h1 className='font-bold text-4xl'>Agents</h1>
 					<h1 className='font-semibold text-primary/50'>
 						Create and manage your agents.
 					</h1>
@@ -95,13 +95,13 @@ function RouteComponent() {
 
 				{!data && conv_agents.isLoading && (
 					<>
-						<div className='flex justify-between items-center'>
+						<div className='flex items-center justify-between'>
 							<div className='relative'>
-								<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+								<Search className='absolute top-2.5 left-2 h-4 w-4 text-muted-foreground' />
 								<Input
 									placeholder='Search Agents...'
 									disabled
-									className='pl-8 w-[400px]'
+									className='w-[400px] pl-8'
 								/>
 							</div>
 							<Button disabled className='flex gap-2'>
@@ -110,12 +110,12 @@ function RouteComponent() {
 							</Button>
 						</div>
 
-						<div className='border rounded-lg'>
+						<div className='rounded-lg border'>
 							<Table>
 								<TableHeader>
 									<TableRow>
 										<TableHead className='px-4'>Name</TableHead>
-										<TableHead className='hidden md:flex items-center'>
+										<TableHead className='hidden items-center md:flex'>
 											Description
 										</TableHead>
 										<TableHead>Tags</TableHead>
@@ -128,7 +128,7 @@ function RouteComponent() {
 											<TableCell className='px-4'>
 												<Skeleton className='h-4 w-[150px]' />
 											</TableCell>
-											<TableCell className='hidden md:flex items-center'>
+											<TableCell className='hidden items-center md:flex'>
 												<Skeleton className='h-4 w-[250px]' />
 											</TableCell>
 											<TableCell>
@@ -153,12 +153,12 @@ function RouteComponent() {
 				)}
 
 				{data && data?.length === 0 && !conv_agents.isLoading && (
-					<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg'>
-						<div className='bg-muted/50 p-4 rounded-full mb-4'>
+					<div className='flex flex-col items-center justify-center rounded-lg px-4 py-16'>
+						<div className='mb-4 rounded-full bg-muted/50 p-4'>
 							<Bot className='h-10 w-10 text-muted-foreground' />
 						</div>
-						<h2 className='text-xl font-semibold mb-2'>No agents found</h2>
-						<p className='text-muted-foreground text-center max-w-md mb-8'>
+						<h2 className='mb-2 font-semibold text-xl'>No agents found</h2>
+						<p className='mb-8 max-w-md text-center text-muted-foreground'>
 							You haven't created any agents yet. Add a new agent to get
 							started.
 						</p>
@@ -172,13 +172,13 @@ function RouteComponent() {
 
 				{data && data.length > 0 && (
 					<>
-						<div className='flex justify-between items-center'>
+						<div className='flex items-center justify-between'>
 							<div className='relative'>
-								<Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+								<Search className='absolute top-2.5 left-2 h-4 w-4 text-muted-foreground' />
 								<Input
 									placeholder='Search Agents...'
 									onChange={e => setFilter(e.target.value)}
-									className='pl-8 w-[400px]'
+									className='w-[400px] pl-8'
 								/>
 							</div>
 
@@ -200,12 +200,12 @@ function RouteComponent() {
 							</TooltipProvider>
 						</div>
 
-						<div className='border rounded-lg'>
+						<div className='rounded-lg border'>
 							<Table>
 								<TableHeader>
 									<TableRow>
 										<TableHead className='px-4'>Name</TableHead>
-										<TableHead className='hidden md:flex items-center'>
+										<TableHead className='hidden items-center md:flex'>
 											Description
 										</TableHead>
 										<TableHead>Tags</TableHead>
@@ -220,9 +220,9 @@ function RouteComponent() {
 												description='This action cannot be undone. This will permanently delete your agent and remove your data from our servers.'
 												open={dialogs.warnDelete}
 												onOpenChange={e => setDialogs('warnDelete', e)}
-												onConfirm={async () =>
+												onConfirm={async () => {
 													await deleteAgent({ agentId: agent._id })
-												}
+												}}
 											/>
 											<EditAgentForm
 												open={dialogs.editAgent}
@@ -239,10 +239,10 @@ function RouteComponent() {
 													})
 												}
 											>
-												<TableCell className='font-medium px-4'>
+												<TableCell className='px-4 font-medium'>
 													{agent.name}
 												</TableCell>
-												<TableCell className='max-w-[300px] hidden md:table-cell items-center truncate'>
+												<TableCell className='hidden max-w-[300px] items-center truncate md:table-cell'>
 													{agent.description}
 												</TableCell>
 												<TableCell>
@@ -253,7 +253,7 @@ function RouteComponent() {
 																variant='secondary'
 																className='text-xs'
 															>
-																<Tag className='h-3 w-3 mr-1' />
+																<Tag className='mr-1 h-3 w-3' />
 																{tag}
 															</Badge>
 														))}
@@ -264,7 +264,7 @@ function RouteComponent() {
 														)}
 													</div>
 												</TableCell>
-												<TableCell className='text-sm text-muted-foreground'>
+												<TableCell className='text-muted-foreground text-sm'>
 													{format(agent._creationTime, 'MMM d, yyyy')}
 												</TableCell>
 												<TableCell onClick={e => e.stopPropagation()}>
@@ -288,7 +288,7 @@ function RouteComponent() {
 																	toast.success('Agent ID copied.')
 																}}
 															>
-																<Copy className='h-4 w-4 mr-2' />
+																<Copy className='mr-2 h-4 w-4' />
 																Copy agent ID
 															</DropdownMenuItem>
 															<DropdownMenuItem
@@ -299,20 +299,20 @@ function RouteComponent() {
 																	toast.success('Link copied.')
 																}}
 															>
-																<LinkIcon className='h-4 w-4 mr-2' />
+																<LinkIcon className='mr-2 h-4 w-4' />
 																Copy Link
 															</DropdownMenuItem>
 															<DropdownMenuItem
 																onClick={() => setDialogs('editAgent', true)}
 															>
-																<PencilIcon className='size-4 mr-2' />
+																<PencilIcon className='mr-2 size-4' />
 																Edit agent
 															</DropdownMenuItem>
 															<DropdownMenuItem
 																onClick={() => setDialogs('warnDelete', true)}
 																className='text-destructive'
 															>
-																<Trash2 className='h-4 w-4 mr-2' />
+																<Trash2 className='mr-2 h-4 w-4' />
 																Delete agent
 															</DropdownMenuItem>
 														</DropdownMenuContent>

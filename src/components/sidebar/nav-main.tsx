@@ -1,4 +1,5 @@
-import { type LucideIcon } from 'lucide-react'
+import { Link, type LinkProps } from '@tanstack/react-router'
+import type { LucideIcon } from 'lucide-react'
 import {
 	SidebarGroup,
 	SidebarGroupContent,
@@ -6,7 +7,6 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { Link, type LinkProps } from '@tanstack/react-router'
 
 export interface NavMainProps {
 	items: {

@@ -1,4 +1,25 @@
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import {
+	LiteralJsonSchemaPropertyType,
+	WebhookToolApiSchemaConfigInputMethod,
+} from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import NumberFlow from '@number-flow/react'
+import { AlertTriangleIcon, LoaderCircleIcon, WebhookIcon } from 'lucide-react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
 	Select,
@@ -14,29 +35,8 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from '@/components/ui/sheet'
-import {
-	Form,
-	FormControl,
-	FormDescription,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
-import { AlertTriangleIcon, LoaderCircleIcon, WebhookIcon } from 'lucide-react'
-import { useFieldArray, useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Input } from '@/components/ui/input'
-import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import NumberFlow from '@number-flow/react'
 import { Slider } from '@/components/ui/slider'
-import {
-	WebhookToolApiSchemaConfigInputMethod,
-	LiteralJsonSchemaPropertyType,
-} from '@elevenlabs/elevenlabs-js/api'
-import { toast } from 'sonner'
+import { Textarea } from '@/components/ui/textarea'
 import { useAddWebhook } from '@/hooks/use-add-webhook'
 
 const methods = [
@@ -274,7 +274,7 @@ export function AddWebhook({
 		<Sheet onOpenChange={onOpenChange} open={open}>
 			<SheetContent className='w-full sm:max-w-md md:max-w-xl'>
 				<SheetHeader>
-					<SheetTitle className='flex gap-4 items-center'>
+					<SheetTitle className='flex items-center gap-4'>
 						<Button variant='secondary' size='icon' type='button'>
 							<WebhookIcon className='size-4' />
 						</Button>{' '}
@@ -283,20 +283,20 @@ export function AddWebhook({
 				</SheetHeader>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
-						<ScrollArea className='h-[70vh] px-2 mx-2'>
-							<div className='flex flex-col gap-4 mb-10'>
+						<ScrollArea className='mx-2 h-[70vh] px-2'>
+							<div className='mb-10 flex flex-col gap-4'>
 								<div className='grid rounded-lg bg-primary-foreground p-4'>
-									<div className='flex justify-between items-center m-2'>
+									<div className='m-2 flex items-center justify-between'>
 										<div className='flex flex-col gap-1'>
-											<h1 className='text-lg font-medium text-white'>
+											<h1 className='font-medium text-lg text-white'>
 												Configuration
 											</h1>
-											<p className='mb-4 text-sm text-primary/50'>
+											<p className='mb-4 text-primary/50 text-sm'>
 												Describe to the LLM how and when to use the tool.
 											</p>
 										</div>
 									</div>
-									<div className='flex flex-col border border-border space-y-6 bg-background rounded-lg px-4 py-6'>
+									<div className='flex flex-col space-y-6 rounded-lg border border-border bg-background px-4 py-6'>
 										<FormField
 											control={form.control}
 											name='name'
@@ -322,7 +322,7 @@ export function AddWebhook({
 													<FormLabel>Description</FormLabel>
 													<FormControl>
 														<Textarea
-															className='resize-none h-[25vh]'
+															className='h-[25vh] resize-none'
 															value={field.value}
 															onChange={field.onChange}
 														/>
@@ -366,7 +366,7 @@ export function AddWebhook({
 													)}
 												/>
 											</div>
-											<div className='grid gap-2 w-full'>
+											<div className='grid w-full gap-2'>
 												<FormField
 													control={form.control}
 													name='url'
@@ -386,10 +386,10 @@ export function AddWebhook({
 												/>
 											</div>
 										</div>
-										<div className='mb-2 flex justify-between items-center text-xs'>
+										<div className='mb-2 flex items-center justify-between text-xs'>
 											<div className='flex flex-col gap-1.5'>
-												<div className='flex justify-between items-center'>
-													<h3 className='text-base font-normal text-white'>
+												<div className='flex items-center justify-between'>
+													<h3 className='font-normal text-base text-white'>
 														Request Timeout (Seconds)
 													</h3>
 													<p className='font-semibold text-[1rem]'>
@@ -423,12 +423,12 @@ export function AddWebhook({
 									</div>
 								</div>
 								<div className='grid rounded-lg bg-primary-foreground p-4'>
-									<div className='flex justify-between items-center m-2'>
+									<div className='m-2 flex items-center justify-between'>
 										<div className='flex flex-col gap-1'>
-											<h1 className='text-lg font-medium text-white'>
+											<h1 className='font-medium text-lg text-white'>
 												Headers
 											</h1>
-											<p className='mb-4 text-sm text-primary/50'>
+											<p className='mb-4 text-primary/50 text-sm'>
 												Define headers that will be sent with the request
 											</p>
 										</div>
@@ -441,7 +441,7 @@ export function AddWebhook({
 													value: '',
 												})
 											}
-											className='w-max ml-4 bg-background'
+											className='ml-4 w-max bg-background'
 										>
 											Add header
 										</Button>
@@ -450,7 +450,7 @@ export function AddWebhook({
 										{headers.fields.map((_, index) => (
 											<div
 												key={index}
-												className='flex flex-col space-y-4 bg-background p-4 rounded-lg'
+												className='flex flex-col space-y-4 rounded-lg bg-background p-4'
 											>
 												<FormField
 													control={form.control}
@@ -476,7 +476,7 @@ export function AddWebhook({
 														</FormItem>
 													)}
 												/>
-												<div className='flex justify-end items-center'>
+												<div className='flex items-center justify-end'>
 													<Button
 														variant='outline'
 														type='button'
@@ -491,12 +491,12 @@ export function AddWebhook({
 								</div>
 								{/* Query Parameters */}
 								<div className='grid rounded-lg bg-primary-foreground p-4'>
-									<div className='flex justify-between items-center m-2'>
+									<div className='m-2 flex items-center justify-between'>
 										<div className='flex flex-col gap-1'>
-											<h1 className='text-lg font-medium text-white'>
+											<h1 className='font-medium text-lg text-white'>
 												Query parameters
 											</h1>
-											<p className='mb-4 text-sm text-primary/50'>
+											<p className='mb-4 text-primary/50 text-sm'>
 												Define parameters that will be collected by the LLM and
 												sent as query parameters in the URL.
 											</p>
@@ -511,7 +511,7 @@ export function AddWebhook({
 													identifier: '',
 												})
 											}
-											className='w-max ml-4 bg-background'
+											className='ml-4 w-max bg-background'
 										>
 											Add Params
 										</Button>
@@ -520,9 +520,9 @@ export function AddWebhook({
 										{query_params.fields.map((_, index) => (
 											<div
 												key={index}
-												className='flex flex-col space-y-4 bg-background p-4 rounded-lg'
+												className='flex flex-col space-y-4 rounded-lg bg-background p-4'
 											>
-												<div className='flex gap-4 w-full'>
+												<div className='flex w-full gap-4'>
 													<FormField
 														control={form.control}
 														name={`query_params.${index}.type`}
@@ -575,7 +575,7 @@ export function AddWebhook({
 															<FormControl>
 																<Textarea
 																	{...field}
-																	className='resize-none h-[8vh]'
+																	className='h-[8vh] resize-none'
 																/>
 															</FormControl>
 															<FormDescription>
@@ -586,7 +586,7 @@ export function AddWebhook({
 														</FormItem>
 													)}
 												/>
-												<div className='flex justify-end items-center'>
+												<div className='flex items-center justify-end'>
 													<Button
 														variant='outline'
 														type='button'
@@ -603,12 +603,12 @@ export function AddWebhook({
 								{/* Body Parameters */}
 								{!isValidRequest && (
 									<div className='grid rounded-lg bg-primary-foreground p-4'>
-										<div className='flex justify-between items-center m-2'>
+										<div className='m-2 flex items-center justify-between'>
 											<div className='flex flex-col gap-1'>
-												<h1 className='text-lg font-medium text-white'>
+												<h1 className='font-medium text-lg text-white'>
 													Body Parameters
 												</h1>
-												<p className='mb-4 text-sm text-primary/50'>
+												<p className='mb-4 text-primary/50 text-sm'>
 													Define parameters that will be collected by the LLM
 													and sent as the body of the request.
 												</p>
@@ -623,13 +623,13 @@ export function AddWebhook({
 														identifier: '',
 													})
 												}
-												className='w-max ml-4 bg-background'
+												className='ml-4 w-max bg-background'
 											>
 												Add params
 											</Button>
 										</div>
 										<div className='flex flex-col gap-2'>
-											<div className='bg-background p-4 rounded-lg'>
+											<div className='rounded-lg bg-background p-4'>
 												<FormField
 													control={form.control}
 													name='body_params.description'
@@ -639,7 +639,7 @@ export function AddWebhook({
 															<FormControl>
 																<Textarea
 																	{...field}
-																	className='resize-none h-[15vh]'
+																	className='h-[15vh] resize-none'
 																	placeholder='Describe the overall purpose of the request body...'
 																/>
 															</FormControl>
@@ -656,9 +656,9 @@ export function AddWebhook({
 											{body_params.fields.map((_, index) => (
 												<div
 													key={index}
-													className='flex flex-col space-y-4 bg-background p-4 rounded-lg'
+													className='flex flex-col space-y-4 rounded-lg bg-background p-4'
 												>
-													<div className='flex gap-4 w-full'>
+													<div className='flex w-full gap-4'>
 														<FormField
 															control={form.control}
 															name={`body_params.properties.${index}.type`}
@@ -711,7 +711,7 @@ export function AddWebhook({
 																<FormControl>
 																	<Textarea
 																		{...field}
-																		className='resize-none h-[8vh]'
+																		className='h-[8vh] resize-none'
 																	/>
 																</FormControl>
 																<FormDescription>
@@ -722,7 +722,7 @@ export function AddWebhook({
 															</FormItem>
 														)}
 													/>
-													<div className='flex justify-end items-center'>
+													<div className='flex items-center justify-end'>
 														<Button
 															variant='outline'
 															type='button'
@@ -740,8 +740,8 @@ export function AddWebhook({
 								{/* Validation Warning */}
 								{form.watch('query_params').length === 0 &&
 									form.watch('body_params.properties').length === 0 && (
-										<div className='bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4'>
-											<p className='text-yellow-500 text-sm flex items-center gap-4 p-2'>
+										<div className='rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4'>
+											<p className='flex items-center gap-4 p-2 text-sm text-yellow-500'>
 												<AlertTriangleIcon className='size-8' />
 												At least one query parameter or body parameter must be
 												defined for the webhook to function properly.
@@ -752,7 +752,7 @@ export function AddWebhook({
 								{!isValidRequest &&
 									form.watch('body_params.properties').length > 0 &&
 									!form.watch('body_params.description').trim() && (
-										<div className='bg-red-500/10 border border-red-500/20 rounded-lg p-4'>
+										<div className='rounded-lg border border-red-500/20 bg-red-500/10 p-4'>
 											<p className='text-red-500 text-sm'>
 												⚠️ Body description is required when using body
 												parameters with POST/PATCH methods.
@@ -762,7 +762,7 @@ export function AddWebhook({
 							</div>
 						</ScrollArea>
 						<SheetFooter>
-							<div className='flex justify-end items-center gap-4'>
+							<div className='flex items-center justify-end gap-4'>
 								<Button
 									onClick={() => onOpenChange?.(false)}
 									variant='outline'

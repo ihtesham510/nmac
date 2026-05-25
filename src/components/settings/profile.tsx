@@ -1,30 +1,20 @@
-import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios from 'axios'
-import * as z from 'zod'
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form'
-import { Input } from '../ui/input'
-import { useAuth } from '@/context/auth-context'
-import { useEffect, useRef, useState } from 'react'
-import { Button } from '../ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { useConvex, useMutation } from 'convex/react'
 import { api } from 'convex/_generated/api'
+import { useConvex, useMutation } from 'convex/react'
 import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '../ui/dialog'
+	Camera,
+	LoaderCircle,
+	Lock,
+	Mail,
+	Trash2,
+	Upload,
+	User,
+} from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -36,7 +26,17 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { PasswordInput } from '../ui/password-input'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
+import { useAuth } from '@/context/auth-context'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Button } from '../ui/button'
 import {
 	Card,
 	CardContent,
@@ -45,14 +45,14 @@ import {
 	CardTitle,
 } from '../ui/card'
 import {
-	Camera,
-	User,
-	Mail,
-	Lock,
-	Trash2,
-	Upload,
-	LoaderCircle,
-} from 'lucide-react'
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '../ui/dialog'
+import { Input } from '../ui/input'
+import { PasswordInput } from '../ui/password-input'
 
 export function Profile() {
 	const auth = useAuth()
@@ -131,7 +131,7 @@ export function Profile() {
 	}
 
 	return (
-		<div className='max-w-full mx-auto space-y-8'>
+		<div className='mx-auto max-w-full space-y-8'>
 			{/* Profile Picture Section */}
 			<Card>
 				<CardHeader>
@@ -159,7 +159,7 @@ export function Profile() {
 							<button
 								type='button'
 								onClick={() => ref.current?.click()}
-								className='absolute -bottom-2 -right-2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors'
+								className='absolute -right-2 -bottom-2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90'
 							>
 								<Upload className='h-4 w-4' />
 							</button>
@@ -174,7 +174,7 @@ export function Profile() {
 								<Upload className='h-4 w-4' />
 								Upload New Picture
 							</Button>
-							<p className='text-sm text-muted-foreground'>
+							<p className='text-muted-foreground text-sm'>
 								JPG, PNG or GIF. Max size 5MB.
 							</p>
 						</div>
@@ -203,7 +203,7 @@ export function Profile() {
 				<CardContent>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+							<div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
 								<FormField
 									control={form.control}
 									name='first_name'
@@ -253,10 +253,10 @@ export function Profile() {
 							/>
 
 							{form.formState.isDirty && (
-								<div className='flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-dashed'>
+								<div className='flex items-center justify-between rounded-lg border border-dashed bg-muted/50 p-4'>
 									<div className='flex items-center gap-2'>
-										<div className='h-2 w-2 bg-orange-500 rounded-full animate-pulse' />
-										<span className='text-sm font-medium'>Unsaved changes</span>
+										<div className='h-2 w-2 animate-pulse rounded-full bg-orange-500' />
+										<span className='font-medium text-sm'>Unsaved changes</span>
 									</div>
 									<div className='flex gap-2'>
 										<Button
@@ -307,7 +307,7 @@ export function Profile() {
 					<div className='flex items-center justify-between'>
 						<div className='space-y-1'>
 							<p className='font-medium'>Password</p>
-							<p className='text-sm text-muted-foreground'>
+							<p className='text-muted-foreground text-sm'>
 								Last changed 30 days ago
 							</p>
 						</div>
@@ -332,7 +332,7 @@ export function Profile() {
 						<div className='flex items-center justify-between'>
 							<div className='space-y-1'>
 								<p className='font-medium'>Delete Account</p>
-								<p className='text-sm text-muted-foreground'>
+								<p className='text-muted-foreground text-sm'>
 									This action cannot be undone. All your data will be
 									permanently removed.
 								</p>
@@ -358,9 +358,10 @@ export function Profile() {
 							<AlertDialogFooter>
 								<AlertDialogCancel>Cancel</AlertDialogCancel>
 								<AlertDialogAction
-									onClick={async () =>
-										await deleteAccount({ userId: auth.user!._id })
-									}
+									onClick={async () => {
+										if (auth.user?._id)
+											await deleteAccount({ userId: auth.user?._id })
+									}}
 									className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
 								>
 									Delete Account
@@ -394,24 +395,26 @@ function ChangePassword() {
 	const [open, setIsOpen] = useState(false)
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		try {
-			const res = await changePassword({
-				userId: auth.user!._id,
-				current_password: values.current_password,
-				new_password: values.new_password,
-			})
-			if (res === 'wrong_password') {
-				form.setError('current_password', {
-					message: 'Current password is incorrect',
+		if (auth.user?._id) {
+			try {
+				const res = await changePassword({
+					userId: auth.user?._id,
+					current_password: values.current_password,
+					new_password: values.new_password,
 				})
-				return
-			}
+				if (res === 'wrong_password') {
+					form.setError('current_password', {
+						message: 'Current password is incorrect',
+					})
+					return
+				}
 
-			toast.success('Password changed successfully!')
-			form.reset()
-			setIsOpen(false)
-		} catch (error) {
-			toast.error('Failed to change password. Please try again.')
+				toast.success('Password changed successfully!')
+				form.reset()
+				setIsOpen(false)
+			} catch (_error) {
+				toast.error('Failed to change password. Please try again.')
+			}
 		}
 	}
 

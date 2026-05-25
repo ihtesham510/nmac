@@ -1,10 +1,10 @@
-import { PhoneIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { PhoneIcon } from 'lucide-react'
 import {
 	SidebarHeader,
 	SidebarMenu,
-	SidebarMenuItem,
 	SidebarMenuButton,
+	SidebarMenuItem,
 } from '../ui/sidebar'
 
 export function NavHeader() {
@@ -18,7 +18,7 @@ export function NavHeader() {
 					>
 						<Link to='/dashboard'>
 							<PhoneIcon className='h-5 w-5' />
-							<span className='text-base font-semibold'>
+							<span className='font-semibold text-base'>
 								Never Miss A Call.
 							</span>
 						</Link>

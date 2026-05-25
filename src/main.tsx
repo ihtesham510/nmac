@@ -1,17 +1,17 @@
+import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
 import './index.css'
-import reportWebVitals from './reportWebVitals.ts'
-import { Toaster } from 'sonner'
-import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ConvexProvider, ConvexReactClient } from 'convex/react'
+import { Toaster } from 'sonner'
 import { AuthProvider, useAuth } from '@/context/auth-context.tsx'
 import { ConvexQueryCacheProvider } from './cache/provider.tsx'
+import reportWebVitals from './reportWebVitals.ts'
 
 declare global {
 	interface Array<T> {

@@ -1,5 +1,7 @@
+import type { ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState, type PropsWithChildren } from 'react'
+import { format, fromUnixTime } from 'date-fns'
 import {
 	ArrowUpDown,
 	BotIcon,
@@ -12,10 +14,31 @@ import {
 	User,
 	X,
 } from 'lucide-react'
-import { format, fromUnixTime } from 'date-fns'
-
+import { type PropsWithChildren, useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { AudioPlayer } from '@/components/audio-wave-visuliser'
+import { LoaderComponent } from '@/components/loader'
+import { Avatar } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import {
+	Sheet,
+	SheetContent,
+	SheetTitle,
+	SheetTrigger,
+} from '@/components/ui/sheet'
 import {
 	Table,
 	TableBody,
@@ -24,32 +47,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import type { ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { queries } from '@/api/query-options'
-import { useAgents } from '@/hooks/use-agents'
-import { LoaderComponent } from '@/components/loader'
-import {
-	Sheet,
-	SheetContent,
-	SheetTitle,
-	SheetTrigger,
-} from '@/components/ui/sheet'
-import { Avatar } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
-import { useElevenLabsClient } from '@/api/client'
-import { toast } from 'sonner'
 import { useAuth } from '@/context/auth-context'
-import { AudioPlayer } from '@/components/audio-wave-visuliser'
+import { useAgents } from '@/hooks/use-agents'
 
 const badgeVariants = {
 	success:
@@ -141,15 +140,15 @@ function Conversations({
 		<div className='m-10'>
 			<div className='grid gap-6'>
 				<div className='grid gap-2'>
-					<h1 className='text-4xl font-bold'>Call History</h1>
+					<h1 className='font-bold text-4xl'>Call History</h1>
 					<h2 className='text-primary/50'>
 						View and manage your agent call history
 					</h2>
 				</div>
 				<div className='flex flex-col space-y-4'>
-					<div className='flex flex-col sm:flex-row gap-4'>
+					<div className='flex flex-col gap-4 sm:flex-row'>
 						<div className='relative flex-1'>
-							<Search className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
+							<Search className='absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground' />
 							<Input
 								placeholder='Search by agent or conversation ID...'
 								className='pl-8'
@@ -160,7 +159,7 @@ function Conversations({
 						<div className='flex gap-2'>
 							<Select value={statusFilter} onValueChange={setStatusFilter}>
 								<SelectTrigger className='w-[160px]'>
-									<Filter className='h-4 w-4 mr-2' />
+									<Filter className='mr-2 h-4 w-4' />
 									<SelectValue placeholder='Status' />
 								</SelectTrigger>
 								<SelectContent>
@@ -174,7 +173,7 @@ function Conversations({
 
 							<Select value={successFilter} onValueChange={setSuccessFilter}>
 								<SelectTrigger className='w-[160px]'>
-									<Check className='h-4 w-4 mr-2' />
+									<Check className='mr-2 h-4 w-4' />
 									<SelectValue
 										placeholder='Result'
 										className='hidden md:block'
@@ -198,7 +197,7 @@ function Conversations({
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('agentName')}
-											className='flex items-center gap-2 h-auto font-medium justify-start'
+											className='flex h-auto items-center justify-start gap-2 font-medium'
 										>
 											<User className='h-4 w-4' />
 											Agent
@@ -207,11 +206,11 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='hidden md:table-cell w-[180px]'>
+									<TableHead className='hidden w-[180px] md:table-cell'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('startTimeUnixSecs')}
-											className='flex items-center gap-2 h-auto font-medium justify-start'
+											className='flex h-auto items-center justify-start gap-2 font-medium'
 										>
 											<Calendar className='h-4 w-4' />
 											Start Time
@@ -220,11 +219,11 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='hidden sm:table-cell w-[120px] text-center'>
+									<TableHead className='hidden w-[120px] text-center sm:table-cell'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('callDurationSecs')}
-											className='flex items-center justify-center gap-2 h-auto font-medium w-full'
+											className='flex h-auto w-full items-center justify-center gap-2 font-medium'
 										>
 											<Clock className='h-4 w-4' />
 											Duration
@@ -233,11 +232,11 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[120px] hidden sm:table-cell text-center'>
+									<TableHead className='hidden w-[120px] text-center sm:table-cell'>
 										<Button
 											variant='ghost'
 											onClick={() => handleSort('messageCount')}
-											className='flex items-center gap-2  h-auto font-medium w-full justify-center'
+											className='flex h-auto w-full items-center justify-center gap-2 font-medium'
 										>
 											<MessageSquare className='h-4 w-4' />
 											Messages
@@ -246,7 +245,7 @@ function Conversations({
 											)}
 										</Button>
 									</TableHead>
-									<TableHead className='w-[120px] hidden sm:table-cell'>
+									<TableHead className='hidden w-[120px] sm:table-cell'>
 										Status
 									</TableHead>
 									<TableHead className='w-[120px]'>Result</TableHead>
@@ -260,6 +259,7 @@ function Conversations({
 
 										return (
 											<ConversationSideSheet
+												key={call.agentId}
 												conversationId={call.conversationId}
 											>
 												<TableRow
@@ -275,10 +275,10 @@ function Conversations({
 															'MMM d, yyyy h:mm a',
 														)}
 													</TableCell>
-													<TableCell className='text-center hidden sm:table-cell'>
+													<TableCell className='hidden text-center sm:table-cell'>
 														{formatDuration(call.callDurationSecs)}
 													</TableCell>
-													<TableCell className='text-center hidden sm:table-cell'>
+													<TableCell className='hidden text-center sm:table-cell'>
 														{call.messageCount}
 													</TableCell>
 													<TableCell className='hidden sm:table-cell'>
@@ -355,7 +355,7 @@ function ConversationSideSheet({
 				queryKey: [conversationId],
 			})
 		}
-	}, [conversationId, open])
+	}, [conversationId, open, queryClient.invalidateQueries])
 
 	const successBadge = getSuccessBadge(
 		conversation.data?.analysis?.callSuccessful,
@@ -366,10 +366,10 @@ function ConversationSideSheet({
 		<Sheet open={open} onOpenChange={e => setIsOpen(e)}>
 			<SheetTrigger asChild>{children}</SheetTrigger>
 			{conversation.data && (
-				<SheetContent className='w-full max-w-[1000px] lg:max-w-[1000px] p-6'>
+				<SheetContent className='w-full max-w-[1000px] p-6 lg:max-w-[1000px]'>
 					<div className='flex h-full gap-6'>
 						{/* Left Side - Audio Player and Transcript */}
-						<div className='flex-1 flex flex-col min-w-0'>
+						<div className='flex min-w-0 flex-1 flex-col'>
 							<div className='flex-shrink-0 pb-4'>
 								<SheetTitle className='mb-4'>Conversation Details</SheetTitle>
 								{!audioBuf.isLoading && audioBuf.data && (
@@ -380,13 +380,12 @@ function ConversationSideSheet({
 								<Separator />
 							</div>
 
-							<div className='flex-1 flex flex-col min-h-0 pt-4'>
-								<h3 className='font-semibold mb-4 flex-shrink-0'>Transcript</h3>
+							<div className='flex min-h-0 flex-1 flex-col pt-4'>
+								<h3 className='mb-4 flex-shrink-0 font-semibold'>Transcript</h3>
 								<ScrollArea className='h-[48vh] pr-4 pb-4'>
-									<div className='space-y-4 pb-4 mb-6'>
+									<div className='mb-6 space-y-4 pb-4'>
 										{conversation.data.transcript.length > 0 ? (
-											conversation.data &&
-											conversation.data.transcript.map((message, index) => (
+											conversation.data?.transcript.map((message, index) => (
 												<div
 													key={index}
 													className={`flex ${
@@ -396,12 +395,12 @@ function ConversationSideSheet({
 													} items-start gap-3`}
 												>
 													{message.role !== 'user' && (
-														<Avatar className='size-8 flex justify-center items-center bg-muted flex-shrink-0'>
+														<Avatar className='flex size-8 flex-shrink-0 items-center justify-center bg-muted'>
 															<BotIcon className='size-4' />
 														</Avatar>
 													)}
 													<div
-														className={`flex flex-col space-y-1 max-w-[85%] ${
+														className={`flex max-w-[85%] flex-col space-y-1 ${
 															message.role === 'user'
 																? 'items-end'
 																: 'items-start'
@@ -419,21 +418,21 @@ function ConversationSideSheet({
 																? '...'
 																: (message.message ?? '...')}
 														</div>
-														<div className='flex items-center gap-2 text-xs text-muted-foreground'>
+														<div className='flex items-center gap-2 text-muted-foreground text-xs'>
 															<span>
 																{formatDuration(message.timeInCallSecs)}
 															</span>
 														</div>
 													</div>
 													{message.role === 'user' && (
-														<Avatar className='size-8 flex justify-center items-center bg-primary-foreground flex-shrink-0'>
+														<Avatar className='flex size-8 flex-shrink-0 items-center justify-center bg-primary-foreground'>
 															<User className='size-4' />
 														</Avatar>
 													)}
 												</div>
 											))
 										) : (
-											<div className='text-center text-muted-foreground py-8'>
+											<div className='py-8 text-center text-muted-foreground'>
 												No transcript available
 											</div>
 										)}
@@ -443,16 +442,16 @@ function ConversationSideSheet({
 						</div>
 
 						{/* Right Side - Metadata */}
-						<div className='w-80  flex-shrink-0 flex flex-col border-l pl-6'>
+						<div className='flex w-80 flex-shrink-0 flex-col border-l pl-6'>
 							<div className='flex-shrink-0 pb-4'>
-								<h3 className='font-semibold mb-4'>Call Information</h3>
+								<h3 className='mb-4 font-semibold'>Call Information</h3>
 								<Separator />
 							</div>
 
 							<div className='flex-1 pt-4'>
 								<div className='space-y-4'>
-									<div className='flex justify-between items-center'>
-										<span className='text-sm font-medium'>Status:</span>
+									<div className='flex items-center justify-between'>
+										<span className='font-medium text-sm'>Status:</span>
 										<Badge
 											variant={
 												successBadge.variant === 'success' ||
@@ -469,8 +468,7 @@ function ConversationSideSheet({
 											}`}
 										>
 											{successBadge.icon}
-											{conversation.data &&
-												conversation.data.analysis &&
+											{conversation.data?.analysis &&
 												conversation.data?.analysis?.callSuccessful
 													.charAt(0)
 													.toUpperCase() +
@@ -478,16 +476,16 @@ function ConversationSideSheet({
 										</Badge>
 									</div>
 
-									<div className='flex justify-between items-center'>
-										<span className='text-sm font-medium'>Call Cost:</span>
-										<span className='text-sm font-mono'>
+									<div className='flex items-center justify-between'>
+										<span className='font-medium text-sm'>Call Cost:</span>
+										<span className='font-mono text-sm'>
 											{totalCost(conversation.data.metadata.cost ?? 0, 20)}
 										</span>
 									</div>
 
-									<div className='flex justify-between items-center'>
-										<span className='text-sm font-medium'>Call Duration:</span>
-										<span className='text-sm font-mono'>
+									<div className='flex items-center justify-between'>
+										<span className='font-medium text-sm'>Call Duration:</span>
+										<span className='font-mono text-sm'>
 											{conversation.data.metadata.callDurationSecs} sec
 										</span>
 									</div>
@@ -495,19 +493,19 @@ function ConversationSideSheet({
 									{isPhoneCall && (
 										<>
 											<Separator className='my-4' />
-											<h4 className='font-semibold mb-4'>Phone Info</h4>
+											<h4 className='mb-4 font-semibold'>Phone Info</h4>
 
 											<div className='space-y-3'>
-												<div className='flex justify-between items-center'>
-													<span className='text-sm font-medium'>
+												<div className='flex items-center justify-between'>
+													<span className='font-medium text-sm'>
 														External No:
 													</span>
 													<button
-														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
+														className='max-w-[150px] cursor-pointer truncate text-right font-mono text-sm hover:underline'
 														onClick={async () => {
 															await navigator.clipboard.writeText(
-																conversation.data.metadata.phoneCall!
-																	.externalNumber,
+																conversation.data.metadata.phoneCall
+																	?.externalNumber as string,
 															)
 															toast.success('Phone Number Copied')
 														}}
@@ -523,14 +521,14 @@ function ConversationSideSheet({
 													</button>
 												</div>
 
-												<div className='flex justify-between items-center'>
-													<span className='text-sm font-medium'>Agent No:</span>
+												<div className='flex items-center justify-between'>
+													<span className='font-medium text-sm'>Agent No:</span>
 													<button
-														className='text-sm font-mono hover:underline cursor-pointer text-right max-w-[150px] truncate'
+														className='max-w-[150px] cursor-pointer truncate text-right font-mono text-sm hover:underline'
 														onClick={async () => {
 															await navigator.clipboard.writeText(
-																conversation.data.metadata.phoneCall!
-																	.agentNumber,
+																conversation.data.metadata.phoneCall
+																	?.agentNumber as string,
 															)
 															toast.success('Phone Number Copied')
 														}}
@@ -542,8 +540,8 @@ function ConversationSideSheet({
 													</button>
 												</div>
 
-												<div className='flex justify-between items-center'>
-													<span className='text-sm font-medium'>
+												<div className='flex items-center justify-between'>
+													<span className='font-medium text-sm'>
 														Direction:
 													</span>
 													<Badge variant='secondary'>
@@ -579,12 +577,12 @@ function getStatusBadge(status?: string) {
 		case 'in-progress':
 			return {
 				variant: 'outline' as const,
-				icon: <Clock className='h-3 w-3 mr-1' />,
+				icon: <Clock className='mr-1 h-3 w-3' />,
 			}
 		case 'done':
 			return {
 				variant: 'secondary' as const,
-				icon: <Check className='h-3 w-3 mr-1' />,
+				icon: <Check className='mr-1 h-3 w-3' />,
 			}
 		default:
 			return { variant: 'outline' as const, icon: null }
@@ -596,17 +594,17 @@ function getSuccessBadge(success?: string) {
 		case 'success':
 			return {
 				variant: 'success' as const,
-				icon: <Check className='h-3 w-3 mr-1' />,
+				icon: <Check className='mr-1 h-3 w-3' />,
 			}
 		case 'failure':
 			return {
 				variant: 'destructive' as const,
-				icon: <X className='h-3 w-3 mr-1' />,
+				icon: <X className='mr-1 h-3 w-3' />,
 			}
 		case 'pending':
 			return {
 				variant: 'outline' as const,
-				icon: <Clock className='h-3 w-3 mr-1' />,
+				icon: <Clock className='mr-1 h-3 w-3' />,
 			}
 		default:
 			return { variant: 'outline' as const, icon: null }

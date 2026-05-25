@@ -1,8 +1,9 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { motion } from 'motion/react'
-import React, { useEffect, useId, useRef, useState } from 'react'
+import type React from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { cn } from '@/lib/utils'
 
 /**
  *  DotPattern Component Props
@@ -144,7 +145,7 @@ export function DotPattern({
 						glow
 							? {
 									duration: dot.duration,
-									repeat: Infinity,
+									repeat: Number.POSITIVE_INFINITY,
 									repeatType: 'reverse',
 									delay: dot.delay,
 									ease: 'easeInOut',

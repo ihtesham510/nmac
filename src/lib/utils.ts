@@ -1,6 +1,6 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { type ClassValue, clsx } from 'clsx'
 import CryptoJS from 'crypto-js'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs))
@@ -25,10 +25,10 @@ export function rabinKarpSearch(text: string, pattern: string): boolean {
 }
 
 function hash(str: string): number {
-	let hashValue: number = 0
+	let hashValue = 0
 	const prime: number = 101
 	for (let i = 0; i < str.length; i++) {
-		hashValue += str.charCodeAt(i) * Math.pow(prime, i)
+		hashValue += str.charCodeAt(i) * prime ** i
 	}
 	return hashValue
 }
@@ -43,7 +43,7 @@ function rehash(
 	const newHash: number = (prevHash - text.charCodeAt(startIndex)) / prime
 	const newCharIndex: number = startIndex + patternLength
 	const newHashValue: number =
-		newHash + text.charCodeAt(newCharIndex) * Math.pow(prime, patternLength - 1)
+		newHash + text.charCodeAt(newCharIndex) * prime ** (patternLength - 1)
 	return newHashValue
 }
 

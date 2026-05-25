@@ -3,9 +3,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 export function UpdateAgentSettingsFormSkeleton() {
 	return (
 		<div className='mb-60'>
-			<div className='grid relative gap-6 mb-6'>
+			<div className='relative mb-6 grid gap-6'>
 				{/* First Message Section */}
-				<div className='grid gap-4 p-4 rounded-lg bg-card border border-border'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
 					<div className='flex flex-col gap-2'>
 						<Skeleton className='h-5 w-32' />
 						<Skeleton className='h-4 w-96' />
@@ -14,7 +14,7 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* System Prompt Section */}
-				<div className='grid gap-4 p-4 rounded-lg bg-card border border-border'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
 					<div className='flex flex-col gap-2'>
 						<Skeleton className='h-5 w-28' />
 						<Skeleton className='h-4 w-80' />
@@ -23,8 +23,8 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* LLM Selection Section */}
-				<div className='grid gap-4 p-4 rounded-lg bg-card border border-border'>
-					<div className='flex justify-between items-start'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+					<div className='flex items-start justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-5 w-12' />
 							<Skeleton className='h-4 w-full max-w-md' />
@@ -35,8 +35,8 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* Temperature Slider Section */}
-				<div className='grid gap-4 p-4 rounded-lg bg-card border border-border'>
-					<div className='flex justify-between items-center'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+					<div className='flex items-center justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-5 w-24' />
 							<Skeleton className='h-4 w-72' />
@@ -49,8 +49,8 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* Knowledge Base Section */}
-				<div className='grid rounded-lg bg-card border border-border gap-4 p-4'>
-					<div className='flex justify-between items-center'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+					<div className='flex items-center justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-6 w-36' />
 							<Skeleton className='h-4 w-80' />
@@ -62,10 +62,10 @@ export function UpdateAgentSettingsFormSkeleton() {
 					</div>
 
 					{/* Knowledge Base Items */}
-					<div className='grid w-full rounded-lg bg-primary-foreground gap-2 p-2'>
+					<div className='grid w-full gap-2 rounded-lg bg-primary-foreground p-2'>
 						{[1, 2, 3].map(item => (
-							<div key={item} className='flex justify-between items-center p-2'>
-								<div className='flex justify-center gap-4 items-center'>
+							<div key={item} className='flex items-center justify-between p-2'>
+								<div className='flex items-center justify-center gap-4'>
 									<Skeleton className='h-10 w-10' />
 									<Skeleton className='h-4 w-32' />
 								</div>
@@ -75,7 +75,7 @@ export function UpdateAgentSettingsFormSkeleton() {
 					</div>
 
 					{/* RAG Toggle Section */}
-					<div className='flex justify-between items-center'>
+					<div className='flex items-center justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-6 w-20' />
 							<Skeleton className='h-4 w-96' />
@@ -89,8 +89,8 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* Tools Section */}
-				<div className='grid rounded-lg bg-card border-border border gap-4 p-4'>
-					<div className='flex justify-between items-center'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+					<div className='flex items-center justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-6 w-16' />
 							<Skeleton className='h-4 w-64' />
@@ -101,10 +101,10 @@ export function UpdateAgentSettingsFormSkeleton() {
 					</div>
 
 					{/* Tools Items */}
-					<div className='grid w-full rounded-lg bg-primary-foreground gap-2 p-2'>
+					<div className='grid w-full gap-2 rounded-lg bg-primary-foreground p-2'>
 						{[1, 2].map(item => (
-							<div key={item} className='flex justify-between items-center p-2'>
-								<div className='flex justify-center gap-4 items-center'>
+							<div key={item} className='flex items-center justify-between p-2'>
+								<div className='flex items-center justify-center gap-4'>
 									<Skeleton className='h-10 w-10' />
 									<div className='flex flex-col gap-2'>
 										<Skeleton className='h-4 w-28' />
@@ -118,8 +118,8 @@ export function UpdateAgentSettingsFormSkeleton() {
 				</div>
 
 				{/* Max Duration Section */}
-				<div className='grid gap-4 p-4 rounded-lg bg-card border border-border'>
-					<div className='flex justify-between items-center'>
+				<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+					<div className='flex items-center justify-between'>
 						<div className='flex flex-col gap-2'>
 							<Skeleton className='h-5 w-48' />
 							<Skeleton className='h-4 w-72' />

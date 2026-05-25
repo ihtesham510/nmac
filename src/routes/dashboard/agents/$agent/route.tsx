@@ -1,19 +1,19 @@
-import { useElevenLabsClient } from '@/api/client'
-import { queries } from '@/api/query-options'
-import { useQuery } from '@/cache/useQuery'
-import { AgentContextProvider } from '@/context/agent-context'
 import { useQuery as useTanstackQuery } from '@tanstack/react-query'
 import {
 	createFileRoute,
+	Link,
+	type LinkProps,
 	Navigate,
 	Outlet,
-	type LinkProps,
-	Link,
 } from '@tanstack/react-router'
 import { api } from 'convex/_generated/api'
 import { Tag } from 'lucide-react'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { useQuery } from '@/cache/useQuery'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { AgentContextProvider } from '@/context/agent-context'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/agents/$agent')({
@@ -56,13 +56,13 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className='m-10 md:mx-40 grid space-y-6'>
+		<div className='m-10 grid space-y-6 md:mx-40'>
 			{isLoading ? (
-				<div className='flex items-center justify-between mb-6'>
+				<div className='mb-6 flex items-center justify-between'>
 					<div className='grid gap-2'>
-						<Skeleton className='h-10 w-24 py-4 mb-4' />
-						<Skeleton className='h-10 w-64 mb-1' />
-						<Skeleton className='h-7 w-80 mb-2' />
+						<Skeleton className='mb-4 h-10 w-24 py-4' />
+						<Skeleton className='mb-1 h-10 w-64' />
+						<Skeleton className='mb-2 h-7 w-80' />
 						<div className='flex gap-2'>
 							<Skeleton className='h-6 w-20 rounded-full' />
 							<Skeleton className='h-6 w-24 rounded-full' />
@@ -71,16 +71,16 @@ function RouteComponent() {
 					</div>
 				</div>
 			) : (
-				<div className='flex items-center justify-between mb-6'>
+				<div className='mb-6 flex items-center justify-between'>
 					<div className='grid gap-2'>
-						<h1 className='text-4xl font-bold'>{agentData?.name}</h1>
-						<p className='font-semibold text-primary/50 max-w-[500px]'>
+						<h1 className='font-bold text-4xl'>{agentData?.name}</h1>
+						<p className='max-w-[500px] font-semibold text-primary/50'>
 							{agentData?.description}
 						</p>
 						<span>
 							{agentData?.tags.map(tag => (
 								<Badge key={tag} variant='secondary' className='text-xs'>
-									<Tag className='h-3 w-3 mr-1' />
+									<Tag className='mr-1 h-3 w-3' />
 									{tag}
 								</Badge>
 							))}
@@ -90,19 +90,19 @@ function RouteComponent() {
 			)}
 
 			{isLoading ? (
-				<header className='border-b border-border'>
+				<header className='border-border border-b'>
 					<nav className='max-w-7xl'>
 						<div className='flex h-12 items-end justify-between'>
 							<div className='flex space-x-6'>
-								<Skeleton className='h-6 w-12 mb-2' />
-								<Skeleton className='h-6 w-16 mb-2' />
-								<Skeleton className='h-6 w-20 mb-2' />
+								<Skeleton className='mb-2 h-6 w-12' />
+								<Skeleton className='mb-2 h-6 w-16' />
+								<Skeleton className='mb-2 h-6 w-20' />
 							</div>
 						</div>
 					</nav>
 				</header>
 			) : (
-				<header className='border-b border-border'>
+				<header className='border-border border-b'>
 					<nav className='max-w-7xl'>
 						<div className='flex h-12 items-end justify-between'>
 							<div className='flex space-x-6'>
@@ -111,8 +111,8 @@ function RouteComponent() {
 										key={index}
 										{...item.href}
 										className={cn(
-											'inline-flex h-full items-end border-b-1 pb-2 text-md font-medium transition-colors',
-											'text-zinc-400 border-transparent hover:border-zinc-600 hover:text-zinc-300',
+											'inline-flex h-full items-end border-b-1 pb-2 font-medium text-md transition-colors',
+											'border-transparent text-zinc-400 hover:border-zinc-600 hover:text-zinc-300',
 											'[&.active]:border-white [&.active]:text-white',
 										)}
 									>

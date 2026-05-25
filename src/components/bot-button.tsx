@@ -1,6 +1,6 @@
+import { cva, type VariantProps } from 'class-variance-authority'
 import { Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
 
 const blurVarients = cva(
 	'absolute inset-0 size-full animate-pulse rounded-full bg-blue-500 opacity-10 blur-2xl',
@@ -8,8 +8,8 @@ const blurVarients = cva(
 		variants: {
 			variant: {
 				default: 'bg-blue-500',
-				destructive: 'bg-destructive animate-none',
-				live: 'bg-green-400 animate-none',
+				destructive: 'animate-none bg-destructive',
+				live: 'animate-none bg-green-400',
 			},
 		},
 		defaultVariants: {
@@ -18,7 +18,7 @@ const blurVarients = cva(
 	},
 )
 const borderVarients = cva(
-	'relative flex justify-center items-center cursor-pointer rounded-full size-28 border-1',
+	'relative flex size-28 cursor-pointer items-center justify-center rounded-full border-1',
 	{
 		variants: {
 			variant: {
@@ -69,10 +69,14 @@ type Props = {
 
 export function BotButton({ onClick, variant }: Props) {
 	return (
-		<div onClick={onClick} className={cn(borderVarients({ variant }))}>
+		<button
+			type='button'
+			onClick={onClick}
+			className={cn(borderVarients({ variant }))}
+		>
 			<div className={cn(blurVarients({ variant }))} />
-			<div className={cn(innerBlurVarient({ variant }))}></div>
+			<div className={cn(innerBlurVarient({ variant }))} />
 			<Bot className={cn(iconVarient({ variant }))} />
-		</div>
+		</button>
 	)
 }

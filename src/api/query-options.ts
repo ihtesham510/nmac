@@ -1,6 +1,6 @@
-import { queryOptions } from '@tanstack/react-query'
-import { type ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import type { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
+import type { ConversationSummaryResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import { queryOptions } from '@tanstack/react-query'
 
 export const queries = {
 	list_agents: (client: ElevenLabsClient) =>
@@ -33,7 +33,7 @@ export const queries = {
 			queryKey: ['list_conversations', agent_id, filter],
 			queryFn: async () => {
 				let conversations: ConversationSummaryResponseModel[] = []
-				let cursor: string | undefined = undefined
+				let cursor: string | undefined
 				do {
 					const conv = await client.conversationalAi.conversations.list({
 						agentId: agent_id,
@@ -104,6 +104,7 @@ export const queries = {
 				const docs = await client.conversationalAi.knowledgeBase.list()
 				const filteredDocs = filter
 					? docs.documents.filter(doc =>
+							// biome-ignore lint/suspicious/noExplicitAny: <agent type can be of any>
 							doc.dependentAgents.some((agent: any) =>
 								filter.includes(agent.id),
 							),

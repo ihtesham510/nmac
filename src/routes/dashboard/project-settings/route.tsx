@@ -1,12 +1,16 @@
+import {
+	createFileRoute,
+	Link,
+	type LinkProps,
+	Outlet,
+} from '@tanstack/react-router'
+import { BotIcon } from 'lucide-react'
 import { AgentSelect } from '@/components/select-agent'
 import {
 	ProjectSettingContextProvider,
 	useProjetSettings,
 } from '@/context/project-setting-context'
 import { ProtectedClientRoute } from '@/hoc/protected-client-route'
-import { createFileRoute, Outlet, type LinkProps } from '@tanstack/react-router'
-import { BotIcon } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard/project-settings')({
@@ -39,28 +43,28 @@ function RouteComponent() {
 		},
 	]
 	return (
-		<div className='m-10 md:mx-40 grid space-y-6'>
-			<div className='flex items-center justify-between mb-6'>
+		<div className='m-10 grid space-y-6 md:mx-40'>
+			<div className='mb-6 flex items-center justify-between'>
 				<div className='grid gap-2'>
-					<h1 className='text-4xl font-bold'>Project Settings</h1>
+					<h1 className='font-bold text-4xl'>Project Settings</h1>
 					<p className='font-semibold text-primary/50'>
 						Manage your agent settings and configurations.
 					</p>
 				</div>
 			</div>
 			{agents.length === 0 ? (
-				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
-					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+				<div className='mt-4 flex flex-col items-center justify-center rounded-lg bg-primary-foreground px-4 py-16'>
+					<div className='mb-4 rounded-full bg-muted/50 p-4'>
 						<BotIcon className='h-10 w-10 text-muted-foreground' />
 					</div>
-					<h2 className='text-xl font-semibold mb-2'>No Agents found</h2>
-					<p className='text-muted-foreground text-center max-w-md mb-8'>
+					<h2 className='mb-2 font-semibold text-xl'>No Agents found</h2>
+					<p className='mb-8 max-w-md text-center text-muted-foreground'>
 						You haven't added any agents yet. Add agent to see analytics.
 					</p>
 				</div>
 			) : (
 				<>
-					<header className='border-b border-border'>
+					<header className='border-border border-b'>
 						<nav className='max-w-7xl'>
 							<div className='flex h-12 items-end justify-between'>
 								<div className='flex space-x-6'>
@@ -69,8 +73,8 @@ function RouteComponent() {
 											key={index}
 											{...item.href}
 											className={cn(
-												'inline-flex h-full items-end border-b-1 pb-2 text-md font-medium transition-colors',
-												'text-zinc-400 border-transparent hover:border-zinc-600 hover:text-zinc-300',
+												'inline-flex h-full items-end border-b-1 pb-2 font-medium text-md transition-colors',
+												'border-transparent text-zinc-400 hover:border-zinc-600 hover:text-zinc-300',
 												'[&.active]:border-white [&.active]:text-white',
 											)}
 										>

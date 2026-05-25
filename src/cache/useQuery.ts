@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ConvexProvider, type OptionalRestArgsOrSkip } from 'convex/react'
-import { type FunctionReference, type FunctionReturnType } from 'convex/server'
+import type { FunctionReference, FunctionReturnType } from 'convex/server'
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { ConvexQueryCacheContext } from './provider'
 import { createQueryKey } from './core'
+import { ConvexQueryCacheContext } from './provider'
 
 /**
  * Load a reactive query within a React component.
@@ -59,7 +59,7 @@ export function useQuery<Query extends FunctionReference<'query'>>(
 		},
 		// Safe to ignore query and args since queryKey is derived from them
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[registry, queryKey, setV],
+		[registry, queryKey, query, args],
 	)
 	return v
 }

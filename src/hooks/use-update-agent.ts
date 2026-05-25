@@ -1,6 +1,6 @@
-import { useElevenLabsClient } from '@/api/client'
-import { useMutation } from '@tanstack/react-query'
 import type { ConversationalConfig } from '@elevenlabs/elevenlabs-js/api'
+import { useMutation } from '@tanstack/react-query'
+import { useElevenLabsClient } from '@/api/client'
 
 export function useUpdateAgent(agentId: string) {
 	const client = useElevenLabsClient()

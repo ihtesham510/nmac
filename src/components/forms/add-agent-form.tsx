@@ -1,39 +1,39 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery as useTanstackQuery } from '@tanstack/react-query'
+import { api } from 'convex/_generated/api'
+import { useMutation } from 'convex/react'
+import { PlusIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { Button } from '@/components/ui/button'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 import {
 	Sheet,
 	SheetContent,
 	SheetHeader,
 	SheetTitle,
 } from '@/components/ui/sheet'
-import { PlusIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useQuery as useTanstackQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { useMutation } from 'convex/react'
-import { api } from 'convex/_generated/api'
-import { useAuth } from '@/context/auth-context'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import {
-	Form,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	FormMessage,
-} from '@/components/ui/form'
 import { TagsInput } from '@/components/ui/tags-input'
 import { Textarea } from '@/components/ui/textarea'
-import {
-	Select,
-	SelectTrigger,
-	SelectValue,
-	SelectContent,
-	SelectItem,
-} from '@/components/ui/select'
-import { queries } from '@/api/query-options'
-import { useElevenLabsClient } from '@/api/client'
+import { useAuth } from '@/context/auth-context'
 
 const formSchema = z.object({
 	agent_name: z.string().min(1).min(2),
@@ -73,7 +73,7 @@ export function AddAgentForm({ open, onOpenChange }: Props) {
 				form.reset()
 				onOpenChange(false)
 			}
-		} catch (error) {
+		} catch (_error) {
 			toast.error('Error while importing agent. Please try again.')
 		}
 	}
@@ -81,7 +81,7 @@ export function AddAgentForm({ open, onOpenChange }: Props) {
 		<Sheet open={open} onOpenChange={onOpenChange}>
 			<SheetContent>
 				<SheetHeader>
-					<SheetTitle className='text-xl font-semibold'>Add Agent</SheetTitle>
+					<SheetTitle className='font-semibold text-xl'>Add Agent</SheetTitle>
 				</SheetHeader>
 				<Form {...form}>
 					<form
@@ -117,8 +117,8 @@ export function AddAgentForm({ open, onOpenChange }: Props) {
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
-											{conv_agents.data?.agents.map(agent => (
-												<SelectItem value={agent.agentId}>
+											{conv_agents.data?.agents.map((agent, index) => (
+												<SelectItem value={agent.agentId} key={index}>
 													{agent.name}
 												</SelectItem>
 											))}
@@ -165,7 +165,7 @@ export function AddAgentForm({ open, onOpenChange }: Props) {
 								</FormItem>
 							)}
 						/>
-						<Button type='submit' className='w-full flex gap-2'>
+						<Button type='submit' className='flex w-full gap-2'>
 							<PlusIcon className='size-4' />
 							Add
 						</Button>

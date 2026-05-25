@@ -1,9 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check } from 'lucide-react'
-import { StarsBackground } from './ui/stars-background'
 import { RainbowButton } from './magicui/rainbow-button'
+import { StarsBackground } from './ui/stars-background'
 
 interface Props {
 	subscription?: 'base' | 'pro' | 'business'
@@ -15,10 +15,10 @@ export default function Pricing({
 }: { className?: string } & Props) {
 	return (
 		<StarsBackground className={className} factor={0.1}>
-			<section className='py-16 md:py-32 relative' id='pricing'>
+			<section className='relative py-16 md:py-32' id='pricing'>
 				<div className='mx-auto max-w-6xl px-6'>
 					<div className='mx-auto max-w-2xl space-y-6 text-center'>
-						<h1 className='text-center text-4xl font-semibold lg:text-5xl'>
+						<h1 className='text-center font-semibold text-4xl lg:text-5xl'>
 							Pricing that Scales with You
 						</h1>
 						<p>
@@ -32,7 +32,7 @@ export default function Pricing({
 						<Card>
 							<CardHeader>
 								<CardTitle className='font-medium'>Base</CardTitle>
-								<span className='my-3 block text-2xl font-semibold'>
+								<span className='my-3 block font-semibold text-2xl'>
 									$9.99 / mo
 								</span>
 								<Button
@@ -66,14 +66,14 @@ export default function Pricing({
 						</Card>
 
 						<Card className='relative mt-[-20px] mb-[20px]'>
-							<RainbowButton className='absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full px-3 py-1 text-xs font-medium'>
+							<RainbowButton className='absolute inset-x-0 -top-3 mx-auto flex h-6 w-fit items-center rounded-full px-3 py-1 font-medium text-xs'>
 								Popular
 							</RainbowButton>
 
 							<CardHeader>
 								<CardTitle className='font-medium'>Pro</CardTitle>
 
-								<span className='my-3 block text-2xl font-semibold'>
+								<span className='my-3 block font-semibold text-2xl'>
 									$19.99 / mo
 								</span>
 
@@ -106,7 +106,7 @@ export default function Pricing({
 							<CardHeader>
 								<CardTitle className='font-medium'>Business</CardTitle>
 
-								<span className='my-3 block text-2xl font-semibold'>
+								<span className='my-3 block font-semibold text-2xl'>
 									$29.99 / mo
 								</span>
 

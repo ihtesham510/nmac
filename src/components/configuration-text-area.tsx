@@ -1,13 +1,12 @@
-import * as React from 'react'
 import { InfoIcon } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
+import type * as React from 'react'
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 interface ConfigSectionProps {
 	title: string
@@ -26,10 +25,10 @@ export function ConfigSection({
 }: ConfigSectionProps) {
 	return (
 		<div
-			className={cn('rounded-lg bg-card border-border border p-4', className)}
+			className={cn('rounded-lg border border-border bg-card p-4', className)}
 		>
 			<div className='mb-2 flex items-center gap-1.5'>
-				<h3 className='text-base font-medium text-white'>{title}</h3>
+				<h3 className='font-medium text-base text-white'>{title}</h3>
 				{infoTooltip && (
 					<TooltipProvider>
 						<Tooltip>

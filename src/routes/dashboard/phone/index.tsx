@@ -1,9 +1,31 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
-import { isValidPhoneNumber } from 'react-phone-number-input'
-import { useForm } from 'react-hook-form'
+import type { PhoneNumbersListResponseItem } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import {
+	CopyIcon,
+	EllipsisVertical,
+	Phone,
+	PhoneIcon,
+	PlusIcon,
+	TrashIcon,
+} from 'lucide-react'
+import React, { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { isValidPhoneNumber } from 'react-phone-number-input'
+import { toast } from 'sonner'
 import * as z from 'zod'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { AgentSelect } from '@/components/select-agent'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
 	Form,
 	FormControl,
@@ -13,36 +35,9 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PhoneInput } from '@/components/ui/phone-input'
 import { PasswordInput } from '@/components/ui/password-input'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import {
-	CopyIcon,
-	EllipsisVertical,
-	Phone,
-	PhoneIcon,
-	PlusIcon,
-	TrashIcon,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-	Table,
-	TableCaption,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-} from '@/components/ui/table'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { queries } from '@/api/query-options'
-import { useAgents } from '@/hooks/use-agents'
+import { PhoneInput } from '@/components/ui/phone-input'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
 	Sheet,
 	SheetContent,
@@ -51,15 +46,20 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet'
-import { useElevenLabsClient } from '@/api/client'
-import { useAddPhoneNo } from '@/hooks/use-add-phone-no'
-import { useDialog } from '@/hooks/use-dialogs'
+import {
+	Table,
+	TableBody,
+	TableCaption,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
 import { useAuth } from '@/context/auth-context'
-import { AgentSelect } from '@/components/select-agent'
+import { useAddPhoneNo } from '@/hooks/use-add-phone-no'
+import { useAgents } from '@/hooks/use-agents'
+import { useDialog } from '@/hooks/use-dialogs'
 import type { Agent } from '@/lib/types'
-import React, { useEffect } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { type PhoneNumbersListResponseItem } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
 
 export const Route = createFileRoute('/dashboard/phone/')({
 	component: RouteComponent,
@@ -80,16 +80,16 @@ function RouteComponent() {
 		<Sheet open={dialog.sheet} onOpenChange={e => setDialog('sheet', e)}>
 			<SheetForm isClient={isClient} />
 			<div className='m-10 grid space-y-6'>
-				<div className='flex items-center justify-between mb-6'>
+				<div className='mb-6 flex items-center justify-between'>
 					<div className='grid gap-2'>
-						<h1 className='text-4xl font-bold'>Phone Numbers</h1>
+						<h1 className='font-bold text-4xl'>Phone Numbers</h1>
 						<p className='font-semibold text-primary/50'>
 							Import and manage your phone numbers.
 						</p>
 					</div>
 					<SheetTrigger>
 						<Button>
-							<PlusIcon className='h-4 w-4 mr-2' />
+							<PlusIcon className='mr-2 h-4 w-4' />
 							Import Number
 						</Button>
 					</SheetTrigger>
@@ -131,6 +131,7 @@ function PhoneNumbersTable({
 					<TableBody className='mt-2'>
 						{phoneNos.map(phoneNo => (
 							<TableRow
+								key={phoneNo.phoneNumberId}
 								className='h-14'
 								onClick={() =>
 									navigate({
@@ -176,8 +177,9 @@ function PhoneNumbersTable({
 													toast.success('Nubmer Copied To Clipboard')
 												}}
 											>
-												<CopyIcon className='size-4' />{' '}
-												<p>Copy Phone Number</p>{' '}
+												<CopyIcon className='size-4' /> <p>
+													Copy Phone Number
+												</p>{' '}
 											</DropdownMenuItem>
 											<DropdownMenuItem
 												className='flex gap-2'
@@ -191,8 +193,9 @@ function PhoneNumbersTable({
 													})
 												}}
 											>
-												<TrashIcon className='size-4' />{' '}
-												<p>Delete Nubmer</p>{' '}
+												<TrashIcon className='size-4' /> <p>
+													Delete Nubmer
+												</p>{' '}
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>
@@ -203,12 +206,12 @@ function PhoneNumbersTable({
 				</Table>
 			)}
 			{phoneNos.length === 0 && (
-				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
-					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+				<div className='mt-4 flex flex-col items-center justify-center rounded-lg bg-primary-foreground px-4 py-16'>
+					<div className='mb-4 rounded-full bg-muted/50 p-4'>
 						<Phone className='h-10 w-10 text-muted-foreground' />
 					</div>
-					<h2 className='text-xl font-semibold mb-2'>No phone numbers found</h2>
-					<p className='text-muted-foreground text-center max-w-md mb-8'>
+					<h2 className='mb-2 font-semibold text-xl'>No phone numbers found</h2>
+					<p className='mb-8 max-w-md text-center text-muted-foreground'>
 						You haven't added any phone numbers yet. Import phone numbers to get
 						started.
 					</p>
@@ -243,7 +246,7 @@ function SheetForm({ isClient }: { isClient: boolean }) {
 		if (selectedAgent && isClient) {
 			form.setValue('agent_id', selectedAgent._id)
 		}
-	}, [selectedAgent])
+	}, [selectedAgent, isClient, form.setValue])
 
 	async function onSubmit({
 		phone_no,
@@ -272,8 +275,8 @@ function SheetForm({ isClient }: { isClient: boolean }) {
 			</SheetHeader>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<ScrollArea scrollBar='hidden' className='mx-4 my-2 px-1 h-[68vh]'>
-						<div className='space-y-8 '>
+					<ScrollArea scrollBar='hidden' className='mx-4 my-2 h-[68vh] px-1'>
+						<div className='space-y-8'>
 							{isClient && (
 								<FormField
 									control={form.control}
@@ -287,7 +290,7 @@ function SheetForm({ isClient }: { isClient: boolean }) {
 													value={selectedAgent}
 													className='min-w-full'
 													placeholder='Select Agent'
-													onSelect={agent => setSelectedAgent(agent!)}
+													onSelect={agent => setSelectedAgent(agent)}
 												/>
 											</FormControl>
 											<FormMessage />

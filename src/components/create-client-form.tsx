@@ -1,13 +1,16 @@
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from 'convex/_generated/api'
+import { useConvex, useMutation } from 'convex/react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
-	DialogHeader,
 	DialogContent,
-	DialogTitle,
 	DialogDescription,
+	DialogHeader,
+	DialogTitle,
 } from '@/components/ui/dialog'
 import {
 	Form,
@@ -18,11 +21,8 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { PasswordInput } from './ui/password-input'
-import { useConvex, useMutation } from 'convex/react'
-import { api } from 'convex/_generated/api'
 import { useAuth } from '@/context/auth-context'
-import { toast } from 'sonner'
+import { PasswordInput } from './ui/password-input'
 
 interface Props {
 	open: boolean
@@ -34,7 +34,7 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 	const formSchema = z
 		.object({
 			name: z.string().min(1).min(2),
-			email: z.string().optional(),
+			email: z.string(),
 			username: z.string().min(1).min(2),
 			password: z
 				.string()
@@ -84,17 +84,20 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 	const createClient = useMutation(api.client.createClient)
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		try {
-			await createClient({
-				name: values.name,
-				userId: auth.user!._id,
-				username: values.username,
-				password: values.password,
-			})
-			toast.success('Client Created Successfully.')
-			onOpenChange(false)
-		} catch (error) {
-			toast.error('Error While Creating Client.')
+		if (auth.user?._id) {
+			try {
+				await createClient({
+					name: values.name,
+					userId: auth.user?._id,
+					email: values.email,
+					username: values.username,
+					password: values.password,
+				})
+				toast.success('Client Created Successfully.')
+				onOpenChange(false)
+			} catch (_error) {
+				toast.error('Error While Creating Client.')
+			}
 		}
 	}
 
@@ -112,7 +115,7 @@ export function CreateClientForm({ open, onOpenChange }: Props) {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className='flex flex-col gap-8'
 					>
-						<div className='space-y-8 w-full'>
+						<div className='w-full space-y-8'>
 							<FormField
 								control={form.control}
 								name='name'

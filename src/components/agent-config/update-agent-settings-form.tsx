@@ -1,6 +1,9 @@
-import { Llm as Models } from '@elevenlabs/elevenlabs-js/api'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import {
+	type GetAgentResponseModel,
+	Llm as Models,
+} from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
 import {
 	FileIcon,
 	FileType,
@@ -12,6 +15,18 @@ import {
 	WebhookIcon,
 	Wrench,
 } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { useElevenLabsClient } from '@/api/client'
+import { ConfigSection } from '@/components/configuration-text-area'
+import { AddTextForm } from '@/components/project-settings/add-text-form'
+import { AddUrlForm } from '@/components/project-settings/add-url-form'
+import { SelectSetting } from '@/components/project-settings/select-setting'
+import { SliderSetting } from '@/components/project-settings/slider-setting'
+import { AddTransferToHumanTool } from '@/components/project-settings/tools/add-transfer-to-human'
+import { AddWebhook } from '@/components/project-settings/tools/add-webhook'
+import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -19,38 +34,25 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { useQueryClient } from '@tanstack/react-query'
-import { type GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import {
 	Form,
 	FormControl,
 	FormField,
 	FormItem,
 	FormMessage,
 } from '@/components/ui/form'
-import { useUpdateAgent } from '@/hooks/use-update-agent'
-import { toast } from 'sonner'
-import { ConfigSection } from '@/components/configuration-text-area'
-import { Button } from '@/components/ui/button'
-import { SliderSetting } from '@/components/project-settings/slider-setting'
-import { SelectSetting } from '@/components/project-settings/select-setting'
-import { useDialog } from '@/hooks/use-dialogs'
-import { AddUrlForm } from '@/components/project-settings/add-url-form'
-import { AddTextForm } from '@/components/project-settings/add-text-form'
+import { Input } from '@/components/ui/input'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
+import { useDialog } from '@/hooks/use-dialogs'
 import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
-import { useElevenLabsClient } from '@/api/client'
-import { AddTransferToHumanTool } from '@/components/project-settings/tools/add-transfer-to-human'
-import { AddWebhook } from '@/components/project-settings/tools/add-webhook'
+import { useUpdateAgent } from '@/hooks/use-update-agent'
 
 export function UpdateAgentSettingsForm({
 	data,
@@ -161,7 +163,7 @@ export function UpdateAgentSettingsForm({
 			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className='mb-60'>
-					<div className='grid relative gap-6 mb-6'>
+					<div className='relative mb-6 grid gap-6'>
 						<FormField
 							control={form.control}
 							name='first_message'
@@ -198,7 +200,7 @@ export function UpdateAgentSettingsForm({
 										>
 											<Textarea
 												id='prompt'
-												className='min-h-[300px] max-h-[500px] font-mono text-sm'
+												className='max-h-[500px] min-h-[300px] font-mono text-sm'
 												placeholder="Enter the agent's prompt here..."
 												{...field}
 											/>
@@ -266,13 +268,13 @@ export function UpdateAgentSettingsForm({
 								</FormItem>
 							)}
 						/>
-						<div className='grid rounded-lg bg-card border border-border gap-4 p-4'>
-							<div className='flex justify-between items-center'>
+						<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+							<div className='flex items-center justify-between'>
 								<div className='flex flex-col gap-1'>
-									<h1 className='text-lg font-medium text-white'>
+									<h1 className='font-medium text-lg text-white'>
 										Knowledge Based
 									</h1>
-									<p className='mb-4 text-sm text-primary/50'>
+									<p className='mb-4 text-primary/50 text-sm'>
 										Provide the LLM with domain-specific information to help it
 										answer questions more accurately.
 									</p>
@@ -293,7 +295,7 @@ export function UpdateAgentSettingsForm({
 										</DropdownMenuTrigger>
 										<DropdownMenuContent className='w-max'>
 											<DropdownMenuItem
-												className='flex gap-2 items-center'
+												className='flex items-center gap-2'
 												onClick={() => {
 													setDialogs('linkDialog', true)
 													setDialogs('dropdownMenu', false)
@@ -303,7 +305,7 @@ export function UpdateAgentSettingsForm({
 												Url
 											</DropdownMenuItem>
 											<DropdownMenuItem
-												className='flex gap-2 items-center'
+												className='flex items-center gap-2'
 												onClick={() => {
 													setDialogs('textDialog', true)
 													setDialogs('dropdownMenu', true)
@@ -319,10 +321,10 @@ export function UpdateAgentSettingsForm({
 							<div className='grid w-full rounded-lg bg-primary-foreground'>
 								{knowledge_base?.map(doc => (
 									<div
-										className='flex justify-between items-center p-2'
+										className='flex items-center justify-between p-2'
 										key={doc.id}
 									>
-										<div className='flex justify-center gap-4 items-center'>
+										<div className='flex items-center justify-center gap-4'>
 											<Button variant='secondary' size='icon' type='button'>
 												{doc.type === 'text' && <FileType className='size-4' />}
 												{doc.type === 'url' && <Globe className='size-4' />}
@@ -346,10 +348,10 @@ export function UpdateAgentSettingsForm({
 								))}
 							</div>
 							{knowledge_base?.length !== 0 && (
-								<div className='flex justify-between items-center'>
+								<div className='flex items-center justify-between'>
 									<div className='flex flex-col gap-1'>
-										<h1 className='text-lg font-medium text-white'>Use RAG</h1>
-										<p className='mb-4 text-sm text-primary/50'>
+										<h1 className='font-medium text-lg text-white'>Use RAG</h1>
+										<p className='mb-4 text-primary/50 text-sm'>
 											Retrieval-Augmented Generation (RAG) increases the agent's
 											maximum Knowledge Base size. The agent will have access to
 											relevant pieces of attached Knowledge Base during answer
@@ -373,11 +375,11 @@ export function UpdateAgentSettingsForm({
 								</div>
 							)}
 						</div>
-						<div className='grid rounded-lg bg-card border-border border gap-4 p-4'>
-							<div className='flex justify-between items-center'>
+						<div className='grid gap-4 rounded-lg border border-border bg-card p-4'>
+							<div className='flex items-center justify-between'>
 								<div className='flex flex-col gap-1'>
-									<h1 className='text-lg font-medium text-white'>Tools</h1>
-									<p className='mb-4 text-sm text-primary/50'>
+									<h1 className='font-medium text-lg text-white'>Tools</h1>
+									<p className='mb-4 text-primary/50 text-sm'>
 										Provide the agent with tools it can use to help users.
 									</p>
 								</div>
@@ -413,10 +415,10 @@ export function UpdateAgentSettingsForm({
 							<div className='grid w-full rounded-lg bg-primary-foreground'>
 								{tools?.map((tool, i) => (
 									<div
-										className='flex justify-between items-center p-2'
+										className='flex items-center justify-between p-2'
 										key={i}
 									>
-										<div className='flex justify-center gap-4 items-center'>
+										<div className='flex items-center justify-center gap-4'>
 											<Button variant='secondary' size='icon' type='button'>
 												{tool.type === 'system' && (
 													<Wrench className='size-4' />
@@ -429,7 +431,7 @@ export function UpdateAgentSettingsForm({
 												<p>{tool.name}</p>
 
 												{!tool.description ||
-													(tool.description == '' && (
+													(tool.description === '' && (
 														<p className='text-primary/50'>
 															{tool.description}
 														</p>
@@ -437,6 +439,7 @@ export function UpdateAgentSettingsForm({
 											</div>
 										</div>
 										<div>
+											{/** biome-ignore lint/suspicious/noExplicitAny: <tool can be of type any> */}
 											<DeleteToolButton data={data} toolId={(tool as any).id} />
 										</div>
 									</div>
@@ -466,14 +469,14 @@ export function UpdateAgentSettingsForm({
 							)}
 						/>
 						{form.formState.isDirty && (
-							<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
+							<div className='sticky bottom-6 flex w-full items-center justify-between rounded-lg border border-border bg-background p-4'>
 								<div className='flex gap-2'>
 									<TriangleAlert className='size-4' />
 									<p className='font-semibold text-sm'>Changes Detected</p>
 								</div>
 								<div className='flex gap-2'>
 									<Button
-										className='text-sm font-semibold'
+										className='font-semibold text-sm'
 										variant='ghost'
 										type='reset'
 										size='sm'
@@ -483,11 +486,11 @@ export function UpdateAgentSettingsForm({
 									</Button>
 									<Button
 										type='submit'
-										className='text-sm font-semibold'
+										className='font-semibold text-sm'
 										size='sm'
 									>
 										{form.formState.isSubmitting ? (
-											<LoaderCircle className='size-4 m-1 animate-spin' />
+											<LoaderCircle className='m-1 size-4 animate-spin' />
 										) : (
 											'save'
 										)}
@@ -523,6 +526,7 @@ function DeleteToolButton({
 							prompt: {
 								tools: [
 									...(data.conversationConfig.agent?.prompt?.tools?.filter(
+										// biome-ignore lint/suspicious/noExplicitAny: <tools can be of type any>
 										(t: any) => t.id !== toolId,
 									) ?? []),
 								],

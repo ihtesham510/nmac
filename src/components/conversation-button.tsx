@@ -11,21 +11,20 @@ export function ConversationButton(props: { agentId: string }) {
 			await conversation.endSession()
 			setConversationStarted(false)
 			return
-		} else {
-			try {
-				await navigator.mediaDevices.getUserMedia({ audio: true })
-			} catch (err) {
-				console.log('error while accessing microphone', err)
-			}
-			try {
-				await conversation.startSession()
-				setConversationStarted(true)
-				return
-			} catch (err) {
-				setErrorConversation(true)
-				console.error('Error while starting conversation', err)
-				return
-			}
+		}
+		try {
+			await navigator.mediaDevices.getUserMedia({ audio: true })
+		} catch (err) {
+			console.log('error while accessing microphone', err)
+		}
+		try {
+			await conversation.startSession()
+			setConversationStarted(true)
+			return
+		} catch (err) {
+			setErrorConversation(true)
+			console.error('Error while starting conversation', err)
+			return
 		}
 	}
 

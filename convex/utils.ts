@@ -1,7 +1,7 @@
-import CryptoJS from 'crypto-js'
-import type { MutationCtx, QueryCtx } from './_generated/server'
-import type { Id } from './_generated/dataModel'
 import { ConvexError } from 'convex/values'
+import CryptoJS from 'crypto-js'
+import type { Id } from './_generated/dataModel'
+import type { MutationCtx, QueryCtx } from './_generated/server'
 
 export const encrypt = (value: string, secret_key: string) => {
 	return CryptoJS.AES.encrypt(value, secret_key).toString()

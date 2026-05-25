@@ -1,5 +1,5 @@
+import type { LucideIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
-import { type LucideIcon } from 'lucide-react'
 
 interface FaviconUpdaterProps {
 	icon: LucideIcon

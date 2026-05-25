@@ -1,9 +1,17 @@
-import { useConvex, useMutation } from 'convex/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from 'convex/_generated/api'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Dialog } from '@/components/ui/dialog'
+import { useConvex, useMutation } from 'convex/react'
+import { LoaderCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import * as z from 'zod'
+import { Button } from '@/components/ui/button'
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog'
 import {
 	Form,
 	FormControl,
@@ -12,17 +20,9 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
-import { LoaderCircle } from 'lucide-react'
-import {
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import type { Clients } from '@/lib/types'
+import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import type { Clients } from '@/lib/types'
 
 interface Props {
 	open: boolean
@@ -104,7 +104,7 @@ export function EditClientForm({ client, open, onOpenChange }: Props) {
 			await new Promise(res => setTimeout(res, 400))
 			onOpenChange(false)
 			toast.success('Client Updated Successfully.')
-		} catch (error) {
+		} catch (_error) {
 			toast.error('Failed to Update the Client. Please try again.')
 		}
 	}
@@ -202,7 +202,7 @@ export function EditClientForm({ client, open, onOpenChange }: Props) {
 								</FormItem>
 							)}
 						/>
-						<div className='flex gap-4 justify-end'>
+						<div className='flex justify-end gap-4'>
 							<Button
 								type='button'
 								variant='ghost'

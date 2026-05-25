@@ -1,5 +1,5 @@
-import React from 'react'
 import { motion } from 'motion/react'
+import type React from 'react'
 import { cn } from '@/lib/utils'
 
 export function FloatingPathsBackground({
@@ -25,10 +25,10 @@ export function FloatingPathsBackground({
 	}))
 
 	return (
-		<div className={cn('w-full relative', className)}>
-			<div className='absolute inset-0 pointer-events-none'>
+		<div className={cn('relative w-full', className)}>
+			<div className='pointer-events-none absolute inset-0'>
 				<svg
-					className='w-full h-full text-slate-950 dark:text-white'
+					className='h-full w-full text-slate-950 dark:text-white'
 					viewBox='0 0 696 316'
 					fill='none'
 				>

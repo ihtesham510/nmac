@@ -1,7 +1,12 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { api } from 'convex/_generated/api'
+import { useConvex } from 'convex/react'
+import { LoaderCircle, PhoneIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
 import {
 	Form,
 	FormControl,
@@ -11,14 +16,9 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { LoaderCircle, PhoneIcon } from 'lucide-react'
-import { useAuth } from '@/context/auth-context'
-import { toast } from 'sonner'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useAuth } from '@/context/auth-context'
 import { UnProtectedRoute } from '@/hoc/unprotected-route'
-import { useConvex } from 'convex/react'
-import { api } from 'convex/_generated/api'
 
 export const Route = createFileRoute('/(auth)/sign-in')({
 	component: () => (
@@ -67,7 +67,7 @@ function RouteComponent() {
 		try {
 			auth.signIn(values)
 			navigate({ to: '/dashboard' })
-		} catch (err) {
+		} catch (_err) {
 			toast.error('Error While Signing In')
 		}
 	}
@@ -77,18 +77,18 @@ function RouteComponent() {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className='max-w-92 m-auto h-fit w-full'
+					className='m-auto h-fit w-full max-w-92'
 				>
 					<div>
 						<Link to='/' aria-label='go home'>
 							<PhoneIcon className='size-6' />
 						</Link>
-						<h1 className='mb-1 mt-4 text-xl font-semibold'>
+						<h1 className='mt-4 mb-1 font-semibold text-xl'>
 							Sign In to "Never Miss A Call"
 						</h1>
 						<p>Welcome back! Sign in to continue</p>
 					</div>
-					<div className='space-y-6 my-10'>
+					<div className='my-10 space-y-6'>
 						<FormField
 							control={form.control}
 							name='username'
@@ -126,7 +126,7 @@ function RouteComponent() {
 						/>
 					</div>
 					<Button
-						className='w-full flex justify-center items-center'
+						className='flex w-full items-center justify-center'
 						type='submit'
 					>
 						{form.formState.isSubmitting ? (

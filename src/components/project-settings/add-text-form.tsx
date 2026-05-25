@@ -1,4 +1,9 @@
-import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FileType, LoaderCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { useElevenLabsClient } from '@/api/client'
 import {
 	Dialog,
 	DialogContent,
@@ -6,22 +11,17 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { FileType, LoaderCircle } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
 import { Button } from '../ui/button'
 import {
 	Form,
+	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormControl,
 	FormMessage,
 } from '../ui/form'
 import { Input } from '../ui/input'
-import { useElevenLabsClient } from '@/api/client'
-import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import { Textarea } from '../ui/textarea'
 
 export function AddTextForm({
@@ -88,7 +88,7 @@ export function AddTextForm({
 									<FormControl>
 										<Textarea
 											{...field}
-											className='min-h-[150px] max-h-[300px]'
+											className='max-h-[300px] min-h-[150px]'
 										/>
 									</FormControl>
 									<FormMessage />

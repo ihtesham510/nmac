@@ -1,6 +1,6 @@
 'use client'
-import { cn } from '@/lib/utils'
 import { motion, type Transition } from 'framer-motion'
+import { cn } from '@/lib/utils'
 
 type BorderTrailProps = {
 	className?: string
@@ -20,7 +20,7 @@ export function BorderTrail({
 	style,
 }: BorderTrailProps) {
 	const BASE_TRANSITION = {
-		repeat: Infinity,
+		repeat: Number.POSITIVE_INFINITY,
 		duration: 5,
 		ease: 'linear',
 	}

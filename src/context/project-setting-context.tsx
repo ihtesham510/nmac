@@ -1,20 +1,19 @@
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
 import {
-	createContext,
-	useContext,
-	useEffect,
-	type PropsWithChildren,
-} from 'react'
-import type { Agent } from '@/lib/types'
-import {
+	type UseQueryResult,
 	useQuery,
 	useQueryClient,
-	type UseQueryResult,
 } from '@tanstack/react-query'
-import { queries } from '@/api/query-options'
+import React, {
+	createContext,
+	type PropsWithChildren,
+	useContext,
+	useEffect,
+} from 'react'
 import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
 import { useAgents } from '@/hooks/use-agents'
-import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import React from 'react'
+import type { Agent } from '@/lib/types'
 
 interface ProjectSettingsContext {
 	selectedAgent: Agent | undefined
@@ -52,7 +51,7 @@ export function ProjectSettingContextProvider({ children }: PropsWithChildren) {
 				queryKey: [selectedAgent.agentId, 'get_agent'],
 			})
 		}
-	}, [selectedAgent])
+	}, [selectedAgent, queryClient.invalidateQueries, agent.refetch])
 
 	return (
 		<projectSettingsContext.Provider

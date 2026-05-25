@@ -12,7 +12,7 @@ export default function AssistantFeatures() {
 		<section className='py-12 md:py-20' id='solutions'>
 			<div className='mx-auto max-w-5xl space-y-8 px-6 md:space-y-16'>
 				<div className='relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12'>
-					<h2 className='text-balance text-4xl font-medium lg:text-5xl'>
+					<h2 className='text-balance font-medium text-4xl lg:text-5xl'>
 						Automate, Optimize and Scale Your Businesses With AI-Automations.
 					</h2>
 					<p>
@@ -26,7 +26,7 @@ export default function AssistantFeatures() {
 					<div className='space-y-3'>
 						<div className='flex items-center gap-2'>
 							<ContactRound className='size-4' />
-							<h3 className='text-sm font-medium'>Social Media Assistant.</h3>
+							<h3 className='font-medium text-sm'>Social Media Assistant.</h3>
 						</div>
 						<p className='text-sm'>
 							Create your <strong>AI social media assistant</strong> to scale
@@ -36,7 +36,7 @@ export default function AssistantFeatures() {
 					<div className='space-y-2'>
 						<div className='flex items-center gap-2'>
 							<Handshake className='size-4' />
-							<h3 className='text-sm font-medium'>Support Assistant.</h3>
+							<h3 className='font-medium text-sm'>Support Assistant.</h3>
 						</div>
 						<p className='text-sm'>
 							Create your <strong>AI sales assistant</strong> to scale your lead
@@ -47,7 +47,7 @@ export default function AssistantFeatures() {
 						<div className='flex items-center gap-2'>
 							<UserSearch className='size-4' />
 
-							<h3 className='text-sm font-medium'>Sales Assistant.</h3>
+							<h3 className='font-medium text-sm'>Sales Assistant.</h3>
 						</div>
 						<p className='text-sm'>
 							Create your <strong>AI sales assistant</strong> to scale your lead
@@ -58,7 +58,7 @@ export default function AssistantFeatures() {
 						<div className='flex items-center gap-2'>
 							<FileChartPie className='size-4' />
 
-							<h3 className='text-sm font-medium'>Database Assistant.</h3>
+							<h3 className='font-medium text-sm'>Database Assistant.</h3>
 						</div>
 						<p className='text-sm'>
 							Build your <strong>AI database reactivation assistant</strong> to
@@ -69,7 +69,7 @@ export default function AssistantFeatures() {
 						<div className='flex items-center gap-2'>
 							<PhoneForwarded className='size-4' />
 
-							<h3 className='text-sm font-medium'>Pre-Call Assistant.</h3>
+							<h3 className='font-medium text-sm'>Pre-Call Assistant.</h3>
 						</div>
 						<p className='text-sm'>
 							Create your <strong>AI pre-call assistant</strong> to analyze
@@ -80,7 +80,7 @@ export default function AssistantFeatures() {
 						<div className='flex items-center gap-2'>
 							<Milestone className='size-4' />
 
-							<h3 className='text-sm font-medium'>
+							<h3 className='font-medium text-sm'>
 								Post-Call Nurture Assistant.
 							</h3>
 						</div>

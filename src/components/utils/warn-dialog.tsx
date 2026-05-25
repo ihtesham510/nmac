@@ -1,3 +1,5 @@
+import { LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -7,15 +9,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import { LoaderCircle } from 'lucide-react'
-import { useState } from 'react'
 
 interface ConfirmDeleteDialogProps {
 	open: boolean
 	onOpenChange: (open: boolean) => void
 	title?: string
 	description?: string
-	onConfirm: () => Promise<any> | any
+	onConfirm: () => Promise<void> | void
 	itemName?: string
 	isLoading?: boolean
 }
@@ -75,7 +75,7 @@ export function WarnDialog({
 					>
 						{isLoading ? (
 							<>
-								<LoaderCircle className='size-4 animate-spin mr-2' />
+								<LoaderCircle className='mr-2 size-4 animate-spin' />
 								Deleting...
 							</>
 						) : (

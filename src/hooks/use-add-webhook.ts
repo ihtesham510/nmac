@@ -1,10 +1,10 @@
-import { useElevenLabsClient } from '@/api/client'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type {
+	ConversationalConfig,
 	GetAgentResponseModel,
 	WebhookToolConfigInput,
-	ConversationalConfig,
 } from '@elevenlabs/elevenlabs-js/api'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useElevenLabsClient } from '@/api/client'
 
 export function useAddWebhook(agent: GetAgentResponseModel) {
 	const client = useElevenLabsClient()
@@ -14,6 +14,7 @@ export function useAddWebhook(agent: GetAgentResponseModel) {
 
 		mutationFn: async (config: WebhookToolConfigInput) => {
 			const updatedTools = [
+				// biome-ignore lint/suspicious/noExplicitAny: <Tools can be of type any>
 				{ ...config, type: 'webhook' } as any,
 				...(agent.conversationConfig.agent?.prompt?.tools ?? []),
 			]

@@ -7,12 +7,12 @@ export const Route = createFileRoute('/401')({
 
 function RouteComponent() {
 	return (
-		<div className='h-screen w-full flex justify-center items-center'>
+		<div className='flex h-screen w-full items-center justify-center'>
 			<div className='flex flex-col items-center space-y-6'>
 				<AlertTriangle className='size-24' />
-				<div className='grid space-y-2 justify-items-center'>
-					<h1 className='text-4xl font-bold'>Not Authorized</h1>
-					<h1 className='text-xl font-semibold text-primary/50 max-w-lg text-center'>
+				<div className='grid justify-items-center space-y-2'>
+					<h1 className='font-bold text-4xl'>Not Authorized</h1>
+					<h1 className='max-w-lg text-center font-semibold text-primary/50 text-xl'>
 						You don't have permission to access this page. Please log in with
 						the correct credentials or contact support if you believe this is a
 						mistake.

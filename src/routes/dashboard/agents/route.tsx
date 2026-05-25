@@ -1,5 +1,5 @@
-import { ProtectedUserRoute } from '@/hoc/protected-user-route'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { ProtectedUserRoute } from '@/hoc/protected-user-route'
 
 export const Route = createFileRoute('/dashboard/agents')({
 	component: () => (
@@ -10,9 +10,5 @@ export const Route = createFileRoute('/dashboard/agents')({
 })
 
 function RouteComponent() {
-	return (
-		<>
-			<Outlet />
-		</>
-	)
+	return <Outlet />
 }

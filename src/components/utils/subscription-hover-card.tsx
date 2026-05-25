@@ -1,14 +1,14 @@
-import { type PropsWithChildren } from 'react'
+import { Calendar, Clock, CreditCard, Users } from 'lucide-react'
+import type { PropsWithChildren } from 'react'
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
 } from '@/components/ui/hover-card'
-import { Calendar, CreditCard, Users, Clock } from 'lucide-react'
 import type { Clients } from '@/lib/types'
-import { Progress } from '../ui/progress'
 import { getSubscriptionBadgeClasses } from '@/lib/utils'
 import { Badge } from '../ui/badge'
+import { Progress } from '../ui/progress'
 import { Separator } from '../ui/separator'
 
 interface Props extends PropsWithChildren {
@@ -45,7 +45,7 @@ export const SubscriptionHoverCard = ({
 		<HoverCard openDelay={0.4}>
 			<HoverCardTrigger asChild>{children}</HoverCardTrigger>
 			<HoverCardContent
-				className='w-80 p-4 m-2'
+				className='m-2 w-80 p-4'
 				align={align}
 				side={side}
 				sideOffset={5}
@@ -53,11 +53,11 @@ export const SubscriptionHoverCard = ({
 				<div className='space-y-4'>
 					{/* Header */}
 					<div className='flex items-center justify-between'>
-						<h4 className='text-md font-semibold text-primary'>
+						<h4 className='font-semibold text-md text-primary'>
 							Subscription Details
 						</h4>
 						<Badge
-							className={`text-xs w-fit capitalize ${getSubscriptionBadgeClasses(subscription.type)}`}
+							className={`w-fit text-xs capitalize ${getSubscriptionBadgeClasses(subscription.type)}`}
 						>
 							{subscription.type}
 						</Badge>
@@ -66,12 +66,12 @@ export const SubscriptionHoverCard = ({
 					<Separator />
 
 					{/* Credits Usage */}
-					<div className='space-y-6 w-full text-primary'>
+					<div className='w-full space-y-6 text-primary'>
 						<div className='space-y-2'>
-							<div className='flex justify-between items-between'>
-								<div className='flex items-center text-primary/75 gap-2'>
+							<div className='items-between flex justify-between'>
+								<div className='flex items-center gap-2 text-primary/75'>
 									<CreditCard className='size-4 font-semibold' />
-									<span className='text-sm font-semibold'>Credits usage</span>
+									<span className='font-semibold text-sm'>Credits usage</span>
 								</div>
 								<Badge className='text-xs'>{usagePercentage}%</Badge>
 							</div>
@@ -99,10 +99,10 @@ export const SubscriptionHoverCard = ({
 							<div className='flex items-center gap-2'>
 								<Clock className='h-4 w-4 text-primary/75' />
 								<div className='flex-1'>
-									<div className='text-sm text-primary/75'>
+									<div className='text-primary/75 text-sm'>
 										Billing Interval
 									</div>
-									<div className='text-sm font-medium'>
+									<div className='font-medium text-sm'>
 										{subscription.interval}{' '}
 										{subscription.interval === 1 ? 'month' : 'months'}
 									</div>
@@ -112,8 +112,8 @@ export const SubscriptionHoverCard = ({
 							<div className='flex items-center gap-2'>
 								<Calendar className='h-4 w-4 text-primary/75' />
 								<div className='flex-1'>
-									<div className='text-sm text-primary/80'>Subscribed</div>
-									<div className='text-sm font-medium'>
+									<div className='text-primary/80 text-sm'>Subscribed</div>
+									<div className='font-medium text-sm'>
 										{formatDate(subscription.subscribedAt)}
 									</div>
 								</div>
@@ -122,8 +122,8 @@ export const SubscriptionHoverCard = ({
 							<div className='flex items-center gap-2'>
 								<Users className='h-4 w-4 text-primary/75' />
 								<div className='flex-1'>
-									<div className='text-sm text-primary/75'>Last Updated</div>
-									<div className='text-sm font-medium'>
+									<div className='text-primary/75 text-sm'>Last Updated</div>
+									<div className='font-medium text-sm'>
 										{formatDate(subscription.updatedAt)}
 									</div>
 								</div>

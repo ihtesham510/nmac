@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Link } from '@tanstack/react-router'
-import { Phone } from 'lucide-react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { api } from 'convex/_generated/api'
+import { useConvex } from 'convex/react'
+import { Phone } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
+import { Button } from '@/components/ui/button'
 import {
 	Form,
 	FormControl,
@@ -15,11 +15,10 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
-import { useAuth } from '@/context/auth-context'
+import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useAuth } from '@/context/auth-context'
 import { UnProtectedRoute } from '@/hoc/unprotected-route'
-import { useConvex } from 'convex/react'
-import { api } from 'convex/_generated/api'
 
 export const Route = createFileRoute('/(auth)/register')({
 	component: () => (
@@ -82,7 +81,7 @@ function RouteComponent() {
 			})
 			toast.success('Registered Successfully.')
 			return
-		} catch (error) {
+		} catch (_error) {
 			toast.error('Failed to submit the form. Please try again.')
 		}
 	}
@@ -91,14 +90,14 @@ function RouteComponent() {
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className='bg-muted m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]'
+					className='m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border bg-muted shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]'
 				>
-					<div className='bg-card -m-px rounded-[calc(var(--radius)+.125rem)] border p-8 pb-6'>
+					<div className='-m-px rounded-[calc(var(--radius)+.125rem)] border bg-card p-8 pb-6'>
 						<div className='text-center'>
 							<Link to='/' aria-label='go home' className='mx-auto block w-fit'>
 								<Phone className='size-12' />
 							</Link>
-							<h1 className='text-title mb-1 mt-4 text-xl font-semibold'>
+							<h1 className='mt-4 mb-1 font-semibold text-title text-xl'>
 								Create an Account
 							</h1>
 							<p className='text-sm'>
@@ -227,7 +226,7 @@ function RouteComponent() {
 					</div>
 
 					<div className='p-3'>
-						<p className='text-accent-foreground text-center text-sm'>
+						<p className='text-center text-accent-foreground text-sm'>
 							Have an account ?
 							<Button asChild variant='link' className='px-2'>
 								<Link to='/sign-in'>Sign In</Link>

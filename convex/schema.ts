@@ -34,7 +34,7 @@ export default defineSchema({
 		),
 		username: v.string(),
 		password: v.string(),
-		email: v.optional(v.string()),
+		email: v.string(),
 		assigned_Agents: v.array(v.id('agent')),
 	})
 		.index('by_username', ['username'])

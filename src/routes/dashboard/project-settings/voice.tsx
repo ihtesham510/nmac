@@ -1,7 +1,7 @@
-import { useProjetSettings } from '@/context/project-setting-context'
 import { createFileRoute } from '@tanstack/react-router'
-import { LoaderComponent } from '@/components/loader'
 import { VoiceForm } from '@/components/agent-config/voice-settings-form'
+import { LoaderComponent } from '@/components/loader'
+import { useProjetSettings } from '@/context/project-setting-context'
 
 export const Route = createFileRoute('/dashboard/project-settings/voice')({
 	component: RouteComponent,

@@ -19,7 +19,7 @@ export function AuroraText({
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const textRef = useRef<SVGTextElement>(null)
 	const containerRef = useRef<HTMLSpanElement>(null)
-	const [fontSize, setFontSize] = React.useState(0)
+	const [_fontSize, setFontSize] = React.useState(0)
 	const [dimensions, setDimensions] = React.useState({ width: 0, height: 0 })
 	const [isReady, setIsReady] = React.useState(false)
 	const [textStyle, setTextStyle] = React.useState<
@@ -50,14 +50,14 @@ export function AuroraText({
 				setTextStyle(relevantStyles)
 			})
 		}
-	}, [className])
+	}, [])
 
 	// Updated effect to compute font size from both inline and class styles
 	useEffect(() => {
 		const updateFontSize = () => {
 			if (containerRef.current) {
 				const computedStyle = window.getComputedStyle(containerRef.current)
-				const computedFontSize = parseFloat(computedStyle.fontSize)
+				const computedFontSize = Number.parseFloat(computedStyle.fontSize)
 
 				requestAnimationFrame(() => {
 					setFontSize(computedFontSize)
@@ -69,7 +69,7 @@ export function AuroraText({
 		window.addEventListener('resize', updateFontSize)
 
 		return () => window.removeEventListener('resize', updateFontSize)
-	}, [className])
+	}, [])
 
 	// Update effect to set ready state after dimensions are computed
 	useEffect(() => {
@@ -88,7 +88,7 @@ export function AuroraText({
 		window.addEventListener('resize', updateDimensions)
 
 		return () => window.removeEventListener('resize', updateDimensions)
-	}, [children, fontSize])
+	}, [])
 
 	useEffect(() => {
 		const canvas = canvasRef.current

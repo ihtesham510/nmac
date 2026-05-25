@@ -1,5 +1,5 @@
-import { mutation, query } from './_generated/server'
 import { ConvexError, v } from 'convex/values'
+import { mutation, query } from './_generated/server'
 import { decrypt, encrypt } from './utils'
 
 export const registerUser = mutation({
@@ -95,17 +95,15 @@ export const checkUser = query({
 			const decrypted_password = decrypt(user.password, secretKey!)
 			if (decrypted_password === password) {
 				return user._id
-			} else {
-				return 'incorrect_password'
 			}
+			return 'incorrect_password'
 		}
 		if (client) {
 			const decrypted_password = decrypt(client.password, secretKey!)
 			if (decrypted_password === password) {
 				return client._id
-			} else {
-				return 'incorrect_password'
 			}
+			return 'incorrect_password'
 		}
 		return 'user_not_found'
 	},
@@ -176,9 +174,8 @@ export const changePassword = mutation({
 					...user,
 					password: encrypt(new_password, secretKey!),
 				})
-			} else {
-				return 'wrong_password'
 			}
+			return 'wrong_password'
 		}
 	},
 })
@@ -193,7 +190,7 @@ export const deleteAccount = mutation({
 			.query('client')
 			.withIndex('by_userId', q => q.eq('userId', args.userId))
 			.collect()
-		if (user && user.image) {
+		if (user?.image) {
 			await ctx.storage.delete(user.image.storageId)
 		}
 		await Promise.all([

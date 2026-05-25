@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {
 	type HTMLMotionProps,
 	motion,
@@ -7,6 +6,7 @@ import {
 	useMotionValue,
 	useSpring,
 } from 'motion/react'
+import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -30,7 +30,11 @@ function generateStars(count: number, starColor: string) {
 function StarLayer({
 	count = 1000,
 	size = 1,
-	transition = { repeat: Infinity, duration: 50, ease: 'linear' },
+	transition = {
+		repeat: Number.POSITIVE_INFINITY,
+		duration: 50,
+		ease: 'linear',
+	},
 	starColor = '#fff',
 	className,
 	...props
@@ -46,11 +50,11 @@ function StarLayer({
 			data-slot='star-layer'
 			animate={{ y: [0, -2000] }}
 			transition={transition}
-			className={cn('absolute top-0 left-0 w-full h-[2000px]', className)}
+			className={cn('absolute top-0 left-0 h-[2000px] w-full', className)}
 			{...props}
 		>
 			<div
-				className='absolute bg-transparent rounded-full'
+				className='absolute rounded-full bg-transparent'
 				style={{
 					width: `${size}px`,
 					height: `${size}px`,
@@ -58,7 +62,7 @@ function StarLayer({
 				}}
 			/>
 			<div
-				className='absolute bg-transparent rounded-full top-[2000px]'
+				className='absolute top-[2000px] rounded-full bg-transparent'
 				style={{
 					width: `${size}px`,
 					height: `${size}px`,
@@ -104,6 +108,7 @@ export function StarsBackground({
 	)
 
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: <this comp needs to interact with div element>
 		<div
 			data-slot='stars-background'
 			className={cn(
@@ -117,14 +122,18 @@ export function StarsBackground({
 				<StarLayer
 					count={1000}
 					size={1}
-					transition={{ repeat: Infinity, duration: speed, ease: 'linear' }}
+					transition={{
+						repeat: Number.POSITIVE_INFINITY,
+						duration: speed,
+						ease: 'linear',
+					}}
 					starColor={starColor}
 				/>
 				<StarLayer
 					count={400}
 					size={2}
 					transition={{
-						repeat: Infinity,
+						repeat: Number.POSITIVE_INFINITY,
 						duration: speed * 2,
 						ease: 'linear',
 					}}
@@ -134,7 +143,7 @@ export function StarsBackground({
 					count={200}
 					size={3}
 					transition={{
-						repeat: Infinity,
+						repeat: Number.POSITIVE_INFINITY,
 						duration: speed * 3,
 						ease: 'linear',
 					}}

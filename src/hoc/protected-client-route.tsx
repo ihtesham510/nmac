@@ -1,6 +1,6 @@
-import { useAuth } from '@/context/auth-context'
 import { Navigate } from '@tanstack/react-router'
 import type { PropsWithChildren } from 'react'
+import { useAuth } from '@/context/auth-context'
 
 export function ProtectedClientRoute(props: PropsWithChildren) {
 	const auth = useAuth()

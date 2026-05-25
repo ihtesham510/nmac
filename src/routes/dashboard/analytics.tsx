@@ -1,6 +1,13 @@
-import { CallChart } from '@/components/call-chart'
+import { useLogger } from '@mantine/hooks'
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { BotIcon } from 'lucide-react'
 import React, { useMemo } from 'react'
+import { useElevenLabsClient } from '@/api/client'
+import { queries } from '@/api/query-options'
+import { CallChart } from '@/components/call-chart'
+import { LoaderComponent } from '@/components/loader'
+import { AgentSelect } from '@/components/select-agent'
 import {
 	Select,
 	SelectContent,
@@ -8,16 +15,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { useQuery } from '@tanstack/react-query'
-import { queries } from '@/api/query-options'
-import type { Agent } from '@/lib/types'
-import { useLogger } from '@mantine/hooks'
-import { LoaderComponent } from '@/components/loader'
-import { AgentSelect } from '@/components/select-agent'
-import { useAgents } from '@/hooks/use-agents'
-import { useElevenLabsClient } from '@/api/client'
-import { BotIcon } from 'lucide-react'
 import { useAuth } from '@/context/auth-context'
+import { useAgents } from '@/hooks/use-agents'
+import type { Agent } from '@/lib/types'
 
 export enum TimeRange {
 	Week = '7d',
@@ -52,7 +52,7 @@ function RouteComponent() {
 		if (!selectedAgent && conversationsList.data) {
 			return {
 				...conversationsList.data,
-				conversations: conversationsList.data!.conversations.filter(conv =>
+				conversations: conversationsList.data?.conversations.filter(conv =>
 					agents.map(agent => agent.agentId).includes(conv.agentId),
 				),
 			}
@@ -60,19 +60,19 @@ function RouteComponent() {
 		if (selectedAgent) {
 			return {
 				...conversationsList.data,
-				conversations: conversationsList.data!.conversations.filter(
+				conversations: conversationsList.data?.conversations.filter(
 					conv => conv.agentId === selectedAgent.agentId,
 				),
 			}
 		}
 
 		return conversationsList.data
-	}, [conversationsList.data, selectedAgent])
+	}, [conversationsList.data, selectedAgent, agents.map])
 
 	useLogger('analytics', [selectedAgent, filteredConversations, agents])
 
 	const filteredNumberOfCalls = useMemo(() => {
-		if (!filteredConversations) return []
+		if (!filteredConversations?.conversations) return []
 
 		const dateCount: Record<string, number> = {}
 		for (const conv of filteredConversations.conversations) {
@@ -83,7 +83,7 @@ function RouteComponent() {
 		}
 
 		const endDate = new Date()
-		const daysToSubtract = parseInt(timeRange.replace('d', ''), 10)
+		const daysToSubtract = Number.parseInt(timeRange.replace('d', ''), 10)
 		const startDate = new Date()
 		startDate.setDate(endDate.getDate() - daysToSubtract)
 
@@ -104,11 +104,11 @@ function RouteComponent() {
 	}, [filteredConversations, timeRange])
 
 	const totalNumberofCalls = useMemo(() => {
-		return filteredNumberOfCalls.reduce((acc, item) => (acc += item.calls), 0)
+		return filteredNumberOfCalls.reduce((acc, item) => acc + item.calls, 0)
 	}, [filteredNumberOfCalls])
 
 	const filteredCallMinutes = useMemo(() => {
-		if (!filteredConversations) return []
+		if (!filteredConversations?.conversations) return []
 
 		const dateDurationMap: Record<string, number> = {}
 		for (const conv of filteredConversations.conversations) {
@@ -120,7 +120,7 @@ function RouteComponent() {
 		}
 
 		const endDate = new Date()
-		const daysToSubtract = parseInt(timeRange.replace('d', ''), 10)
+		const daysToSubtract = Number.parseInt(timeRange.replace('d', ''), 10)
 		const startDate = new Date()
 		startDate.setDate(endDate.getDate() - daysToSubtract)
 
@@ -142,24 +142,24 @@ function RouteComponent() {
 
 	const totalNumberofMinutes = useMemo(() => {
 		if (filteredCallMinutes.length === 0) return 0
-		return filteredCallMinutes.reduce((acc, item) => (acc += item.minutes), 0)
+		return filteredCallMinutes.reduce((acc, item) => acc + item.minutes, 0)
 	}, [filteredCallMinutes])
 
 	return (
-		<div className='grid m-10 gap-10'>
+		<div className='m-10 grid gap-10'>
 			<span className='grid gap-2'>
-				<h1 className='text-4xl font-bold'>Analytics</h1>
+				<h1 className='font-bold text-4xl'>Analytics</h1>
 				<h2 className='font-semibold text-primary/50'>
 					See call analytics for your agents.
 				</h2>
 			</span>
 			{agents.length === 0 && !conversationsList.isLoading && (
-				<div className='flex flex-col items-center justify-center py-16 px-4 rounded-lg bg-primary-foreground mt-4'>
-					<div className='bg-muted/50 p-4 rounded-full mb-4'>
+				<div className='mt-4 flex flex-col items-center justify-center rounded-lg bg-primary-foreground px-4 py-16'>
+					<div className='mb-4 rounded-full bg-muted/50 p-4'>
 						<BotIcon className='h-10 w-10 text-muted-foreground' />
 					</div>
-					<h2 className='text-xl font-semibold mb-2'>No Agents found</h2>
-					<p className='text-muted-foreground text-center max-w-md mb-8'>
+					<h2 className='mb-2 font-semibold text-xl'>No Agents found</h2>
+					<p className='mb-8 max-w-md text-center text-muted-foreground'>
 						{auth.type === 'user'
 							? "You haven't added any agents yet. Add agent to see analytics."
 							: "You haven't been assigned any agents yet."}

@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils'
 import type { PropsWithChildren } from 'react'
+import { cn } from '@/lib/utils'
 
 export function SelectSetting(
 	props: {
@@ -14,13 +14,13 @@ export function SelectSetting(
 	return (
 		<div
 			className={cn(
-				'rounded-lg bg-card border-border border p-4 flex justify-between items-center',
+				'flex items-center justify-between rounded-lg border border-border bg-card p-4',
 				props.className,
 			)}
 		>
 			<div className='flex flex-col gap-1'>
-				<h1 className='text-lg font-medium text-white'>{props.title}</h1>
-				<p className='mb-4 text-sm text-primary/50'>{props.description}</p>
+				<h1 className='font-medium text-lg text-white'>{props.title}</h1>
+				<p className='mb-4 text-primary/50 text-sm'>{props.description}</p>
 			</div>
 			<div className={cn('min-w-[200px] p-[20px]', props.child?.className)}>
 				{props.children}

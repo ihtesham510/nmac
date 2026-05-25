@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import { useUpdateAgent } from './use-update-agent'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useUpdateAgent } from './use-update-agent'
 
 export function useKnowledgeBase(
 	client: ElevenLabsClient,

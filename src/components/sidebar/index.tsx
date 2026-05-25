@@ -1,3 +1,4 @@
+import { useMatchRoute } from '@tanstack/react-router'
 import {
 	BotIcon,
 	ChartLine,
@@ -7,11 +8,10 @@ import {
 	SettingsIcon,
 	Users2Icon,
 } from 'lucide-react'
+import { useAuth } from '@/context/auth-context'
 import { Sidebar, SidebarContent, SidebarFooter } from '../ui/sidebar'
 import { NavHeader } from './nav-header'
-import { useMatchRoute } from '@tanstack/react-router'
-import { useAuth } from '@/context/auth-context'
-import { type NavMainProps, NavMain } from './nav-main'
+import { NavMain, type NavMainProps } from './nav-main'
 import { NavUser } from './nav-user'
 
 export function AppSidebar() {
@@ -76,27 +76,31 @@ export function AppSidebar() {
 				<NavMain items={items} />
 			</SidebarContent>
 			<SidebarFooter>
-				{auth.isAuthenticated && auth.type === 'user' && (
+				{auth.isAuthenticated && auth.type === 'user' && auth.user && (
 					<NavUser
 						user={{
-							email: auth.user!.email,
-							name: `${auth.user!.first_name} ${auth.user!.last_name}`,
+							email: auth.user?.email,
+							name: `${auth.user?.first_name} ${auth.user?.last_name}`,
 							avatar: auth.user?.image?.url,
 						}}
 						onLogOut={() => auth.logOut()}
 					/>
 				)}
-				{auth.isAuthenticated && auth.type === 'client' && (
+				{auth.isAuthenticated && auth.type === 'client' && auth.client && (
 					<NavUser
 						user={{
-							email: auth.client?.username!,
-							name: `${auth.client!.name}`,
+							email: auth.client.email,
+							name: `${auth.client?.name}`,
 							avatar: auth.user?.image?.url,
 						}}
-						credits={{
-							remaining: auth.client!.subscription!.remaining_credits,
-							total: auth.client!.subscription!.total_credits,
-						}}
+						credits={
+							auth.client.subscription
+								? {
+										remaining: auth.client.subscription.remaining_credits,
+										total: auth.client.subscription.total_credits,
+									}
+								: undefined
+						}
 						onLogOut={() => auth.logOut()}
 					/>
 				)}

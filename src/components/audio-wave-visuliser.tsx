@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Skeleton } from './ui/skeleton'
 import { useWavesurfer } from '@wavesurfer/react'
+import { Download, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Play, Pause, SkipBack, SkipForward, Download } from 'lucide-react'
+import { Skeleton } from './ui/skeleton'
 
 interface AudioPlayerProps {
 	audioBlob: Blob
@@ -11,7 +12,7 @@ interface AudioPlayerProps {
 }
 
 const formatTime = (seconds: number): string => {
-	if (isNaN(seconds)) return '0:00'
+	if (Number.isNaN(seconds)) return '0:00'
 	const mins = Math.floor(seconds / 60)
 	const secs = Math.floor(seconds % 60)
 	return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -71,7 +72,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 		if (!open) {
 			cleanup()
 		}
-	}, [open, wavesurfer, isPlaying, audioUrl])
+	}, [open, cleanup])
 
 	// Create blob URL
 	useEffect(() => {
@@ -85,7 +86,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 				URL.revokeObjectURL(audioUrl)
 			}
 		}
-	}, [audioBlob, open])
+	}, [audioBlob, open, audioUrl])
 
 	// Set duration when ready
 	useEffect(() => {
@@ -161,7 +162,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 				{/* Right Controls */}
 				<div className='flex items-center space-x-3'>
 					{/* Time Display */}
-					<div className='text-sm font-mono text-muted-foreground min-w-[80px] text-center'>
+					<div className='min-w-[80px] text-center font-mono text-muted-foreground text-sm'>
 						<span>{formatTime(currentTime)}</span>
 						<span className='mx-1'>/</span>
 						<span>{formatTime(duration)}</span>
@@ -201,7 +202,7 @@ export const AudioPlayerSkeleton = () => {
 				<div className='flex items-center space-x-3'>
 					{/* Time Display Skeleton */}
 					<div className='min-w-[80px] text-center'>
-						<Skeleton className='h-4 w-16 mx-auto' />
+						<Skeleton className='mx-auto h-4 w-16' />
 					</div>
 					<Skeleton className='h-9 w-9 rounded-md' />
 				</div>

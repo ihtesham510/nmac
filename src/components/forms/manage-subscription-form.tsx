@@ -1,5 +1,11 @@
-import { useMutation } from 'convex/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from 'convex/_generated/api'
+import { useMutation } from 'convex/react'
+import { LoaderCircle, Trash2 } from 'lucide-react'
+import { useId } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -9,8 +15,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
 	Form,
 	FormControl,
@@ -19,6 +23,8 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
 	Select,
 	SelectContent,
@@ -26,12 +32,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { LoaderCircle, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { useId } from 'react'
 import type { Clients } from '@/lib/types'
 
 interface Props {
@@ -134,7 +134,7 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className='max-w-md overflow-auto max-h-[90vh]'>
+			<DialogContent className='max-h-[90vh] max-w-md overflow-auto'>
 				<div className='mb-2 flex flex-col gap-2'>
 					<DialogHeader>
 						<DialogTitle className='text-left'>
@@ -157,7 +157,7 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 							name='plan'
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className='ml-1 text-lg font-bold'>
+									<FormLabel className='ml-1 font-bold text-lg'>
 										Subscription Plan
 									</FormLabel>
 									<FormControl>
@@ -169,7 +169,7 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 											{Object.entries(planDetails).map(([value, details]) => (
 												<div
 													key={value}
-													className='relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-sm shadow-black/5 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent'
+													className='relative flex w-full items-center gap-2 rounded-lg border border-input px-4 py-3 shadow-black/5 shadow-sm has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-accent'
 												>
 													<RadioGroupItem
 														value={value}
@@ -183,7 +183,7 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 														</Label>
 														<p
 															id={`${id}-${value}-description`}
-															className='text-xs text-muted-foreground'
+															className='text-muted-foreground text-xs'
 														>
 															${details.price} per member/month
 														</p>
@@ -201,11 +201,13 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 							control={form.control}
 							name='interval'
 							render={({ field }) => (
-								<FormItem className='flex justify-between items-center ml-1'>
+								<FormItem className='ml-1 flex items-center justify-between'>
 									<FormLabel className='font-bold'>Billing Interval</FormLabel>
 									<Select
 										value={field.value?.toString()}
-										onValueChange={value => field.onChange(parseInt(value))}
+										onValueChange={value =>
+											field.onChange(Number.parseInt(value, 10))
+										}
 									>
 										<FormControl>
 											<SelectTrigger>
@@ -230,9 +232,9 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 
 						{selectedPlan && selectedInterval && (
 							<div className='rounded-lg border border-input bg-muted/20 p-4'>
-								<div className='flex justify-between items-center'>
-									<span className='text-sm font-medium'>Total Cost:</span>
-									<span className='text-lg font-bold'>
+								<div className='flex items-center justify-between'>
+									<span className='font-medium text-sm'>Total Cost:</span>
+									<span className='font-bold text-lg'>
 										${totalPrice} for {selectedInterval}{' '}
 										{selectedInterval === 1 ? 'month' : 'months'}
 									</span>
@@ -264,7 +266,7 @@ export function ManageSubscriptionForm({ open, onOpenChange, client }: Props) {
 									className='w-full'
 									onClick={handleRemoveSubscription}
 								>
-									<Trash2 className='size-4 mr-2' />
+									<Trash2 className='mr-2 size-4' />
 									Remove subscription
 								</Button>
 							)}

@@ -1,6 +1,6 @@
+import { api } from 'convex/_generated/api'
 import { useQuery } from '@/cache/useQuery'
 import { useAuth } from '@/context/auth-context'
-import { api } from 'convex/_generated/api'
 
 export function useAgents() {
 	const auth = useAuth()

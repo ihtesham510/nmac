@@ -1,4 +1,11 @@
-import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
+import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Globe, LoaderCircle } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
+import { useElevenLabsClient } from '@/api/client'
+import { Button } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -6,11 +13,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { Button } from '@/components/ui/button'
 import {
 	Form,
 	FormControl,
@@ -20,10 +22,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-
-import { useElevenLabsClient } from '@/api/client'
-import type { GetAgentResponseModel } from '@elevenlabs/elevenlabs-js/api'
-import { Globe, LoaderCircle } from 'lucide-react'
+import { useKnowledgeBase } from '@/hooks/use-knowledge-base'
 
 export function AddUrlForm({
 	data,

@@ -1,14 +1,18 @@
+import type { PhoneNumbersGetResponse } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { LoaderCircle, PhoneOutgoingIcon } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { isValidPhoneNumber } from 'react-phone-number-input'
+import { toast } from 'sonner'
+import { z } from 'zod'
 import { useElevenLabsClient } from '@/api/client'
 import { queries } from '@/api/query-options'
-import React, { useEffect, useState } from 'react'
-import type { Agent } from '@/lib/types'
-import { Button } from '@/components/ui/button'
-import { PhoneInput } from '@/components/ui/phone-input'
-import { isValidPhoneNumber } from 'react-phone-number-input'
-import { useAgents } from '@/hooks/use-agents'
+import { SelectSetting } from '@/components/project-settings/select-setting'
 import { AgentSelect } from '@/components/select-agent'
-import { zodResolver } from '@hookform/resolvers/zod'
-import type { PhoneNumbersGetResponse } from '@elevenlabs/elevenlabs-js/api/resources/conversationalAi'
+import { Button } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
@@ -24,15 +28,11 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
+import { PhoneInput } from '@/components/ui/phone-input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useAgents } from '@/hooks/use-agents'
 import { useDialog } from '@/hooks/use-dialogs'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
-import { LoaderCircle, PhoneOutgoingIcon } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { SelectSetting } from '@/components/project-settings/select-setting'
+import type { Agent } from '@/lib/types'
 
 export const Route = createFileRoute('/dashboard/phone/$id')({
 	component: RouteComponent,
@@ -59,11 +59,11 @@ function RouteComponent() {
 						onOpenChange={e => setDialogs('makeCall', e)}
 						id={phone_number.data.phoneNumberId}
 					/>
-					<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
-						<div className='flex items-center justify-between mb-6'>
+					<div className='m-10 grid space-y-6 md:mx-40 md:my-10'>
+						<div className='mb-6 flex items-center justify-between'>
 							<div className='grid gap-1'>
 								<h1
-									className='text-4xl font-bold cursor-pointer select-none'
+									className='cursor-pointer select-none font-bold text-4xl'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
 											phone_number.data.phoneNumber,
@@ -73,11 +73,11 @@ function RouteComponent() {
 								>
 									{phone_number.data.phoneNumber}
 								</h1>
-								<p className='font-semibold ml-2 text-primary/50'>
+								<p className='ml-2 font-semibold text-primary/50'>
 									{phone_number.data.label}
 								</p>
 								<p
-									className='font-semibold text-primary/50 cursor-pointer ml-2 select-none'
+									className='ml-2 cursor-pointer select-none font-semibold text-primary/50'
 									onClick={async () => {
 										await window.navigator.clipboard.writeText(
 											phone_number.data.phoneNumberId,
@@ -90,7 +90,7 @@ function RouteComponent() {
 								</p>
 							</div>
 							<Button onClick={() => setDialogs('makeCall', true)}>
-								<PhoneOutgoingIcon className='h-4 w-4 mr-2' />
+								<PhoneOutgoingIcon className='mr-2 h-4 w-4' />
 								Make Call
 							</Button>
 						</div>
@@ -177,7 +177,7 @@ function MakeCallDialog({
 		if (selectedAgent) {
 			form.setValue('agent_id', selectedAgent.agentId)
 		}
-	}, [selectedAgent])
+	}, [selectedAgent, form.setValue])
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
@@ -205,7 +205,7 @@ function MakeCallDialog({
 					</DialogTitle>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)}>
-							<div className='space-y-4 my-4'>
+							<div className='my-4 space-y-4'>
 								<FormField
 									control={form.control}
 									name='agent_id'
@@ -262,12 +262,12 @@ function MakeCallDialog({
 
 function PhoneSkeleton() {
 	return (
-		<div className='m-10 md:my-10 md:mx-40 grid space-y-6'>
-			<div className='flex items-center justify-between mb-6'>
+		<div className='m-10 grid space-y-6 md:mx-40 md:my-10'>
+			<div className='mb-6 flex items-center justify-between'>
 				<div className='grid gap-1'>
-					<Skeleton className='h-8 w-8 mb-2' /> {/* Back button */}
-					<Skeleton className='h-5 w-32 ml-2' /> {/* Phone number ID */}
-					<Skeleton className='h-5 w-24 ml-2' /> {/* Label */}
+					<Skeleton className='mb-2 h-8 w-8' /> {/* Back button */}
+					<Skeleton className='ml-2 h-5 w-32' /> {/* Phone number ID */}
+					<Skeleton className='ml-2 h-5 w-24' /> {/* Label */}
 					<Skeleton className='h-10 w-48' /> {/* Phone number */}
 				</div>
 				<Skeleton className='h-10 w-28' /> {/* Make Call button */}

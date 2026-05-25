@@ -1,13 +1,13 @@
 export class MicroPhone {
 	private mediaRecorder: MediaRecorder | null = null
 	private mediaStream: MediaStream | null = null
-	public timeSlice: number = 1000
-	public echoCancellation: boolean = false
-	public noiseSuppression: boolean = false
-	public audioGainControl: boolean = false
+	public timeSlice = 1000
+	public echoCancellation = false
+	public noiseSuppression = false
+	public audioGainControl = false
 	public onStop?: () => void
-	public isRecoding: boolean = false
-	public record: boolean = false
+	public isRecoding = false
+	public record = false
 	private chunks: Blob[] | null = null
 
 	constructor(options?: {
@@ -18,7 +18,7 @@ export class MicroPhone {
 		record?: boolean
 		onStop?: () => void
 	}) {
-		if (options && options.timeSlice) {
+		if (options?.timeSlice) {
 			this.timeSlice = options.timeSlice
 			this.echoCancellation = options.echoCancellation ?? false
 			this.noiseSuppression = options.noiseSuppression ?? false
@@ -75,7 +75,9 @@ export class MicroPhone {
 			if (this.onStop) {
 				this.onStop()
 			}
-			this.mediaStream.getTracks().forEach(track => track.stop())
+			this.mediaStream.getTracks().forEach(track => {
+				track.stop()
+			})
 			this.mediaRecorder.stop()
 			console.log('Recording stopped')
 		}

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import {
 	Check,
 	ChevronsUpDown,
@@ -6,7 +5,8 @@ import {
 	Tag,
 	TrashIcon,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import * as React from 'react'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Command,
@@ -23,8 +23,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-import { Badge } from '@/components/ui/badge'
 import type { Agent } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 export interface AgentSelectProps {
 	agents: Agent[]
@@ -94,42 +94,42 @@ export function AgentSelect({
 						)}
 						<CommandGroup>
 							{agents.map(agent => {
-								if (agent)
-									return (
-										<CommandItem
-											key={agent._id}
-											value={agent.name}
-											onSelect={() => {
-												onSelect(agent)
-												setOpen(false)
-											}}
-											className='flex flex-col items-start'
-										>
-											<div className='flex w-full items-center justify-between'>
-												<span className='font-medium'>{agent.name}</span>
-												{value?._id === agent._id && (
-													<Check className='h-4 w-4' />
-												)}
-											</div>
-											<p className='text-xs text-muted-foreground line-clamp-1 text-left'>
-												{agent.description}
-											</p>
-											{agent.tags.length > 0 && (
-												<div className='flex flex-wrap gap-1 mt-1'>
-													{agent.tags.map(tag => (
-														<Badge
-															key={tag}
-															variant='secondary'
-															className='text-xs'
-														>
-															<Tag className='h-3 w-3 mr-1' />
-															{tag}
-														</Badge>
-													))}
-												</div>
+								if (!agent) return null
+								return (
+									<CommandItem
+										key={agent._id}
+										value={agent.name}
+										onSelect={() => {
+											onSelect(agent)
+											setOpen(false)
+										}}
+										className='flex flex-col items-start'
+									>
+										<div className='flex w-full items-center justify-between'>
+											<span className='font-medium'>{agent.name}</span>
+											{value?._id === agent._id && (
+												<Check className='h-4 w-4' />
 											)}
-										</CommandItem>
-									)
+										</div>
+										<p className='line-clamp-1 text-left text-muted-foreground text-xs'>
+											{agent.description}
+										</p>
+										{agent.tags.length > 0 && (
+											<div className='mt-1 flex flex-wrap gap-1'>
+												{agent.tags.map(tag => (
+													<Badge
+														key={tag}
+														variant='secondary'
+														className='text-xs'
+													>
+														<Tag className='mr-1 h-3 w-3' />
+														{tag}
+													</Badge>
+												))}
+											</div>
+										)}
+									</CommandItem>
+								)
 							})}
 						</CommandGroup>
 					</CommandList>

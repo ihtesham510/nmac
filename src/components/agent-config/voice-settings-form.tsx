@@ -1,14 +1,16 @@
-import { SelectVoice } from '@/components/project-settings/select-voice'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
-import { TtsOutputFormat as AudioFormat } from '@elevenlabs/elevenlabs-js/api'
-import { z } from 'zod'
 import type { ConversationalConfig } from '@elevenlabs/elevenlabs-js/api'
+import { TtsOutputFormat as AudioFormat } from '@elevenlabs/elevenlabs-js/api'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useQueryClient } from '@tanstack/react-query'
+import { LoaderCircle, TriangleAlert } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { SelectSetting } from '@/components/project-settings/select-setting'
+import { SelectVoice } from '@/components/project-settings/select-voice'
 import { SliderSetting } from '@/components/project-settings/slider-setting'
 import { Button } from '@/components/ui/button'
-import { TriangleAlert, LoaderCircle } from 'lucide-react'
-import { SelectSetting } from '@/components/project-settings/select-setting'
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import {
 	Select,
 	SelectContent,
@@ -17,8 +19,6 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { useUpdateAgent } from '@/hooks/use-update-agent'
-import { toast } from 'sonner'
-import { useQueryClient } from '@tanstack/react-query'
 
 const formSchema = z.object({
 	similarity: z.number(),
@@ -78,7 +78,7 @@ export function VoiceForm({
 				},
 			)
 			return toast.success('Agent updated successfully')
-		} catch (err) {
+		} catch (_err) {
 			return toast.error('Error while updating agent')
 		}
 	}
@@ -193,23 +193,23 @@ export function VoiceForm({
 					)}
 				/>
 				{form.formState.isDirty && (
-					<div className='sticky bg-background p-4 border-border border rounded-lg w-full bottom-6 flex justify-between items-center'>
+					<div className='sticky bottom-6 flex w-full items-center justify-between rounded-lg border border-border bg-background p-4'>
 						<div className='flex gap-2'>
 							<TriangleAlert className='size-4' />
 							<p className='font-semibold text-sm'>Changes Detected</p>
 						</div>
-						<div className='flex gap-2 items-center'>
+						<div className='flex items-center gap-2'>
 							<Button
-								className='text-sm font-semibold'
+								className='font-semibold text-sm'
 								variant='ghost'
 								type='reset'
 								onClick={() => form.reset()}
 							>
 								clear
 							</Button>
-							<Button type='submit' className='text-sm font-semibold' size='sm'>
+							<Button type='submit' className='font-semibold text-sm' size='sm'>
 								{form.formState.isSubmitting ? (
-									<LoaderCircle className='size-4 m-1 animate-spin' />
+									<LoaderCircle className='m-1 size-4 animate-spin' />
 								) : (
 									'save'
 								)}
