@@ -128,7 +128,7 @@ function RouteComponent() {
 			<AgentContextProvider
 				agent={agentRes}
 				isLoading={!!isLoading}
-				agentData={agentData}
+				agentData={agentData ?? null}
 			>
 				<Outlet />
 			</AgentContextProvider>

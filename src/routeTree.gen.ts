@@ -8,502 +8,688 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as R505RouteImport } from './routes/505'
+import { Route as R422RouteImport } from './routes/422'
+import { Route as R403RouteImport } from './routes/403'
+import { Route as R401RouteImport } from './routes/401'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardHistoryRouteImport } from './routes/dashboard/history'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
+import { Route as Dashboard505RouteImport } from './routes/dashboard/505'
+import { Route as Dashboard404RouteImport } from './routes/dashboard/404'
+import { Route as AgentsAgentIdRouteImport } from './routes/agents.$agentId'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authRegisterRouteImport } from './routes/(auth)/register'
+import { Route as DashboardProjectSettingsRouteRouteImport } from './routes/dashboard/project-settings/route'
+import { Route as DashboardClientsRouteRouteImport } from './routes/dashboard/clients/route'
+import { Route as DashboardAgentsRouteRouteImport } from './routes/dashboard/agents/route'
+import { Route as DashboardProjectSettingsIndexRouteImport } from './routes/dashboard/project-settings/index'
+import { Route as DashboardPhoneIndexRouteImport } from './routes/dashboard/phone/index'
+import { Route as DashboardClientsIndexRouteImport } from './routes/dashboard/clients/index'
+import { Route as DashboardAgentsIndexRouteImport } from './routes/dashboard/agents/index'
+import { Route as DashboardProjectSettingsVoiceRouteImport } from './routes/dashboard/project-settings/voice'
+import { Route as DashboardProjectSettingsPreviewRouteImport } from './routes/dashboard/project-settings/preview'
+import { Route as DashboardProjectSettingsAgentRouteImport } from './routes/dashboard/project-settings/agent'
+import { Route as DashboardPhoneIdRouteImport } from './routes/dashboard/phone/$id'
+import { Route as DashboardAgents505RouteImport } from './routes/dashboard/agents/505'
+import { Route as DashboardAgents404RouteImport } from './routes/dashboard/agents/404'
+import { Route as DashboardAgentsAgentRouteRouteImport } from './routes/dashboard/agents/$agent/route'
+import { Route as DashboardAgentsAgentIndexRouteImport } from './routes/dashboard/agents/$agent/index'
+import { Route as DashboardAgentsAgentVoiceRouteImport } from './routes/dashboard/agents/$agent/voice'
+import { Route as DashboardAgentsAgentPreviewRouteImport } from './routes/dashboard/agents/$agent/preview'
+import { Route as DashboardAgentsAgentAgentRouteImport } from './routes/dashboard/agents/$agent/agent'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as PricingImport } from './routes/pricing'
-import { Route as R505Import } from './routes/505'
-import { Route as R422Import } from './routes/422'
-import { Route as R403Import } from './routes/403'
-import { Route as R401Import } from './routes/401'
-import { Route as DashboardRouteImport } from './routes/dashboard/route'
-import { Route as IndexImport } from './routes/index'
-import { Route as DashboardIndexImport } from './routes/dashboard/index'
-import { Route as DashboardSettingsImport } from './routes/dashboard/settings'
-import { Route as DashboardHistoryImport } from './routes/dashboard/history'
-import { Route as DashboardAnalyticsImport } from './routes/dashboard/analytics'
-import { Route as Dashboard505Import } from './routes/dashboard/505'
-import { Route as Dashboard404Import } from './routes/dashboard/404'
-import { Route as AgentsAgentIdImport } from './routes/agents.$agentId'
-import { Route as authSignInImport } from './routes/(auth)/sign-in'
-import { Route as authRegisterImport } from './routes/(auth)/register'
-import { Route as DashboardProjectSettingsRouteImport } from './routes/dashboard/project-settings/route'
-import { Route as DashboardClientsRouteImport } from './routes/dashboard/clients/route'
-import { Route as DashboardAgentsRouteImport } from './routes/dashboard/agents/route'
-import { Route as DashboardProjectSettingsIndexImport } from './routes/dashboard/project-settings/index'
-import { Route as DashboardPhoneIndexImport } from './routes/dashboard/phone/index'
-import { Route as DashboardClientsIndexImport } from './routes/dashboard/clients/index'
-import { Route as DashboardAgentsIndexImport } from './routes/dashboard/agents/index'
-import { Route as DashboardProjectSettingsVoiceImport } from './routes/dashboard/project-settings/voice'
-import { Route as DashboardProjectSettingsPreviewImport } from './routes/dashboard/project-settings/preview'
-import { Route as DashboardProjectSettingsAgentImport } from './routes/dashboard/project-settings/agent'
-import { Route as DashboardPhoneIdImport } from './routes/dashboard/phone/$id'
-import { Route as DashboardAgents505Import } from './routes/dashboard/agents/505'
-import { Route as DashboardAgents404Import } from './routes/dashboard/agents/404'
-import { Route as DashboardAgentsAgentRouteImport } from './routes/dashboard/agents/$agent/route'
-import { Route as DashboardAgentsAgentIndexImport } from './routes/dashboard/agents/$agent/index'
-import { Route as DashboardAgentsAgentVoiceImport } from './routes/dashboard/agents/$agent/voice'
-import { Route as DashboardAgentsAgentPreviewImport } from './routes/dashboard/agents/$agent/preview'
-import { Route as DashboardAgentsAgentAgentImport } from './routes/dashboard/agents/$agent/agent'
-
-// Create/Update Routes
-
-const PricingRoute = PricingImport.update({
+const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R505Route = R505Import.update({
+const R505Route = R505RouteImport.update({
   id: '/505',
   path: '/505',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R422Route = R422Import.update({
+const R422Route = R422RouteImport.update({
   id: '/422',
   path: '/422',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R403Route = R403Import.update({
+const R403Route = R403RouteImport.update({
   id: '/403',
   path: '/403',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const R401Route = R401Import.update({
+const R401Route = R401RouteImport.update({
   id: '/401',
   path: '/401',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const DashboardRouteRoute = DashboardRouteImport.update({
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const DashboardIndexRoute = DashboardIndexImport.update({
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardSettingsRoute = DashboardSettingsImport.update({
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardHistoryRoute = DashboardHistoryImport.update({
+const DashboardHistoryRoute = DashboardHistoryRouteImport.update({
   id: '/history',
   path: '/history',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardAnalyticsRoute = DashboardAnalyticsImport.update({
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const Dashboard505Route = Dashboard505Import.update({
+const Dashboard505Route = Dashboard505RouteImport.update({
   id: '/505',
   path: '/505',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const Dashboard404Route = Dashboard404Import.update({
+const Dashboard404Route = Dashboard404RouteImport.update({
   id: '/404',
   path: '/404',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const AgentsAgentIdRoute = AgentsAgentIdImport.update({
+const AgentsAgentIdRoute = AgentsAgentIdRouteImport.update({
   id: '/agents/$agentId',
   path: '/agents/$agentId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const authSignInRoute = authSignInImport.update({
+const authSignInRoute = authSignInRouteImport.update({
   id: '/(auth)/sign-in',
   path: '/sign-in',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const authRegisterRoute = authRegisterImport.update({
+const authRegisterRoute = authRegisterRouteImport.update({
   id: '/(auth)/register',
   path: '/register',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const DashboardProjectSettingsRouteRoute =
-  DashboardProjectSettingsRouteImport.update({
+  DashboardProjectSettingsRouteRouteImport.update({
     id: '/project-settings',
     path: '/project-settings',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
-
-const DashboardClientsRouteRoute = DashboardClientsRouteImport.update({
+const DashboardClientsRouteRoute = DashboardClientsRouteRouteImport.update({
   id: '/clients',
   path: '/clients',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardAgentsRouteRoute = DashboardAgentsRouteImport.update({
+const DashboardAgentsRouteRoute = DashboardAgentsRouteRouteImport.update({
   id: '/agents',
   path: '/agents',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
 const DashboardProjectSettingsIndexRoute =
-  DashboardProjectSettingsIndexImport.update({
+  DashboardProjectSettingsIndexRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
-
-const DashboardPhoneIndexRoute = DashboardPhoneIndexImport.update({
+const DashboardPhoneIndexRoute = DashboardPhoneIndexRouteImport.update({
   id: '/phone/',
   path: '/phone/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardClientsIndexRoute = DashboardClientsIndexImport.update({
+const DashboardClientsIndexRoute = DashboardClientsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardClientsRouteRoute,
 } as any)
-
-const DashboardAgentsIndexRoute = DashboardAgentsIndexImport.update({
+const DashboardAgentsIndexRoute = DashboardAgentsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardAgentsRouteRoute,
 } as any)
-
 const DashboardProjectSettingsVoiceRoute =
-  DashboardProjectSettingsVoiceImport.update({
+  DashboardProjectSettingsVoiceRouteImport.update({
     id: '/voice',
     path: '/voice',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
-
 const DashboardProjectSettingsPreviewRoute =
-  DashboardProjectSettingsPreviewImport.update({
+  DashboardProjectSettingsPreviewRouteImport.update({
     id: '/preview',
     path: '/preview',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
-
 const DashboardProjectSettingsAgentRoute =
-  DashboardProjectSettingsAgentImport.update({
+  DashboardProjectSettingsAgentRouteImport.update({
     id: '/agent',
     path: '/agent',
     getParentRoute: () => DashboardProjectSettingsRouteRoute,
   } as any)
-
-const DashboardPhoneIdRoute = DashboardPhoneIdImport.update({
+const DashboardPhoneIdRoute = DashboardPhoneIdRouteImport.update({
   id: '/phone/$id',
   path: '/phone/$id',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
-
-const DashboardAgents505Route = DashboardAgents505Import.update({
+const DashboardAgents505Route = DashboardAgents505RouteImport.update({
   id: '/505',
   path: '/505',
   getParentRoute: () => DashboardAgentsRouteRoute,
 } as any)
-
-const DashboardAgents404Route = DashboardAgents404Import.update({
+const DashboardAgents404Route = DashboardAgents404RouteImport.update({
   id: '/404',
   path: '/404',
   getParentRoute: () => DashboardAgentsRouteRoute,
 } as any)
-
-const DashboardAgentsAgentRouteRoute = DashboardAgentsAgentRouteImport.update({
-  id: '/$agent',
-  path: '/$agent',
-  getParentRoute: () => DashboardAgentsRouteRoute,
-} as any)
-
-const DashboardAgentsAgentIndexRoute = DashboardAgentsAgentIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardAgentsAgentRouteRoute,
-} as any)
-
-const DashboardAgentsAgentVoiceRoute = DashboardAgentsAgentVoiceImport.update({
-  id: '/voice',
-  path: '/voice',
-  getParentRoute: () => DashboardAgentsAgentRouteRoute,
-} as any)
-
+const DashboardAgentsAgentRouteRoute =
+  DashboardAgentsAgentRouteRouteImport.update({
+    id: '/$agent',
+    path: '/$agent',
+    getParentRoute: () => DashboardAgentsRouteRoute,
+  } as any)
+const DashboardAgentsAgentIndexRoute =
+  DashboardAgentsAgentIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => DashboardAgentsAgentRouteRoute,
+  } as any)
+const DashboardAgentsAgentVoiceRoute =
+  DashboardAgentsAgentVoiceRouteImport.update({
+    id: '/voice',
+    path: '/voice',
+    getParentRoute: () => DashboardAgentsAgentRouteRoute,
+  } as any)
 const DashboardAgentsAgentPreviewRoute =
-  DashboardAgentsAgentPreviewImport.update({
+  DashboardAgentsAgentPreviewRouteImport.update({
     id: '/preview',
     path: '/preview',
     getParentRoute: () => DashboardAgentsAgentRouteRoute,
   } as any)
+const DashboardAgentsAgentAgentRoute =
+  DashboardAgentsAgentAgentRouteImport.update({
+    id: '/agent',
+    path: '/agent',
+    getParentRoute: () => DashboardAgentsAgentRouteRoute,
+  } as any)
 
-const DashboardAgentsAgentAgentRoute = DashboardAgentsAgentAgentImport.update({
-  id: '/agent',
-  path: '/agent',
-  getParentRoute: () => DashboardAgentsAgentRouteRoute,
-} as any)
-
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/401': typeof R401Route
+  '/403': typeof R403Route
+  '/422': typeof R422Route
+  '/505': typeof R505Route
+  '/pricing': typeof PricingRoute
+  '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
+  '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
+  '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
+  '/register': typeof authRegisterRoute
+  '/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
+  '/dashboard/404': typeof Dashboard404Route
+  '/dashboard/505': typeof Dashboard505Route
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
+  '/dashboard/agents/404': typeof DashboardAgents404Route
+  '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
+  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
+  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
+  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
+  '/dashboard/agents/': typeof DashboardAgentsIndexRoute
+  '/dashboard/clients/': typeof DashboardClientsIndexRoute
+  '/dashboard/phone/': typeof DashboardPhoneIndexRoute
+  '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/401': typeof R401Route
+  '/403': typeof R403Route
+  '/422': typeof R422Route
+  '/505': typeof R505Route
+  '/pricing': typeof PricingRoute
+  '/register': typeof authRegisterRoute
+  '/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
+  '/dashboard/404': typeof Dashboard404Route
+  '/dashboard/505': typeof Dashboard505Route
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/agents/404': typeof DashboardAgents404Route
+  '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
+  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
+  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
+  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
+  '/dashboard/agents': typeof DashboardAgentsIndexRoute
+  '/dashboard/clients': typeof DashboardClientsIndexRoute
+  '/dashboard/phone': typeof DashboardPhoneIndexRoute
+  '/dashboard/project-settings': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/401': typeof R401Route
+  '/403': typeof R403Route
+  '/422': typeof R422Route
+  '/505': typeof R505Route
+  '/pricing': typeof PricingRoute
+  '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
+  '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
+  '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
+  '/(auth)/register': typeof authRegisterRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/agents/$agentId': typeof AgentsAgentIdRoute
+  '/dashboard/404': typeof Dashboard404Route
+  '/dashboard/505': typeof Dashboard505Route
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
+  '/dashboard/agents/404': typeof DashboardAgents404Route
+  '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
+  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
+  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
+  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
+  '/dashboard/agents/': typeof DashboardAgentsIndexRoute
+  '/dashboard/clients/': typeof DashboardClientsIndexRoute
+  '/dashboard/phone/': typeof DashboardPhoneIndexRoute
+  '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
+  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
+  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
+  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
+  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/401'
+    | '/403'
+    | '/422'
+    | '/505'
+    | '/pricing'
+    | '/dashboard/agents'
+    | '/dashboard/clients'
+    | '/dashboard/project-settings'
+    | '/register'
+    | '/sign-in'
+    | '/agents/$agentId'
+    | '/dashboard/404'
+    | '/dashboard/505'
+    | '/dashboard/analytics'
+    | '/dashboard/history'
+    | '/dashboard/settings'
+    | '/dashboard/'
+    | '/dashboard/agents/$agent'
+    | '/dashboard/agents/404'
+    | '/dashboard/agents/505'
+    | '/dashboard/phone/$id'
+    | '/dashboard/project-settings/agent'
+    | '/dashboard/project-settings/preview'
+    | '/dashboard/project-settings/voice'
+    | '/dashboard/agents/'
+    | '/dashboard/clients/'
+    | '/dashboard/phone/'
+    | '/dashboard/project-settings/'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/401'
+    | '/403'
+    | '/422'
+    | '/505'
+    | '/pricing'
+    | '/register'
+    | '/sign-in'
+    | '/agents/$agentId'
+    | '/dashboard/404'
+    | '/dashboard/505'
+    | '/dashboard/analytics'
+    | '/dashboard/history'
+    | '/dashboard/settings'
+    | '/dashboard'
+    | '/dashboard/agents/404'
+    | '/dashboard/agents/505'
+    | '/dashboard/phone/$id'
+    | '/dashboard/project-settings/agent'
+    | '/dashboard/project-settings/preview'
+    | '/dashboard/project-settings/voice'
+    | '/dashboard/agents'
+    | '/dashboard/clients'
+    | '/dashboard/phone'
+    | '/dashboard/project-settings'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/401'
+    | '/403'
+    | '/422'
+    | '/505'
+    | '/pricing'
+    | '/dashboard/agents'
+    | '/dashboard/clients'
+    | '/dashboard/project-settings'
+    | '/(auth)/register'
+    | '/(auth)/sign-in'
+    | '/agents/$agentId'
+    | '/dashboard/404'
+    | '/dashboard/505'
+    | '/dashboard/analytics'
+    | '/dashboard/history'
+    | '/dashboard/settings'
+    | '/dashboard/'
+    | '/dashboard/agents/$agent'
+    | '/dashboard/agents/404'
+    | '/dashboard/agents/505'
+    | '/dashboard/phone/$id'
+    | '/dashboard/project-settings/agent'
+    | '/dashboard/project-settings/preview'
+    | '/dashboard/project-settings/voice'
+    | '/dashboard/agents/'
+    | '/dashboard/clients/'
+    | '/dashboard/phone/'
+    | '/dashboard/project-settings/'
+    | '/dashboard/agents/$agent/agent'
+    | '/dashboard/agents/$agent/preview'
+    | '/dashboard/agents/$agent/voice'
+    | '/dashboard/agents/$agent/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  R401Route: typeof R401Route
+  R403Route: typeof R403Route
+  R422Route: typeof R422Route
+  R505Route: typeof R505Route
+  PricingRoute: typeof PricingRoute
+  authRegisterRoute: typeof authRegisterRoute
+  authSignInRoute: typeof authSignInRoute
+  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/401': {
-      id: '/401'
-      path: '/401'
-      fullPath: '/401'
-      preLoaderRoute: typeof R401Import
-      parentRoute: typeof rootRoute
-    }
-    '/403': {
-      id: '/403'
-      path: '/403'
-      fullPath: '/403'
-      preLoaderRoute: typeof R403Import
-      parentRoute: typeof rootRoute
-    }
-    '/422': {
-      id: '/422'
-      path: '/422'
-      fullPath: '/422'
-      preLoaderRoute: typeof R422Import
-      parentRoute: typeof rootRoute
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/505': {
       id: '/505'
       path: '/505'
       fullPath: '/505'
-      preLoaderRoute: typeof R505Import
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof R505RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingImport
-      parentRoute: typeof rootRoute
+    '/422': {
+      id: '/422'
+      path: '/422'
+      fullPath: '/422'
+      preLoaderRoute: typeof R422RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/agents': {
-      id: '/dashboard/agents'
-      path: '/agents'
-      fullPath: '/dashboard/agents'
-      preLoaderRoute: typeof DashboardAgentsRouteImport
-      parentRoute: typeof DashboardRouteImport
+    '/403': {
+      id: '/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof R403RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/clients': {
-      id: '/dashboard/clients'
-      path: '/clients'
-      fullPath: '/dashboard/clients'
-      preLoaderRoute: typeof DashboardClientsRouteImport
-      parentRoute: typeof DashboardRouteImport
+    '/401': {
+      id: '/401'
+      path: '/401'
+      fullPath: '/401'
+      preLoaderRoute: typeof R401RouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/project-settings': {
-      id: '/dashboard/project-settings'
-      path: '/project-settings'
-      fullPath: '/dashboard/project-settings'
-      preLoaderRoute: typeof DashboardProjectSettingsRouteImport
-      parentRoute: typeof DashboardRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/(auth)/register': {
-      id: '/(auth)/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof authRegisterImport
-      parentRoute: typeof rootRoute
-    }
-    '/(auth)/sign-in': {
-      id: '/(auth)/sign-in'
-      path: '/sign-in'
-      fullPath: '/sign-in'
-      preLoaderRoute: typeof authSignInImport
-      parentRoute: typeof rootRoute
-    }
-    '/agents/$agentId': {
-      id: '/agents/$agentId'
-      path: '/agents/$agentId'
-      fullPath: '/agents/$agentId'
-      preLoaderRoute: typeof AgentsAgentIdImport
-      parentRoute: typeof rootRoute
-    }
-    '/dashboard/404': {
-      id: '/dashboard/404'
-      path: '/404'
-      fullPath: '/dashboard/404'
-      preLoaderRoute: typeof Dashboard404Import
-      parentRoute: typeof DashboardRouteImport
-    }
-    '/dashboard/505': {
-      id: '/dashboard/505'
-      path: '/505'
-      fullPath: '/dashboard/505'
-      preLoaderRoute: typeof Dashboard505Import
-      parentRoute: typeof DashboardRouteImport
-    }
-    '/dashboard/analytics': {
-      id: '/dashboard/analytics'
-      path: '/analytics'
-      fullPath: '/dashboard/analytics'
-      preLoaderRoute: typeof DashboardAnalyticsImport
-      parentRoute: typeof DashboardRouteImport
-    }
-    '/dashboard/history': {
-      id: '/dashboard/history'
-      path: '/history'
-      fullPath: '/dashboard/history'
-      preLoaderRoute: typeof DashboardHistoryImport
-      parentRoute: typeof DashboardRouteImport
-    }
-    '/dashboard/settings': {
-      id: '/dashboard/settings'
-      path: '/settings'
-      fullPath: '/dashboard/settings'
-      preLoaderRoute: typeof DashboardSettingsImport
-      parentRoute: typeof DashboardRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexImport
-      parentRoute: typeof DashboardRouteImport
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/agents/$agent': {
-      id: '/dashboard/agents/$agent'
-      path: '/$agent'
-      fullPath: '/dashboard/agents/$agent'
-      preLoaderRoute: typeof DashboardAgentsAgentRouteImport
-      parentRoute: typeof DashboardAgentsRouteImport
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/agents/404': {
-      id: '/dashboard/agents/404'
-      path: '/404'
-      fullPath: '/dashboard/agents/404'
-      preLoaderRoute: typeof DashboardAgents404Import
-      parentRoute: typeof DashboardAgentsRouteImport
+    '/dashboard/history': {
+      id: '/dashboard/history'
+      path: '/history'
+      fullPath: '/dashboard/history'
+      preLoaderRoute: typeof DashboardHistoryRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/agents/505': {
-      id: '/dashboard/agents/505'
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/505': {
+      id: '/dashboard/505'
       path: '/505'
-      fullPath: '/dashboard/agents/505'
-      preLoaderRoute: typeof DashboardAgents505Import
-      parentRoute: typeof DashboardAgentsRouteImport
+      fullPath: '/dashboard/505'
+      preLoaderRoute: typeof Dashboard505RouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/phone/$id': {
-      id: '/dashboard/phone/$id'
-      path: '/phone/$id'
-      fullPath: '/dashboard/phone/$id'
-      preLoaderRoute: typeof DashboardPhoneIdImport
-      parentRoute: typeof DashboardRouteImport
+    '/dashboard/404': {
+      id: '/dashboard/404'
+      path: '/404'
+      fullPath: '/dashboard/404'
+      preLoaderRoute: typeof Dashboard404RouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/project-settings/agent': {
-      id: '/dashboard/project-settings/agent'
-      path: '/agent'
-      fullPath: '/dashboard/project-settings/agent'
-      preLoaderRoute: typeof DashboardProjectSettingsAgentImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
+    '/agents/$agentId': {
+      id: '/agents/$agentId'
+      path: '/agents/$agentId'
+      fullPath: '/agents/$agentId'
+      preLoaderRoute: typeof AgentsAgentIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/project-settings/preview': {
-      id: '/dashboard/project-settings/preview'
-      path: '/preview'
-      fullPath: '/dashboard/project-settings/preview'
-      preLoaderRoute: typeof DashboardProjectSettingsPreviewImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/project-settings/voice': {
-      id: '/dashboard/project-settings/voice'
-      path: '/voice'
-      fullPath: '/dashboard/project-settings/voice'
-      preLoaderRoute: typeof DashboardProjectSettingsVoiceImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
+    '/(auth)/register': {
+      id: '/(auth)/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof authRegisterRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/dashboard/agents/': {
-      id: '/dashboard/agents/'
-      path: '/'
-      fullPath: '/dashboard/agents/'
-      preLoaderRoute: typeof DashboardAgentsIndexImport
-      parentRoute: typeof DashboardAgentsRouteImport
+    '/dashboard/project-settings': {
+      id: '/dashboard/project-settings'
+      path: '/project-settings'
+      fullPath: '/dashboard/project-settings'
+      preLoaderRoute: typeof DashboardProjectSettingsRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/clients/': {
-      id: '/dashboard/clients/'
-      path: '/'
-      fullPath: '/dashboard/clients/'
-      preLoaderRoute: typeof DashboardClientsIndexImport
-      parentRoute: typeof DashboardClientsRouteImport
+    '/dashboard/clients': {
+      id: '/dashboard/clients'
+      path: '/clients'
+      fullPath: '/dashboard/clients'
+      preLoaderRoute: typeof DashboardClientsRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/phone/': {
-      id: '/dashboard/phone/'
-      path: '/phone'
-      fullPath: '/dashboard/phone'
-      preLoaderRoute: typeof DashboardPhoneIndexImport
-      parentRoute: typeof DashboardRouteImport
+    '/dashboard/agents': {
+      id: '/dashboard/agents'
+      path: '/agents'
+      fullPath: '/dashboard/agents'
+      preLoaderRoute: typeof DashboardAgentsRouteRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/project-settings/': {
       id: '/dashboard/project-settings/'
       path: '/'
       fullPath: '/dashboard/project-settings/'
-      preLoaderRoute: typeof DashboardProjectSettingsIndexImport
-      parentRoute: typeof DashboardProjectSettingsRouteImport
+      preLoaderRoute: typeof DashboardProjectSettingsIndexRouteImport
+      parentRoute: typeof DashboardProjectSettingsRouteRoute
     }
-    '/dashboard/agents/$agent/agent': {
-      id: '/dashboard/agents/$agent/agent'
-      path: '/agent'
-      fullPath: '/dashboard/agents/$agent/agent'
-      preLoaderRoute: typeof DashboardAgentsAgentAgentImport
-      parentRoute: typeof DashboardAgentsAgentRouteImport
+    '/dashboard/phone/': {
+      id: '/dashboard/phone/'
+      path: '/phone'
+      fullPath: '/dashboard/phone/'
+      preLoaderRoute: typeof DashboardPhoneIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/agents/$agent/preview': {
-      id: '/dashboard/agents/$agent/preview'
-      path: '/preview'
-      fullPath: '/dashboard/agents/$agent/preview'
-      preLoaderRoute: typeof DashboardAgentsAgentPreviewImport
-      parentRoute: typeof DashboardAgentsAgentRouteImport
+    '/dashboard/clients/': {
+      id: '/dashboard/clients/'
+      path: '/'
+      fullPath: '/dashboard/clients/'
+      preLoaderRoute: typeof DashboardClientsIndexRouteImport
+      parentRoute: typeof DashboardClientsRouteRoute
     }
-    '/dashboard/agents/$agent/voice': {
-      id: '/dashboard/agents/$agent/voice'
+    '/dashboard/agents/': {
+      id: '/dashboard/agents/'
+      path: '/'
+      fullPath: '/dashboard/agents/'
+      preLoaderRoute: typeof DashboardAgentsIndexRouteImport
+      parentRoute: typeof DashboardAgentsRouteRoute
+    }
+    '/dashboard/project-settings/voice': {
+      id: '/dashboard/project-settings/voice'
       path: '/voice'
-      fullPath: '/dashboard/agents/$agent/voice'
-      preLoaderRoute: typeof DashboardAgentsAgentVoiceImport
-      parentRoute: typeof DashboardAgentsAgentRouteImport
+      fullPath: '/dashboard/project-settings/voice'
+      preLoaderRoute: typeof DashboardProjectSettingsVoiceRouteImport
+      parentRoute: typeof DashboardProjectSettingsRouteRoute
+    }
+    '/dashboard/project-settings/preview': {
+      id: '/dashboard/project-settings/preview'
+      path: '/preview'
+      fullPath: '/dashboard/project-settings/preview'
+      preLoaderRoute: typeof DashboardProjectSettingsPreviewRouteImport
+      parentRoute: typeof DashboardProjectSettingsRouteRoute
+    }
+    '/dashboard/project-settings/agent': {
+      id: '/dashboard/project-settings/agent'
+      path: '/agent'
+      fullPath: '/dashboard/project-settings/agent'
+      preLoaderRoute: typeof DashboardProjectSettingsAgentRouteImport
+      parentRoute: typeof DashboardProjectSettingsRouteRoute
+    }
+    '/dashboard/phone/$id': {
+      id: '/dashboard/phone/$id'
+      path: '/phone/$id'
+      fullPath: '/dashboard/phone/$id'
+      preLoaderRoute: typeof DashboardPhoneIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/agents/505': {
+      id: '/dashboard/agents/505'
+      path: '/505'
+      fullPath: '/dashboard/agents/505'
+      preLoaderRoute: typeof DashboardAgents505RouteImport
+      parentRoute: typeof DashboardAgentsRouteRoute
+    }
+    '/dashboard/agents/404': {
+      id: '/dashboard/agents/404'
+      path: '/404'
+      fullPath: '/dashboard/agents/404'
+      preLoaderRoute: typeof DashboardAgents404RouteImport
+      parentRoute: typeof DashboardAgentsRouteRoute
+    }
+    '/dashboard/agents/$agent': {
+      id: '/dashboard/agents/$agent'
+      path: '/$agent'
+      fullPath: '/dashboard/agents/$agent'
+      preLoaderRoute: typeof DashboardAgentsAgentRouteRouteImport
+      parentRoute: typeof DashboardAgentsRouteRoute
     }
     '/dashboard/agents/$agent/': {
       id: '/dashboard/agents/$agent/'
       path: '/'
       fullPath: '/dashboard/agents/$agent/'
-      preLoaderRoute: typeof DashboardAgentsAgentIndexImport
-      parentRoute: typeof DashboardAgentsAgentRouteImport
+      preLoaderRoute: typeof DashboardAgentsAgentIndexRouteImport
+      parentRoute: typeof DashboardAgentsAgentRouteRoute
+    }
+    '/dashboard/agents/$agent/voice': {
+      id: '/dashboard/agents/$agent/voice'
+      path: '/voice'
+      fullPath: '/dashboard/agents/$agent/voice'
+      preLoaderRoute: typeof DashboardAgentsAgentVoiceRouteImport
+      parentRoute: typeof DashboardAgentsAgentRouteRoute
+    }
+    '/dashboard/agents/$agent/preview': {
+      id: '/dashboard/agents/$agent/preview'
+      path: '/preview'
+      fullPath: '/dashboard/agents/$agent/preview'
+      preLoaderRoute: typeof DashboardAgentsAgentPreviewRouteImport
+      parentRoute: typeof DashboardAgentsAgentRouteRoute
+    }
+    '/dashboard/agents/$agent/agent': {
+      id: '/dashboard/agents/$agent/agent'
+      path: '/agent'
+      fullPath: '/dashboard/agents/$agent/agent'
+      preLoaderRoute: typeof DashboardAgentsAgentAgentRouteImport
+      parentRoute: typeof DashboardAgentsAgentRouteRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface DashboardAgentsAgentRouteRouteChildren {
   DashboardAgentsAgentAgentRoute: typeof DashboardAgentsAgentAgentRoute
@@ -608,233 +794,6 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
   DashboardRouteRouteChildren,
 )
 
-export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/401': typeof R401Route
-  '/403': typeof R403Route
-  '/422': typeof R422Route
-  '/505': typeof R505Route
-  '/pricing': typeof PricingRoute
-  '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
-  '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
-  '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
-  '/register': typeof authRegisterRoute
-  '/sign-in': typeof authSignInRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/dashboard/404': typeof Dashboard404Route
-  '/dashboard/505': typeof Dashboard505Route
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
-  '/dashboard/agents/404': typeof DashboardAgents404Route
-  '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
-  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
-  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
-  '/dashboard/agents/': typeof DashboardAgentsIndexRoute
-  '/dashboard/clients/': typeof DashboardClientsIndexRoute
-  '/dashboard/phone': typeof DashboardPhoneIndexRoute
-  '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
-  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
-  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
-  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
-  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/401': typeof R401Route
-  '/403': typeof R403Route
-  '/422': typeof R422Route
-  '/505': typeof R505Route
-  '/pricing': typeof PricingRoute
-  '/register': typeof authRegisterRoute
-  '/sign-in': typeof authSignInRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/dashboard/404': typeof Dashboard404Route
-  '/dashboard/505': typeof Dashboard505Route
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/dashboard/agents/404': typeof DashboardAgents404Route
-  '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
-  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
-  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
-  '/dashboard/agents': typeof DashboardAgentsIndexRoute
-  '/dashboard/clients': typeof DashboardClientsIndexRoute
-  '/dashboard/phone': typeof DashboardPhoneIndexRoute
-  '/dashboard/project-settings': typeof DashboardProjectSettingsIndexRoute
-  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
-  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
-  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
-  '/dashboard/agents/$agent': typeof DashboardAgentsAgentIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/401': typeof R401Route
-  '/403': typeof R403Route
-  '/422': typeof R422Route
-  '/505': typeof R505Route
-  '/pricing': typeof PricingRoute
-  '/dashboard/agents': typeof DashboardAgentsRouteRouteWithChildren
-  '/dashboard/clients': typeof DashboardClientsRouteRouteWithChildren
-  '/dashboard/project-settings': typeof DashboardProjectSettingsRouteRouteWithChildren
-  '/(auth)/register': typeof authRegisterRoute
-  '/(auth)/sign-in': typeof authSignInRoute
-  '/agents/$agentId': typeof AgentsAgentIdRoute
-  '/dashboard/404': typeof Dashboard404Route
-  '/dashboard/505': typeof Dashboard505Route
-  '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
-  '/dashboard/settings': typeof DashboardSettingsRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
-  '/dashboard/agents/404': typeof DashboardAgents404Route
-  '/dashboard/agents/505': typeof DashboardAgents505Route
-  '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
-  '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
-  '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
-  '/dashboard/project-settings/voice': typeof DashboardProjectSettingsVoiceRoute
-  '/dashboard/agents/': typeof DashboardAgentsIndexRoute
-  '/dashboard/clients/': typeof DashboardClientsIndexRoute
-  '/dashboard/phone/': typeof DashboardPhoneIndexRoute
-  '/dashboard/project-settings/': typeof DashboardProjectSettingsIndexRoute
-  '/dashboard/agents/$agent/agent': typeof DashboardAgentsAgentAgentRoute
-  '/dashboard/agents/$agent/preview': typeof DashboardAgentsAgentPreviewRoute
-  '/dashboard/agents/$agent/voice': typeof DashboardAgentsAgentVoiceRoute
-  '/dashboard/agents/$agent/': typeof DashboardAgentsAgentIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/dashboard'
-    | '/401'
-    | '/403'
-    | '/422'
-    | '/505'
-    | '/pricing'
-    | '/dashboard/agents'
-    | '/dashboard/clients'
-    | '/dashboard/project-settings'
-    | '/register'
-    | '/sign-in'
-    | '/agents/$agentId'
-    | '/dashboard/404'
-    | '/dashboard/505'
-    | '/dashboard/analytics'
-    | '/dashboard/history'
-    | '/dashboard/settings'
-    | '/dashboard/'
-    | '/dashboard/agents/$agent'
-    | '/dashboard/agents/404'
-    | '/dashboard/agents/505'
-    | '/dashboard/phone/$id'
-    | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/preview'
-    | '/dashboard/project-settings/voice'
-    | '/dashboard/agents/'
-    | '/dashboard/clients/'
-    | '/dashboard/phone'
-    | '/dashboard/project-settings/'
-    | '/dashboard/agents/$agent/agent'
-    | '/dashboard/agents/$agent/preview'
-    | '/dashboard/agents/$agent/voice'
-    | '/dashboard/agents/$agent/'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/401'
-    | '/403'
-    | '/422'
-    | '/505'
-    | '/pricing'
-    | '/register'
-    | '/sign-in'
-    | '/agents/$agentId'
-    | '/dashboard/404'
-    | '/dashboard/505'
-    | '/dashboard/analytics'
-    | '/dashboard/history'
-    | '/dashboard/settings'
-    | '/dashboard'
-    | '/dashboard/agents/404'
-    | '/dashboard/agents/505'
-    | '/dashboard/phone/$id'
-    | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/preview'
-    | '/dashboard/project-settings/voice'
-    | '/dashboard/agents'
-    | '/dashboard/clients'
-    | '/dashboard/phone'
-    | '/dashboard/project-settings'
-    | '/dashboard/agents/$agent/agent'
-    | '/dashboard/agents/$agent/preview'
-    | '/dashboard/agents/$agent/voice'
-    | '/dashboard/agents/$agent'
-  id:
-    | '__root__'
-    | '/'
-    | '/dashboard'
-    | '/401'
-    | '/403'
-    | '/422'
-    | '/505'
-    | '/pricing'
-    | '/dashboard/agents'
-    | '/dashboard/clients'
-    | '/dashboard/project-settings'
-    | '/(auth)/register'
-    | '/(auth)/sign-in'
-    | '/agents/$agentId'
-    | '/dashboard/404'
-    | '/dashboard/505'
-    | '/dashboard/analytics'
-    | '/dashboard/history'
-    | '/dashboard/settings'
-    | '/dashboard/'
-    | '/dashboard/agents/$agent'
-    | '/dashboard/agents/404'
-    | '/dashboard/agents/505'
-    | '/dashboard/phone/$id'
-    | '/dashboard/project-settings/agent'
-    | '/dashboard/project-settings/preview'
-    | '/dashboard/project-settings/voice'
-    | '/dashboard/agents/'
-    | '/dashboard/clients/'
-    | '/dashboard/phone/'
-    | '/dashboard/project-settings/'
-    | '/dashboard/agents/$agent/agent'
-    | '/dashboard/agents/$agent/preview'
-    | '/dashboard/agents/$agent/voice'
-    | '/dashboard/agents/$agent/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  R401Route: typeof R401Route
-  R403Route: typeof R403Route
-  R422Route: typeof R422Route
-  R505Route: typeof R505Route
-  PricingRoute: typeof PricingRoute
-  authRegisterRoute: typeof authRegisterRoute
-  authSignInRoute: typeof authSignInRoute
-  AgentsAgentIdRoute: typeof AgentsAgentIdRoute
-}
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
@@ -847,189 +806,6 @@ const rootRouteChildren: RootRouteChildren = {
   authSignInRoute: authSignInRoute,
   AgentsAgentIdRoute: AgentsAgentIdRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/dashboard",
-        "/401",
-        "/403",
-        "/422",
-        "/505",
-        "/pricing",
-        "/(auth)/register",
-        "/(auth)/sign-in",
-        "/agents/$agentId"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/dashboard": {
-      "filePath": "dashboard/route.tsx",
-      "children": [
-        "/dashboard/agents",
-        "/dashboard/clients",
-        "/dashboard/project-settings",
-        "/dashboard/404",
-        "/dashboard/505",
-        "/dashboard/analytics",
-        "/dashboard/history",
-        "/dashboard/settings",
-        "/dashboard/",
-        "/dashboard/phone/$id",
-        "/dashboard/phone/"
-      ]
-    },
-    "/401": {
-      "filePath": "401.tsx"
-    },
-    "/403": {
-      "filePath": "403.tsx"
-    },
-    "/422": {
-      "filePath": "422.tsx"
-    },
-    "/505": {
-      "filePath": "505.tsx"
-    },
-    "/pricing": {
-      "filePath": "pricing.tsx"
-    },
-    "/dashboard/agents": {
-      "filePath": "dashboard/agents/route.tsx",
-      "parent": "/dashboard",
-      "children": [
-        "/dashboard/agents/$agent",
-        "/dashboard/agents/404",
-        "/dashboard/agents/505",
-        "/dashboard/agents/"
-      ]
-    },
-    "/dashboard/clients": {
-      "filePath": "dashboard/clients/route.tsx",
-      "parent": "/dashboard",
-      "children": [
-        "/dashboard/clients/"
-      ]
-    },
-    "/dashboard/project-settings": {
-      "filePath": "dashboard/project-settings/route.tsx",
-      "parent": "/dashboard",
-      "children": [
-        "/dashboard/project-settings/agent",
-        "/dashboard/project-settings/preview",
-        "/dashboard/project-settings/voice",
-        "/dashboard/project-settings/"
-      ]
-    },
-    "/(auth)/register": {
-      "filePath": "(auth)/register.tsx"
-    },
-    "/(auth)/sign-in": {
-      "filePath": "(auth)/sign-in.tsx"
-    },
-    "/agents/$agentId": {
-      "filePath": "agents.$agentId.tsx"
-    },
-    "/dashboard/404": {
-      "filePath": "dashboard/404.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/505": {
-      "filePath": "dashboard/505.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/analytics": {
-      "filePath": "dashboard/analytics.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/history": {
-      "filePath": "dashboard/history.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/settings": {
-      "filePath": "dashboard/settings.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/": {
-      "filePath": "dashboard/index.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/agents/$agent": {
-      "filePath": "dashboard/agents/$agent/route.tsx",
-      "parent": "/dashboard/agents",
-      "children": [
-        "/dashboard/agents/$agent/agent",
-        "/dashboard/agents/$agent/preview",
-        "/dashboard/agents/$agent/voice",
-        "/dashboard/agents/$agent/"
-      ]
-    },
-    "/dashboard/agents/404": {
-      "filePath": "dashboard/agents/404.tsx",
-      "parent": "/dashboard/agents"
-    },
-    "/dashboard/agents/505": {
-      "filePath": "dashboard/agents/505.tsx",
-      "parent": "/dashboard/agents"
-    },
-    "/dashboard/phone/$id": {
-      "filePath": "dashboard/phone/$id.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/project-settings/agent": {
-      "filePath": "dashboard/project-settings/agent.tsx",
-      "parent": "/dashboard/project-settings"
-    },
-    "/dashboard/project-settings/preview": {
-      "filePath": "dashboard/project-settings/preview.tsx",
-      "parent": "/dashboard/project-settings"
-    },
-    "/dashboard/project-settings/voice": {
-      "filePath": "dashboard/project-settings/voice.tsx",
-      "parent": "/dashboard/project-settings"
-    },
-    "/dashboard/agents/": {
-      "filePath": "dashboard/agents/index.tsx",
-      "parent": "/dashboard/agents"
-    },
-    "/dashboard/clients/": {
-      "filePath": "dashboard/clients/index.tsx",
-      "parent": "/dashboard/clients"
-    },
-    "/dashboard/phone/": {
-      "filePath": "dashboard/phone/index.tsx",
-      "parent": "/dashboard"
-    },
-    "/dashboard/project-settings/": {
-      "filePath": "dashboard/project-settings/index.tsx",
-      "parent": "/dashboard/project-settings"
-    },
-    "/dashboard/agents/$agent/agent": {
-      "filePath": "dashboard/agents/$agent/agent.tsx",
-      "parent": "/dashboard/agents/$agent"
-    },
-    "/dashboard/agents/$agent/preview": {
-      "filePath": "dashboard/agents/$agent/preview.tsx",
-      "parent": "/dashboard/agents/$agent"
-    },
-    "/dashboard/agents/$agent/voice": {
-      "filePath": "dashboard/agents/$agent/voice.tsx",
-      "parent": "/dashboard/agents/$agent"
-    },
-    "/dashboard/agents/$agent/": {
-      "filePath": "dashboard/agents/$agent/index.tsx",
-      "parent": "/dashboard/agents/$agent"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
