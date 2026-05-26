@@ -15,7 +15,8 @@ export const registerUser = mutation({
 		{ first_name, last_name, email, password, elevenLabs_api_key },
 	) => {
 		const secretKey = process.env.SECRET_KEY
-		const encryptedPassword = encrypt(password, secretKey!)
+		if (!secretKey) throw new ConvexError('Secret key is not set')
+		const encryptedPassword = encrypt(password, secretKey)
 		return await ctx.db.insert('user', {
 			first_name,
 			last_name,
