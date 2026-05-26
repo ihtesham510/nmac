@@ -154,7 +154,7 @@ function RouteComponent() {
 								<SheetTitle className='mb-4'>Conversation Details</SheetTitle>
 								{!audioBuf.isLoading && audioBuf.data && (
 									<div className='mb-4'>
-										<AudioPlayer audioBlob={audioBuf.data} />
+										<AudioPlayer audioBlob={audioBuf.data} open={open} />
 									</div>
 								)}
 								{audioBuf.isLoading && (
