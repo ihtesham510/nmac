@@ -7,6 +7,7 @@ import { Skeleton } from './ui/skeleton'
 
 interface AudioPlayerProps {
 	audioBlob: Blob
+	open?: boolean
 	isLoading?: boolean
 }
 
@@ -19,6 +20,7 @@ const formatTime = (seconds: number): string => {
 
 export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 	audioBlob,
+	open = true,
 	isLoading,
 }) => {
 	const containerRef = useRef<HTMLDivElement>(null)
@@ -65,16 +67,18 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 		setDuration(0)
 	}
 
+	// Handle open prop changes
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <cannot pass function as dep>
 	useEffect(() => {
-		return () => {
+		if (!open) {
 			cleanup()
 		}
-	}, [])
+	}, [open, wavesurfer, isPlaying, audioUrl])
 
 	// Create blob URL
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <cannot pass function as dep>
 	useEffect(() => {
-		if (audioBlob) {
+		if (open && audioBlob) {
 			const url = URL.createObjectURL(audioBlob)
 			setAudioUrl(url)
 		}
@@ -84,7 +88,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 				URL.revokeObjectURL(audioUrl)
 			}
 		}
-	}, [audioBlob, audioUrl])
+	}, [audioBlob, open])
 
 	// Set duration when ready
 	useEffect(() => {
@@ -123,7 +127,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
 		document.body.removeChild(link)
 	}
 
-	if (!audioUrl) {
+	if (!open || !audioUrl) {
 		return null
 	}
 
