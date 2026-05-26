@@ -36,6 +36,7 @@ import { Route as DashboardProjectSettingsVoiceRouteImport } from './routes/dash
 import { Route as DashboardProjectSettingsPreviewRouteImport } from './routes/dashboard/project-settings/preview'
 import { Route as DashboardProjectSettingsAgentRouteImport } from './routes/dashboard/project-settings/agent'
 import { Route as DashboardPhoneIdRouteImport } from './routes/dashboard/phone/$id'
+import { Route as DashboardHistoryConversationRouteImport } from './routes/dashboard/history.$conversation'
 import { Route as DashboardAgents505RouteImport } from './routes/dashboard/agents/505'
 import { Route as DashboardAgents404RouteImport } from './routes/dashboard/agents/404'
 import { Route as DashboardAgentsAgentRouteRouteImport } from './routes/dashboard/agents/$agent/route'
@@ -184,6 +185,12 @@ const DashboardPhoneIdRoute = DashboardPhoneIdRouteImport.update({
   path: '/phone/$id',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardHistoryConversationRoute =
+  DashboardHistoryConversationRouteImport.update({
+    id: '/$conversation',
+    path: '/$conversation',
+    getParentRoute: () => DashboardHistoryRoute,
+  } as any)
 const DashboardAgents505Route = DashboardAgents505RouteImport.update({
   id: '/505',
   path: '/505',
@@ -242,12 +249,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/history': typeof DashboardHistoryRouteWithChildren
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/history/$conversation': typeof DashboardHistoryConversationRoute
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
@@ -274,11 +282,12 @@ export interface FileRoutesByTo {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/history': typeof DashboardHistoryRouteWithChildren
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/history/$conversation': typeof DashboardHistoryConversationRoute
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
@@ -310,12 +319,13 @@ export interface FileRoutesById {
   '/dashboard/404': typeof Dashboard404Route
   '/dashboard/505': typeof Dashboard505Route
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
-  '/dashboard/history': typeof DashboardHistoryRoute
+  '/dashboard/history': typeof DashboardHistoryRouteWithChildren
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/agents/$agent': typeof DashboardAgentsAgentRouteRouteWithChildren
   '/dashboard/agents/404': typeof DashboardAgents404Route
   '/dashboard/agents/505': typeof DashboardAgents505Route
+  '/dashboard/history/$conversation': typeof DashboardHistoryConversationRoute
   '/dashboard/phone/$id': typeof DashboardPhoneIdRoute
   '/dashboard/project-settings/agent': typeof DashboardProjectSettingsAgentRoute
   '/dashboard/project-settings/preview': typeof DashboardProjectSettingsPreviewRoute
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/dashboard/agents/$agent'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
+    | '/dashboard/history/$conversation'
     | '/dashboard/phone/$id'
     | '/dashboard/project-settings/agent'
     | '/dashboard/project-settings/preview'
@@ -385,6 +396,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
+    | '/dashboard/history/$conversation'
     | '/dashboard/phone/$id'
     | '/dashboard/project-settings/agent'
     | '/dashboard/project-settings/preview'
@@ -421,6 +433,7 @@ export interface FileRouteTypes {
     | '/dashboard/agents/$agent'
     | '/dashboard/agents/404'
     | '/dashboard/agents/505'
+    | '/dashboard/history/$conversation'
     | '/dashboard/phone/$id'
     | '/dashboard/project-settings/agent'
     | '/dashboard/project-settings/preview'
@@ -639,6 +652,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPhoneIdRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/history/$conversation': {
+      id: '/dashboard/history/$conversation'
+      path: '/$conversation'
+      fullPath: '/dashboard/history/$conversation'
+      preLoaderRoute: typeof DashboardHistoryConversationRouteImport
+      parentRoute: typeof DashboardHistoryRoute
+    }
     '/dashboard/agents/505': {
       id: '/dashboard/agents/505'
       path: '/505'
@@ -761,6 +781,17 @@ const DashboardProjectSettingsRouteRouteWithChildren =
     DashboardProjectSettingsRouteRouteChildren,
   )
 
+interface DashboardHistoryRouteChildren {
+  DashboardHistoryConversationRoute: typeof DashboardHistoryConversationRoute
+}
+
+const DashboardHistoryRouteChildren: DashboardHistoryRouteChildren = {
+  DashboardHistoryConversationRoute: DashboardHistoryConversationRoute,
+}
+
+const DashboardHistoryRouteWithChildren =
+  DashboardHistoryRoute._addFileChildren(DashboardHistoryRouteChildren)
+
 interface DashboardRouteRouteChildren {
   DashboardAgentsRouteRoute: typeof DashboardAgentsRouteRouteWithChildren
   DashboardClientsRouteRoute: typeof DashboardClientsRouteRouteWithChildren
@@ -768,7 +799,7 @@ interface DashboardRouteRouteChildren {
   Dashboard404Route: typeof Dashboard404Route
   Dashboard505Route: typeof Dashboard505Route
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
-  DashboardHistoryRoute: typeof DashboardHistoryRoute
+  DashboardHistoryRoute: typeof DashboardHistoryRouteWithChildren
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardPhoneIdRoute: typeof DashboardPhoneIdRoute
@@ -783,7 +814,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   Dashboard404Route: Dashboard404Route,
   Dashboard505Route: Dashboard505Route,
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
-  DashboardHistoryRoute: DashboardHistoryRoute,
+  DashboardHistoryRoute: DashboardHistoryRouteWithChildren,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardPhoneIdRoute: DashboardPhoneIdRoute,
